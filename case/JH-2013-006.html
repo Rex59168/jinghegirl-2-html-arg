@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <base href="../">
-<title>JH-2026-004｜尋人資料庫｜社團法人臺灣失蹤兒少協尋關懷基金會</title>
+<title>JH-2013-006｜尋人資料庫｜社團法人臺灣失蹤兒少協尋關懷基金會</title>
 <link rel="stylesheet" href="styles/tokens.css">
 <link rel="stylesheet" href="styles/base.css">
 <link rel="stylesheet" href="styles/layout.css">
@@ -41,19 +41,17 @@
   import { renderCaseDetail, homeCrumb } from './scripts/render.js';
   import { LABELS, STATUS_VALUES } from './scripts/labels.js';
   import { t } from './scripts/i18n.js';
-  import * as flags from './scripts/flags.js';
   import * as notebook from './scripts/notebook.js';
 
   const CASE = {
-    id: "JH-2026-004",
-    name: "陳語安",
-    age: 16,
-    missing: "2026/08/26",
-    lastSeen: { "zh-Hant": "靖河市河東區", "zh-Hans": "靖河市河东区", en: "Jinghe City, Hedong District" },
-    status: "協尋中",
-    summary: { "zh-Hant": "當日 06:40 離家後失去聯繫。", "zh-Hans": "当日 06:40 离家后失去联系。", en: "Left home at 06:40 that day and has not been in contact since." },
-    photoNote: { "zh-Hant": "證件照掃描，畫質不佳", "zh-Hans": "证件照扫描，画质不佳", en: "Scanned ID photo, poor quality" },
-    note: { "zh-Hant": "報案後九天，初步研判為自行離家。", "zh-Hans": "报案后九天，初步研判为自行离家。", en: "Nine days after the report was filed, the preliminary assessment was voluntary departure." },
+    id: "JH-2013-006",
+    name: "張○安",
+    age: 8,
+    missing: "2013/07/22",
+    lastSeen: { "zh-Hant": "靖河市　大同區", "zh-Hans": "靖河市　大同区", en: "Jinghe City, Datong District" },
+    status: "已尋獲",
+    summary: { "zh-Hant": "通報後三日尋獲，已與家屬團聚。", "zh-Hans": "通报后三日寻获，已与家属团聚。", en: "Found three days after being reported; reunited with family." },
+    photoNote: { "zh-Hant": "證件照掃描，畫質不佳", "zh-Hans": "证件照扫描，画质不佳", en: "Scanned ID photo, poor quality" }
   };
 
   guard.enter({}, () => {
@@ -61,8 +59,7 @@
 
     function render() {
       document.getElementById('main').replaceChildren(renderCaseDetail(CASE, store.get('locale')));
-      const statusKey = CASE.id === 'JH-2025-003' && flags.isMidUpdateFired() ? CASE.statusAfterMidUpdate : CASE.status;
-      notebook.addFact('case-' + CASE.id, CASE.name + '（' + CASE.id + '）　' + CASE.missing + '　' + t(STATUS_VALUES[statusKey], store.get('locale')), 'case/' + CASE.id + '.html');
+      notebook.addFact('case-' + CASE.id, CASE.name + '（' + CASE.id + '）　' + CASE.missing + '　' + t(STATUS_VALUES[CASE.status], store.get('locale')), 'case/' + CASE.id + '.html');
     }
     render();
     chrome.onLocaleChange(render);

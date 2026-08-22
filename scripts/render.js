@@ -93,24 +93,38 @@ export function renderHome(page, locale) {
   filterWrap.appendChild(filterLabel);
   root.appendChild(filterWrap);
 
-  const list = el('ul', 'case-list');
-  page.cases.forEach((c) => {
-    const statusKey = statusKeyOf(c);
-    const li = el('li', 'case-list__item');
-    li.dataset.status = statusKey;
-    const a = link(c.id, 'case/' + c.id + '.html');
-    a.className = 'case-list__id';
-    li.appendChild(a);
-    li.appendChild(el('span', 'case-list__name', c.name));
-    li.appendChild(el('span', 'status status--' + STATUS_CLASS[statusKey], statusLabel(statusKey, locale)));
-    list.appendChild(li);
+  const table = el('table', 'data-table');
+  const thead = el('thead');
+  const headRow = el('tr', 'data-table__row');
+  [label('caseId', locale), label('name', locale), label('missingDate', locale), label('status', locale)].forEach((h) => {
+    headRow.appendChild(el('th', 'data-table__cell', h));
   });
-  root.appendChild(list);
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = el('tbody');
+  const sortedCases = page.cases.slice().sort((a, b) => (a.missing < b.missing ? 1 : a.missing > b.missing ? -1 : 0));
+  sortedCases.forEach((c) => {
+    const statusKey = statusKeyOf(c);
+    const tr = el('tr', 'data-table__row');
+    tr.dataset.status = statusKey;
+    const idCell = el('td', 'data-table__cell');
+    idCell.appendChild(link(c.id, 'case/' + c.id + '.html'));
+    tr.appendChild(idCell);
+    tr.appendChild(el('td', 'data-table__cell', c.name));
+    tr.appendChild(el('td', 'data-table__cell', c.missing));
+    const statusCell = el('td', 'data-table__cell');
+    statusCell.appendChild(el('span', 'status status--' + STATUS_CLASS[statusKey], statusLabel(statusKey, locale)));
+    tr.appendChild(statusCell);
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  root.appendChild(table);
 
   select.addEventListener('change', () => {
     const val = select.value;
-    list.querySelectorAll('.case-list__item').forEach((li) => {
-      li.hidden = !!val && li.dataset.status !== val;
+    tbody.querySelectorAll('tr').forEach((tr) => {
+      tr.hidden = !!val && tr.dataset.status !== val;
     });
   });
 
@@ -206,14 +220,9 @@ export function renderCaseDetail(c, locale) {
   details.appendChild(el('p', null, '[' + t(c.photoNote, locale) + ']'));
   tbody.appendChild(tableRow(label('poster', locale), details));
 
-  const relatedWrap = el('div');
   if (c.links) {
+    const relatedWrap = el('div');
     c.links.forEach((l) => relatedWrap.appendChild(link(t(l.label, locale), l.href)));
-  }
-  if (c.fileId) {
-    relatedWrap.appendChild(link(label('sourceFile', locale) + '　' + c.fileId + '.txt', 'file/' + c.fileId + '.html'));
-  }
-  if (c.links || c.fileId) {
     tbody.appendChild(tableRow(label('relatedLinks', locale), relatedWrap));
   }
 
@@ -428,6 +437,17 @@ export function renderLegacy(page, locale) {
   root.appendChild(el('p', null, page.author));
   root.appendChild(el('p', null, t(page.note, locale)));
   root.appendChild(el('p', null, t(page.line, locale)));
+
+  if (page.staleLinks) {
+    root.appendChild(el('p', 'note-block', t(page.staleLinksNote, locale)));
+    const linksLine = el('p', null);
+    page.staleLinks.forEach((sl, i) => {
+      if (i > 0) linksLine.appendChild(document.createTextNode('　'));
+      linksLine.appendChild(link(sl.id + '.txt', 'file/' + sl.id + '.html'));
+    });
+    root.appendChild(linksLine);
+  }
+
   root.appendChild(link(label('closeSnapshot', locale), 'index.html'));
   return root;
 }

@@ -194,6 +194,10 @@
   font-size: 0.85rem;
 }
 
+.data-table tbody tr[hidden] {
+  display: none;
+}
+
 /* chatlog */
 
 .chatlog {

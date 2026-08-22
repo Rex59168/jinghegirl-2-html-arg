@@ -52,7 +52,6 @@ export const LABELS = {
   recoveredFromLabel: { "zh-Hant": "來源", "zh-Hans": "来源", en: "Source" },
   filed: { "zh-Hant": "建檔", "zh-Hans": "建档", en: "Filed" },
   lastUpdated: { "zh-Hant": "最後更新", "zh-Hans": "最后更新", en: "Last Updated" },
-  sourceFile: { "zh-Hant": "原始檔案", "zh-Hans": "原始档案", en: "Source File" },
   evidenceChatlog: { "zh-Hant": "附件：雲端備份對話紀錄", "zh-Hans": "附件：云端备份对话记录", en: "Attachment: Recovered Chat Log (Cloud Backup)" },
   evidenceSchoolNotice: { "zh-Hant": "校方公告（比對用）", "zh-Hans": "校方公告（比对用）", en: "School Notice (for comparison)" },
   relatedMarketSnapshot: { "zh-Hant": "疑似相關網路紀錄快照", "zh-Hans": "疑似相关网络记录快照", en: "Possibly related online record snapshot" },
