@@ -20,10 +20,6 @@ function link(text, href) {
   return a;
 }
 
-function normalizeAnswer(s) {
-  return String(s || '').trim().toUpperCase().replace(/[-\s]/g, '');
-}
-
 function label(key, locale) {
   return t(LABELS[key], locale);
 }
@@ -350,7 +346,37 @@ export function renderFile014(locale) {
   return appendUpLink(renderFileLines(['014.txt', '—']), locale);
 }
 
-export function renderTrust(page, locale, onSolved) {
+export function renderTrust(page, locale) {
+  const root = el('div');
+  root.appendChild(el('h1', null, t(page.title, locale)));
+  root.appendChild(el('p', null, t(page.note, locale)));
+
+  const table = el('table', 'data-table');
+  const thead = el('thead');
+  const headRow = el('tr', 'data-table__row');
+  [label('year', locale), label('date', locale), label('amount', locale), label('donorName', locale), label('zip', locale)].forEach((h) =>
+    headRow.appendChild(el('th', 'data-table__cell', h))
+  );
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = el('tbody');
+  page.rows.forEach((r) => {
+    const tr = el('tr', 'data-table__row');
+    tr.appendChild(el('td', 'data-table__cell', r.year));
+    tr.appendChild(el('td', 'data-table__cell', r.date));
+    tr.appendChild(el('td', 'data-table__cell', r.amount));
+    tr.appendChild(el('td', 'data-table__cell', t(r.name, locale)));
+    tr.appendChild(el('td', 'data-table__cell', t(r.zip, locale)));
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  root.appendChild(table);
+
+  return root;
+}
+
+export function renderWorksheet(page, locale, onSolved) {
   const root = el('div');
   root.appendChild(el('h1', null, t(page.title, locale)));
   root.appendChild(el('p', null, t(page.note, locale)));
@@ -361,13 +387,13 @@ export function renderTrust(page, locale, onSolved) {
   const thead = el('thead');
   const headRow = el('tr', 'data-table__row');
   const headers = [label('year', locale), label('date', locale), label('amount', locale), label('donorName', locale), label('zip', locale)];
-  if (!solved) headers.push(t(page.puzzle.answerHeader, locale));
+  if (!solved) headers.push(label('correspondingCase', locale));
   headers.forEach((h) => headRow.appendChild(el('th', 'data-table__cell', h)));
   thead.appendChild(headRow);
   table.appendChild(thead);
 
   const tbody = el('tbody');
-  const inputs = [];
+  const selects = [];
   page.rows.forEach((r) => {
     const tr = el('tr', 'data-table__row');
     tr.appendChild(el('td', 'data-table__cell', r.year));
@@ -377,14 +403,23 @@ export function renderTrust(page, locale, onSolved) {
     tr.appendChild(el('td', 'data-table__cell', t(r.zip, locale)));
     if (!solved) {
       const td = el('td', 'data-table__cell');
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.className = 'trust-puzzle__input';
+      const select = document.createElement('select');
+      select.className = 'trust-puzzle__input';
+      const blank = document.createElement('option');
+      blank.value = '';
+      blank.textContent = label('chooseCasePlaceholder', locale);
+      select.appendChild(blank);
+      page.cases.forEach((c) => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.id + '　' + c.name;
+        select.appendChild(opt);
+      });
       const feedback = el('span', 'trust-puzzle__feedback');
-      td.appendChild(input);
+      td.appendChild(select);
       td.appendChild(feedback);
       tr.appendChild(td);
-      inputs.push({ input, feedback, row: r });
+      selects.push({ select, feedback, row: r });
     }
     tbody.appendChild(tr);
   });
@@ -405,12 +440,13 @@ export function renderTrust(page, locale, onSolved) {
   checkBtn.addEventListener('click', async () => {
     checkBtn.disabled = true;
     const results = await Promise.all(
-      inputs.map(async ({ input, row }) => {
-        const hash = await sha256Hex(normalizeAnswer(input.value));
-        return row.matchHashes.includes(hash);
+      selects.map(async ({ select, row }) => {
+        if (!select.value) return false;
+        const hash = await sha256Hex(select.value);
+        return hash === row.correctHash;
       })
     );
-    inputs.forEach(({ feedback }, i) => {
+    selects.forEach(({ feedback }, i) => {
       feedback.textContent = results[i] ? '✓' : '✗';
     });
     const allCorrect = results.every(Boolean);
@@ -418,7 +454,7 @@ export function renderTrust(page, locale, onSolved) {
       store.set('trustPuzzleSolved', true);
       resultMsg.textContent = t(page.puzzle.allCorrect, locale);
       hintMsg.textContent = '';
-      inputs.forEach(({ input: i }) => (i.disabled = true));
+      selects.forEach(({ select: s }) => (s.disabled = true));
       root.appendChild(link(label('archiveLink', locale), 'archive2019.html'));
       if (onSolved) onSolved();
     } else {

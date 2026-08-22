@@ -41,7 +41,7 @@
   };
 
   guard.enter({ isGone: true }, () => {
-    chrome.mountBare();
+    chrome.mountBare({ skipWidgets: true });
     function render() {
       document.getElementById('main').replaceChildren(renderGone(PAGE, store.get('locale')));
     }

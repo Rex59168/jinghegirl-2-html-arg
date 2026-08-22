@@ -2,6 +2,7 @@ import { store } from './store.js';
 import { t, LOCALES } from './i18n.js';
 import { LABELS, ORG_CHROME } from './labels.js';
 import * as notebook from './notebook.js';
+import * as mail from './mail.js';
 
 const localeChangeListeners = [];
 
@@ -93,12 +94,17 @@ export function mount({ breadcrumb = [] } = {}) {
   document.getElementById('app').hidden = false;
   mountLangSwitchers();
   notebook.mount();
+  mail.mount();
 }
 
 // For pages without the institutional chrome (raw snapshots, file views, endgame, admin).
-export function mountBare() {
+// { skipWidgets: true } drops the notebook/mail drawers too — for gone.html, where the
+// site itself is supposed to have stopped working, not just lost its header.
+export function mountBare({ skipWidgets = false } = {}) {
   const appEl = document.getElementById('app');
   if (appEl) appEl.hidden = false;
   mountLangSwitchers();
+  if (skipWidgets) return;
   notebook.mount();
+  mail.mount();
 }

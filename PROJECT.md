@@ -15,7 +15,7 @@
 5. 首次進站顯示一次性告示：本作為虛構作品，含失蹤、死亡與暴力暗示。可跳過，不可省略。
 6. 玩家自填的暱稱與文字只存在 `localStorage`，不上傳、不外送。
 7. **「他」全劇沒有台詞、沒有帳號、沒有暱稱，一次都不出現。** 任何謎題的答案都不得是他的名字或身分。
-8. **周妤（前作角色）本作只出現一行**（`legacy.html` 的求助句）。不得移植前作的主動提示聊天機制。
+8. **周妤（前作角色）本作只出現一行**（`legacy.html` 的求助句）。不得移植前作的主動提示聊天機制。◆ 已知的刻意例外：徵信錄謎題現在會透過一封**不具名**的匿名信主動點出「這裡怪怪的」（見「8. 進度旗標與解鎖規則」的比對表機制）。這在精神上確實違反了本條「不主動遞提示」的原則——這是使用者明確要求、知情推翻的決定，不是疏忽。底線仍然守住：這封信不是周妤寫的、也不是他寫的，全程不具名、不建立新角色，避免變成「又一個主動提示的人」。
 9. **永遠不解釋的清單**（下方「永遠不解釋的清單」章節列出的九件事）不得被任何 UI、謎題、彩蛋解答。
 
 ---
@@ -108,7 +108,7 @@
 
 > 本幕的每一步，用的都是前面已經放過的東西。玩家不會拿到新線索，只會發現自己一直看著它們。貫穿全幕的一句話：**他從來沒有藏過。只是沒有人去看。**
 
-**場 28　第一步｜徵信錄** — 基金會的歷年徵信錄，彙整了好幾年的匿名捐款紀錄。裡面有三筆金額一模一樣的匿名捐款（各 1,000），日期卻完全不同：2026/08/26、2025/08/14、2022/09/03。只有玩家自己把這三個日期拿去跟資料庫裡的失蹤日期核對，才會發現：09/03 是林昭失蹤那天、08/14 是林晞失蹤那天、08/26 是陳語安失蹤那天。三筆、三個人、三個完全不同的日期，同一個金額。◆ 他不是每年固定捐一次錢。他是每次「拿到」一個人的那天捐錢。表格上不會有任何一句話告訴玩家這件事——連「金額相同」都不特別標出來，玩家得自己一行一行去對。不解釋。匿名捐款仍會寄收據，徵信錄上留著郵遞區號。→ 縮到一個行政區。
+**場 28　第一步｜徵信錄** — 基金會的歷年徵信錄，彙整了好幾年的匿名捐款紀錄。裡面有三筆金額一模一樣的匿名捐款（各 1,000），日期卻完全不同：2026/08/26、2025/08/14、2022/09/03。玩家看完徵信錄後，會收到一封不具名的訊息，點出「這份徵信錄有點奇怪」並附上一份比對表的連結（另開新分頁）——玩家要在比對表裡把這三個日期拿去跟資料庫裡的失蹤日期核對，才會發現：09/03 是林昭失蹤那天、08/14 是林晞失蹤那天、08/26 是陳語安失蹤那天。三筆、三個人、三個完全不同的日期，同一個金額。◆ 他不是每年固定捐一次錢。他是每次「拿到」一個人的那天捐錢。徵信錄本身不會有任何一句話告訴玩家這件事——連「金額相同」都不特別標出來，玩家得自己一行一行去對；那封信只點出「有問題」，不點破答案是什麼。匿名捐款仍會寄收據，徵信錄上留著郵遞區號。→ 縮到一個行政區。
 
 **場 29　第二步｜還沒改成匿名之前** — 基金會 2019 年的舊版網站是公開「感謝名單」的，後來才改匿名。舊版網站有存檔。那一筆上面有姓氏，和一個「里」。◆ 這一步就是全系列的主題本身：網路不會忘。她們的貼文不會，他的也不會。→ 縮到一個里。
 
@@ -194,7 +194,7 @@
 ```
 /index.html /intro.html
 /about.html /faq.html /contact.html /donate.html /privacy.html /accessibility.html
-/trust.html /archive2019.html /market.html /legacy.html
+/trust.html /worksheet.html /archive2019.html /market.html /legacy.html
 /collection.html /walk.html /gone.html /admin.html
 /case/JH-2018-001.html /case/JH-2022-002.html /case/JH-2025-003.html /case/JH-2026-004.html
 /file/001.html … /file/015.html   （只有 007/012/013/014/015 有內容，其餘維持空白 "—"）
@@ -204,13 +204,14 @@
   store.js      進度儲存（localStorage / memory 兩種實作）
   i18n.js       t(value, locale) 三語解析
   flags.js      旗標與解鎖判定
-  labels.js     全站共用、非劇透的 UI 字串（欄位標籤、機構名稱、頁尾、導覽列、語言切換、告示文字、筆記本按鈕文字）
+  labels.js     全站共用、非劇透的 UI 字串（欄位標籤、機構名稱、頁尾、導覽列、語言切換、告示文字、筆記本按鈕文字、訊息抽屜文字）
   chrome.js     畫 header/nav/breadcrumb/footer/lang-switcher；管理語言切換後的重新渲染
   guard.js      每頁自己在 inline script 開頭呼叫，取代舊版集中式 guard()（告示已讀＋暱稱檢查、finished 鎖死轉 gone.html、walk.html 額外檢查解鎖旗標）
-  hash.js       sha256Hex(text)，供 trust.html 雜湊比對謎題答案
+  hash.js       sha256Hex(text)，供 worksheet.html 雜湊比對謎題答案
   render.js     各頁面的 DOM 渲染函式（純函式，只吃該頁自己的小資料物件，不含劇情文字）
   endgame.js    第六幕狀態機，WALK 文字資料由 walk.html 以參數傳入
-  notebook.js   常駐筆記本抽屜
+  notebook.js   常駐筆記本抽屜（左下角）
+  mail.js       常駐「訊息」抽屜（右下角），送出不具名信件，連結另開新分頁
 ```
 
 `main.js`、`router.js`、`data/content.json` 已刪除，不再存在。
@@ -258,14 +259,15 @@
 | `intro.html` | true | 序章：暱稱＋「你是怎麼知道這件事的」，只出現一次 |
 | `case/JH-xxxx-xxx.html` 共 20 頁 | true | 案件頁，見下方「案件數量」說明 |
 | `about.html` `faq.html` `contact.html` `donate.html` `privacy.html` `accessibility.html` | true | 機構制式頁面 |
-| `trust.html` | true | 年度徵信錄＋謎題，第六幕第一步 |
+| `trust.html` | true | 年度徵信錄（純展示，無互動），第六幕第一步；看完後送出一封「訊息」，連結到 `worksheet.html` |
+| `worksheet.html` | false | 比對表：徵信錄謎題實際作答的地方，從 `trust.html` 的訊息連結另開新分頁進入，不對外連結 |
 | `archive2019.html` | false | 2019 年網站存檔快照，第六幕第二步 |
 | `market.html` | false | 二手平台賣場快照，第六幕第三、四步 |
 | `legacy.html` | false | 周妤的舊協尋網站（已停止更新）；同時是 `.txt` 檔案的發現入口，見下方說明 |
 | `file/001.html`…`file/015.html` | false | `.txt` 純文字頁 |
 | `collection.html` | false | 收藏，列出 001–015，`walk.html` 解鎖後多一行 016.txt |
 | `walk.html` | false | 第六幕 |
-| `gone.html` | false | 封站白頁 |
+| `gone.html` | false | 封站白頁，`chrome.mountBare({ skipWidgets: true })`，不顯示筆記本／訊息按鈕——網站說停用了，這兩個工具也該跟著停 |
 | `admin.html` | false | 管理員測試面板，不對外連結 |
 
 ### 案件數量與版面
@@ -303,7 +305,7 @@
   seen: {},              // { "JH-2022-002": true, "file-007": true, "page-trust": true, "page-legacy": true, ... }
   midUpdateFired: false, secondUpdateFired: false, collectionUnlocked: false,
   refusedCount: 0, finished: false,
-  notebook: [], trustPuzzleSolved: false
+  notebook: [], letters: [], trustPuzzleSolved: false
 }
 ```
 
@@ -317,7 +319,7 @@
 
 **中段更新的真實時間門檻**：原本只看玩家有沒有看過幾個頁面，跟現實時間完全無關，玩家可以一次坐下十分鐘內看完全部劇情。現在額外要求距離志工登錄（`intro.html` 完成時間，存成 `introCompletedAt`）至少過了 2 小時真實時間，才會觸發林晞尋獲公告——模擬「機構網站在你不在時默默更新」的節奏感。這個延遲時間寫在 `flags.js` 的 `MID_UPDATE_MIN_DELAY_MS` 常數，可自行調整；`admin.html` 有一顆「把志工登錄時間往前撥 3 小時」的按鈕方便測試跳過這道門檻，另一顆「強制觸發中段更新」按鈕則是完全繞過所有條件的硬開關。
 
-**徵信錄謎題現為必經關卡**：`isWalkUnlocked()` 新增 `trustPuzzleSolved` 檢查，玩家必須自己把三筆匿名捐款日期跟資料庫裡的失蹤日期核對正確，才能真正解鎖第六幕——原本這一步就算不解也能推進，跟「你以為是自己查出來的」這條情感線缺乏玩法支撐，現已修正。連續答錯三次後，`trust.html` 會多顯示一句提示（`page.puzzle.hint`），避免真的卡死。`admin.html` 的兩顆「解鎖第六幕」測試按鈕已同步加上 `store.set('trustPuzzleSolved', true)`，另有一顆「強制觸發二次更新」按鈕可跳過整條鏈路直接測試。
+**徵信錄謎題現為必經關卡，且拆成「展示頁＋比對表」兩個頁面**：`trust.html` 只單純展示徵信錄公開資料，看完之後（`flags.notePageSeen('page-trust')` 觸發時）會透過 `mail.js` 送出一封不具名的「訊息」——右下角一顆訊息按鈕會冒出未讀數字，點開後看到信件內容，直接點出「這份徵信錄有點奇怪」，附一顆「開啟比對表」的連結，用 `target="_blank"` 另開新分頁進入 `worksheet.html`。實際核對的動作全部搬到 `worksheet.html`：三筆匿名捐款分別配一個下拉選單，選項是資料庫裡全部 20 筆案件（只顯示編號＋姓名，**故意不顯示失蹤日期**，否則玩家不用真的去核對就能用選單本身的資訊猜出來），玩家得自己記得或回去首頁核對日期，才能從選單裡選出正確案件。`isWalkUnlocked()` 檢查的 `trustPuzzleSolved` 旗標現在由 `worksheet.html` 設定，而不是 `trust.html`——這一步原本就算不解也能推進，跟「你以為是自己查出來的」這條情感線缺乏玩法支撐，現已修正。連續答錯三次後 `worksheet.html` 會多顯示一句提示（`page.puzzle.hint`），避免真的卡死。答案驗證方式不變：SHA-256 雜湊比對（現在雜湊的是選單選出的案件編號本身，不再需要處理姓名／編號兩種輸入變體），已知限制照舊——這只能拉高門檻，玩家還是可以寫幾行 console 把 20 個候選案件的雜湊全部跑過一次去比對答案。`admin.html` 的兩顆「解鎖第六幕」測試按鈕已同步加上 `store.set('trustPuzzleSolved', true)`，另有一顆「強制觸發二次更新」按鈕可跳過整條鏈路直接測試。這封信是全站唯一一處主動點破線索的地方，見「0. 硬性規則」第 8 條下方的例外說明。
 
 **已修正的舊 bug**：`admin.html` 的「強制解鎖收藏頁」「強制解鎖第六幕」「解鎖並直接跳到第六幕」三顆按鈕，過去直接呼叫 `store.markSeen(...)`，繞過了 `flags.checkCollectionUnlocked()` 這個只在 `flags.notePageSeen()` 內才會觸發的旗標寫入，導致按鈕標記了頁面已讀、卻沒有真的解鎖。現已改為同時直接 `store.set('collectionUnlocked', true)`。
 
@@ -421,8 +423,9 @@
 .content-warning .content-warning__box .content-warning__title .content-warning__body .content-warning__continue
 .lang-switcher .lang-switcher__label .lang-switcher__option .lang-switcher__option--active
 .admin-panel .admin-panel__state .admin-panel__button   不算在機構視覺規範內，等寬字純除錯介面，可正常做成好用的樣子
-.trust-puzzle__input .trust-puzzle__feedback
+.trust-puzzle__input .trust-puzzle__feedback   worksheet.html 專用，class 名稱沿用舊版但現在是 <select> 不是 <input>
 .notebook__button .notebook__badge .notebook__backdrop .notebook__panel .notebook__header .notebook__title .notebook__close .notebook__list .notebook__empty
+.mail__button .mail__badge .mail__backdrop .mail__panel .mail__header .mail__close .mail__list .mail__item .mail__subject .mail__text .mail__link .mail__empty   訊息抽屜（右下角，跟筆記本左右對稱）
 ```
 
 ---
@@ -435,8 +438,10 @@
 
 第六幕結局音效已決定不做，直接移除 `audio/` 資料夾與 `door_key.wav`／`door_hinge.wav` 的播放邏輯，改用純 CSS 視覺效果（見「9. 視覺設計規範」結局頁段落）撐出原本音效負責的節奏，理由與內容變更已併入本文件對應章節（第 3 節場 34、第 7 節技術架構表、第 9 節結局頁）。
 
-`JH-2026-004` 的 `summaryRevised` 欄位已重新加回並接上觸發條件（見「8. 進度旗標與解鎖規則」的「二次更新」列）：中段更新之後，玩家再看過 `legacy.html` 跟 `015.txt`，案情摘要會修正成多一句「最後一次留下紀錄為 07:14」，並寫進筆記本。徵信錄謎題也已改為第六幕的必經關卡（見同節說明），`archive2019.html`／`market.html` 的關鍵線索改成要玩家自己從一份填充過的名單裡認出來、或自己點開才看到（見「7. 技術架構」頁面清單旁的說明），不再是旁白直接講完。
+`JH-2026-004` 的 `summaryRevised` 欄位已重新加回並接上觸發條件（見「8. 進度旗標與解鎖規則」的「二次更新」列）：中段更新之後，玩家再看過 `legacy.html` 跟 `015.txt`，案情摘要會修正成多一句「最後一次留下紀錄為 07:14」，並寫進筆記本。徵信錄謎題也已改為第六幕的必經關卡，且拆成 `trust.html`（純展示）＋一封不具名訊息（`mail.js`）＋另開新分頁的 `worksheet.html`（實際作答，下拉選單比對）三段式流程（見「8. 進度旗標與解鎖規則」說明）。`archive2019.html`／`market.html` 的關鍵線索改成要玩家自己從一份填充過的名單裡認出來、或自己點開才看到（見「7. 技術架構」頁面清單旁的說明），不再是旁白直接講完。
 
 早期草稿曾寫「五個案件」的措辭問題已解決（現有 20 筆，遠超過原本的疑慮）。
+
+**全站健檢**：改完視覺設計與比對表機制後，用 headless Chrome 把全站每一頁（首頁、六個機構制式頁面、`trust/worksheet/archive2019/market/legacy/collection/admin`、20 個案件頁、15 個 `.txt` 頁、`walk.html`、`gone.html`）都跑過一輪，確認每頁都有正常渲染內容、沒有 `undefined`／`[object Object]` 這類殘留、zero console 例外。過程中順手修掉一個小疏漏：`gone.html`（封站白頁）先前透過 `chrome.mountBare()` 還是會冒出筆記本／訊息按鈕，跟「網站已經無法使用」的設定矛盾——現在改呼叫 `chrome.mountBare({ skipWidgets: true })`，封站後這兩個工具也一併停用，只留語言切換。
 
 尚未決定、需要人來拍板的舊有事項：目前沒有。

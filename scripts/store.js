@@ -14,6 +14,7 @@ const DEFAULTS = {
   refusedCount: 0,
   finished: false,
   notebook: [],
+  letters: [],
   trustPuzzleSolved: false
 };
 

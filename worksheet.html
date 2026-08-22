@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>比對表</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderWorksheet } from './scripts/render.js';
+  import * as notebook from './scripts/notebook.js';
+  import { t } from './scripts/i18n.js';
+
+  const PAGE = {
+    title: { "zh-Hant": "比對表", "zh-Hans": "比对表", en: "Comparison Worksheet" },
+    note: { "zh-Hant": "左邊是徵信錄公開的三筆匿名捐款，右邊選出你覺得日期對得上的案件，再核對。", "zh-Hans": "左边是征信录公开的三笔匿名捐款，右边选出你觉得日期对得上的案件，再核对。", en: "On the left are the three anonymous donations from the public disclosure. On the right, pick the case whose date you think lines up, then check." },
+    rows: [
+      { date: "08/26", year: "2026", amount: "1,000", name: { "zh-Hant": "無名氏", "zh-Hans": "无名氏", en: "Anonymous" }, zip: { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", en: "[Hedong District postal code]" }, correctHash: "2cc2496c6a7ac1980f34775cb0836c93646128a8f9bb4f3c7a259c51b7113747" },
+      { date: "08/14", year: "2025", amount: "1,000", name: { "zh-Hant": "無名氏", "zh-Hans": "无名氏", en: "Anonymous" }, zip: { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", en: "[Hedong District postal code]" }, correctHash: "2a820627357df7d553d9e0e6e4c1e37de41a3cbb8ea727b75c010b7783fc119d" },
+      { date: "09/03", year: "2022", amount: "1,000", name: { "zh-Hant": "無名氏", "zh-Hans": "无名氏", en: "Anonymous" }, zip: { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", en: "[Hedong District postal code]" }, correctHash: "b49950c3d1dbc6f39906b59a03ce80f84cffad699ac8d5c175f189953b2e9b14" }
+    ],
+    cases: [
+      { id: "JH-2018-001", name: "方○○" },
+      { id: "JH-2022-002", name: "林昭" },
+      { id: "JH-2025-003", name: "林晞" },
+      { id: "JH-2026-004", name: "陳語安" },
+      { id: "JH-2012-005", name: "王思穎" },
+      { id: "JH-2013-006", name: "張○安" },
+      { id: "JH-2014-007", name: "陳建宏" },
+      { id: "JH-2015-008", name: "李佳蓉" },
+      { id: "JH-2016-009", name: "黃○宸" },
+      { id: "JH-2017-010", name: "吳雅婷" },
+      { id: "JH-2019-011", name: "蔡秉軒" },
+      { id: "JH-2019-012", name: "許○彤" },
+      { id: "JH-2020-013", name: "林○睿" },
+      { id: "JH-2020-014", name: "郭家豪" },
+      { id: "JH-2021-015", name: "曾○妍" },
+      { id: "JH-2021-016", name: "賴宗翰" },
+      { id: "JH-2023-017", name: "周○涵" },
+      { id: "JH-2023-018", name: "潘力維" },
+      { id: "JH-2024-019", name: "蕭○安" },
+      { id: "JH-2024-020", name: "洪振宇" }
+    ],
+    puzzle: {
+      prompt: { "zh-Hant": "如果你看得出哪一筆對應到哪個案子，從下拉選單選出對應的案件，再核對。", "zh-Hans": "如果你看得出哪一笔对应到哪个案子，从下拉选单选出对应的案件，再核对。", en: "If you can tell which entry lines up with which case, choose it from the dropdown, then check." },
+      check: { "zh-Hant": "核對", "zh-Hans": "核对", en: "Check" },
+      incorrect: { "zh-Hant": "還沒對上。", "zh-Hans": "还没对上。", en: "Not matching yet." },
+      hint: { "zh-Hant": "提示：把這三個日期拿去跟尋人資料庫裡的失蹤日期核對看看。", "zh-Hans": "提示：把这三个日期拿去跟寻人数据库里的失踪日期核对看看。", en: "Hint: try checking these three dates against the missing-persons dates in the database." },
+      allCorrect: { "zh-Hant": "三筆都對上了。金額也一模一樣。這不是巧合。", "zh-Hans": "三笔都对上了。金额也一模一样。这不是巧合。", en: "All three match. The amount is identical too. This isn't a coincidence." }
+    }
+  };
+
+  const WORKSHEET_SOLVED_FACT = { "zh-Hant": "比對表：三筆匿名捐款都對上了失蹤日期，金額一模一樣。", "zh-Hans": "比对表：三笔匿名捐款都对上了失踪日期，金额一模一样。", en: "Worksheet: all three anonymous donations line up with missing-persons dates, same amount." };
+
+  guard.enter({}, () => {
+    chrome.mountBare();
+
+    function render() {
+      document.getElementById('main').replaceChildren(
+        renderWorksheet(PAGE, store.get('locale'), () => {
+          notebook.addFact('worksheet-solved', t(WORKSHEET_SOLVED_FACT, store.get('locale')), 'worksheet.html');
+        })
+      );
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

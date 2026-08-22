@@ -76,6 +76,8 @@ export const LABELS = {
   sortStatusOpt: { "zh-Hant": "狀態", "zh-Hans": "状态", en: "Status" },
   district: { "zh-Hant": "地區", "zh-Hans": "地区", en: "District" },
   viewDetail: { "zh-Hant": "放大看", "zh-Hans": "放大看", en: "Zoom in" },
+  correspondingCase: { "zh-Hant": "對應案件", "zh-Hans": "对应案件", en: "Corresponding Case" },
+  chooseCasePlaceholder: { "zh-Hant": "請選擇", "zh-Hans": "请选择", en: "Please choose" },
   officeHours: { "zh-Hant": "服務時間", "zh-Hans": "服务时间", en: "Office Hours" },
   phone: { "zh-Hant": "協尋專線", "zh-Hans": "协寻专线", en: "Search Hotline" },
   email: { "zh-Hant": "電子郵件", "zh-Hans": "电子邮件", en: "Email" }
@@ -107,5 +109,12 @@ export const NOTEBOOK_UI = {
   buttonLabel: { "zh-Hant": "筆記本", "zh-Hans": "笔记本", en: "Notebook" },
   title: { "zh-Hant": "已知事項", "zh-Hans": "已知事项", en: "Known Facts" },
   empty: { "zh-Hant": "還沒有已知事項。繼續往下看。", "zh-Hans": "还没有已知事项。继续往下看。", en: "No known facts yet. Keep reading." },
+  close: { "zh-Hant": "關閉", "zh-Hans": "关闭", en: "Close" }
+};
+
+export const MAIL_UI = {
+  buttonLabel: { "zh-Hant": "訊息", "zh-Hans": "消息", en: "Messages" },
+  title: { "zh-Hant": "訊息", "zh-Hans": "消息", en: "Messages" },
+  empty: { "zh-Hant": "還沒有新訊息。", "zh-Hans": "还没有新消息。", en: "No new messages yet." },
   close: { "zh-Hant": "關閉", "zh-Hans": "关闭", en: "Close" }
 };
