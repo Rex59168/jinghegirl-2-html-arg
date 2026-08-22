@@ -107,7 +107,15 @@
   display: none;
 }
 
-.case-list__filter {
+.case-list__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em 1.5em;
+}
+
+.case-list__filter,
+.case-list__sort {
   font-family: inherit;
   font-size: 0.9rem;
   padding: 0.3em;

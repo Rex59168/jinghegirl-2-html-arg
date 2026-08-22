@@ -70,6 +70,12 @@ export const LABELS = {
   statsUnit: { "zh-Hant": "件", "zh-Hans": "件", en: "" },
   filterAll: { "zh-Hant": "全部狀態", "zh-Hans": "全部状态", en: "All Statuses" },
   filterLabel: { "zh-Hant": "篩選", "zh-Hans": "筛选", en: "Filter" },
+  sortLabel: { "zh-Hant": "排序", "zh-Hans": "排序", en: "Sort" },
+  sortMissingDesc: { "zh-Hant": "失蹤時間（新到舊）", "zh-Hans": "失踪时间（新到旧）", en: "Date Missing (Newest First)" },
+  sortMissingAsc: { "zh-Hant": "失蹤時間（舊到新）", "zh-Hans": "失踪时间（旧到新）", en: "Date Missing (Oldest First)" },
+  sortId: { "zh-Hant": "案件編號", "zh-Hans": "案件编号", en: "Case No." },
+  sortName: { "zh-Hant": "姓名", "zh-Hans": "姓名", en: "Name" },
+  sortStatusOpt: { "zh-Hant": "狀態", "zh-Hans": "状态", en: "Status" },
   officeHours: { "zh-Hant": "服務時間", "zh-Hans": "服务时间", en: "Office Hours" },
   phone: { "zh-Hant": "協尋專線", "zh-Hans": "协寻专线", en: "Search Hotline" },
   email: { "zh-Hant": "電子郵件", "zh-Hans": "电子邮件", en: "Email" }

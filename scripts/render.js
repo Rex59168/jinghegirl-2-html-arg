@@ -75,7 +75,7 @@ export function renderHome(page, locale) {
     '　' + statusLabel('已結案', locale) + ' ' + counts['已結案'] + unit;
   root.appendChild(statsLine);
 
-  const filterWrap = el('p', null);
+  const controlsWrap = el('div', 'case-list__controls');
   const filterLabel = el('label', null, label('filterLabel', locale) + '　');
   const select = document.createElement('select');
   select.className = 'case-list__filter';
@@ -90,8 +90,35 @@ export function renderHome(page, locale) {
     select.appendChild(opt);
   });
   filterLabel.appendChild(select);
-  filterWrap.appendChild(filterLabel);
-  root.appendChild(filterWrap);
+  controlsWrap.appendChild(filterLabel);
+
+  const sortLabelEl = el('label', null, label('sortLabel', locale) + '　');
+  const sortSelect = document.createElement('select');
+  sortSelect.className = 'case-list__sort';
+  const STATUS_ORDER = { 協尋中: 0, 已尋獲: 1, 已結案: 2 };
+  const SORTERS = {
+    'missing-desc': (a, b) => (a.missing < b.missing ? 1 : a.missing > b.missing ? -1 : 0),
+    'missing-asc': (a, b) => (a.missing > b.missing ? 1 : a.missing < b.missing ? -1 : 0),
+    id: (a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0),
+    name: (a, b) => a.name.localeCompare(b.name, 'zh-Hant'),
+    status: (a, b) => STATUS_ORDER[statusKeyOf(a)] - STATUS_ORDER[statusKeyOf(b)] || (a.missing < b.missing ? 1 : a.missing > b.missing ? -1 : 0)
+  };
+  [
+    ['missing-desc', 'sortMissingDesc'],
+    ['missing-asc', 'sortMissingAsc'],
+    ['id', 'sortId'],
+    ['name', 'sortName'],
+    ['status', 'sortStatusOpt']
+  ].forEach(([value, key]) => {
+    const opt = document.createElement('option');
+    opt.value = value;
+    opt.textContent = label(key, locale);
+    sortSelect.appendChild(opt);
+  });
+  sortSelect.value = 'missing-desc';
+  sortLabelEl.appendChild(sortSelect);
+  controlsWrap.appendChild(sortLabelEl);
+  root.appendChild(controlsWrap);
 
   const table = el('table', 'data-table');
   const thead = el('thead');
@@ -103,30 +130,39 @@ export function renderHome(page, locale) {
   table.appendChild(thead);
 
   const tbody = el('tbody');
-  const sortedCases = page.cases.slice().sort((a, b) => (a.missing < b.missing ? 1 : a.missing > b.missing ? -1 : 0));
-  sortedCases.forEach((c) => {
-    const statusKey = statusKeyOf(c);
-    const tr = el('tr', 'data-table__row');
-    tr.dataset.status = statusKey;
-    const idCell = el('td', 'data-table__cell');
-    idCell.appendChild(link(c.id, 'case/' + c.id + '.html'));
-    tr.appendChild(idCell);
-    tr.appendChild(el('td', 'data-table__cell', c.name));
-    tr.appendChild(el('td', 'data-table__cell', c.missing));
-    const statusCell = el('td', 'data-table__cell');
-    statusCell.appendChild(el('span', 'status status--' + STATUS_CLASS[statusKey], statusLabel(statusKey, locale)));
-    tr.appendChild(statusCell);
-    tbody.appendChild(tr);
-  });
   table.appendChild(tbody);
   root.appendChild(table);
 
-  select.addEventListener('change', () => {
+  function buildRows(sortKey) {
+    tbody.replaceChildren();
+    const sortedCases = page.cases.slice().sort(SORTERS[sortKey] || SORTERS['missing-desc']);
+    sortedCases.forEach((c) => {
+      const statusKey = statusKeyOf(c);
+      const tr = el('tr', 'data-table__row');
+      tr.dataset.status = statusKey;
+      const idCell = el('td', 'data-table__cell');
+      idCell.appendChild(link(c.id, 'case/' + c.id + '.html'));
+      tr.appendChild(idCell);
+      tr.appendChild(el('td', 'data-table__cell', c.name));
+      tr.appendChild(el('td', 'data-table__cell', c.missing));
+      const statusCell = el('td', 'data-table__cell');
+      statusCell.appendChild(el('span', 'status status--' + STATUS_CLASS[statusKey], statusLabel(statusKey, locale)));
+      tr.appendChild(statusCell);
+      tbody.appendChild(tr);
+    });
+    applyFilter();
+  }
+
+  function applyFilter() {
     const val = select.value;
     tbody.querySelectorAll('tr').forEach((tr) => {
       tr.hidden = !!val && tr.dataset.status !== val;
     });
-  });
+  }
+
+  buildRows(sortSelect.value);
+  select.addEventListener('change', applyFilter);
+  sortSelect.addEventListener('change', () => buildRows(sortSelect.value));
 
   return root;
 }
