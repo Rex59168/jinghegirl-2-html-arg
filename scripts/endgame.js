@@ -17,33 +17,7 @@ export function renderWalk(walk, locale, container) {
 
   let step = 0;
 
-  const audioKey = new Audio('audio/door_key.wav');
-  const audioHinge = new Audio('audio/door_hinge.wav');
-  audioKey.preload = 'auto';
-  audioHinge.preload = 'auto';
-  let muted = false;
-
-  const muteBtn = el('button', 'walk__mute', t(LABELS.mute, locale));
-  muteBtn.type = 'button';
-  muteBtn.addEventListener('click', () => {
-    muted = !muted;
-    audioKey.muted = muted;
-    audioHinge.muted = muted;
-    muteBtn.textContent = t(LABELS[muted ? 'unmute' : 'mute'], locale);
-  });
-  document.body.appendChild(muteBtn);
-
-  function unlockAudio() {
-    [audioKey, audioHinge].forEach((a) => {
-      const p = a.play();
-      if (p && p.catch) p.catch(() => {});
-      a.pause();
-      a.currentTime = 0;
-    });
-  }
-
   function cleanup() {
-    muteBtn.remove();
     document.querySelectorAll('.endgame-black, .endgame-red').forEach((n) => n.remove());
   }
 
@@ -122,7 +96,6 @@ export function renderWalk(walk, locale, container) {
     choiceWrap.appendChild(noBtn);
 
     function handleClick(e) {
-      unlockAudio();
       const btn = e.currentTarget;
       const state = btn.dataset.state;
 
@@ -165,27 +138,25 @@ export function renderWalk(walk, locale, container) {
     noBtn.addEventListener('click', handleClick);
   }
 
-  function safePlay(audio, duration) {
-    return new Promise((resolve) => {
-      try {
-        audio.currentTime = 0;
-        const p = audio.play();
-        if (p && p.catch) p.catch(() => {});
-      } catch (e) {
-        /* ignore missing/blocked audio, timing still advances */
-      }
-      setTimeout(resolve, duration);
-    });
+  function wait(duration) {
+    return new Promise((resolve) => setTimeout(resolve, duration));
   }
 
   function runDoor() {
     clearRoot();
     const overlay = el('div', 'endgame-black');
+    const crack = el('div', 'endgame-black__crack');
+    overlay.appendChild(crack);
     document.body.appendChild(overlay);
 
-    safePlay(audioKey, 3000)
-      .then(() => safePlay(audioHinge, 1000))
-      .then(() => new Promise((resolve) => setTimeout(resolve, 1000)))
+    crack.classList.add('endgame-black__crack--click');
+    wait(3000)
+      .then(() => {
+        crack.classList.remove('endgame-black__crack--click');
+        crack.classList.add('endgame-black__crack--open');
+        return wait(1000);
+      })
+      .then(() => wait(1000))
       .then(() => {
         overlay.remove();
         step = 7;

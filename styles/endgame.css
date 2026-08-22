@@ -3,6 +3,42 @@
   inset: 0;
   background: #000000;
   z-index: 9999;
+  overflow: hidden;
+}
+
+.endgame-black__crack {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 2px;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.endgame-black__crack--click {
+  animation: endgame-crack-click 1s steps(1, end) 3;
+}
+
+.endgame-black__crack--open {
+  width: 46px;
+  opacity: 1;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
+  transition: width 1s ease, opacity 1s ease;
+}
+
+@keyframes endgame-crack-click {
+  0%, 55% { opacity: 0; }
+  25% { opacity: 0.35; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .endgame-black__crack--click {
+    animation: none;
+  }
+  .endgame-black__crack--open {
+    transition: none;
+  }
 }
 
 .endgame-red {

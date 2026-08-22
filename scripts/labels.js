@@ -30,8 +30,6 @@ export const LABELS = {
   statusHistory: { "zh-Hant": "狀態異動紀錄", "zh-Hans": "状态异动记录", en: "Status History" },
   breadcrumbDb: { "zh-Hant": "尋人資料庫", "zh-Hans": "寻人数据库", en: "Missing Persons Database" },
   continue: { "zh-Hant": "繼續", "zh-Hans": "继续", en: "Continue" },
-  mute: { "zh-Hant": "靜音", "zh-Hans": "静音", en: "Mute" },
-  unmute: { "zh-Hant": "取消靜音", "zh-Hans": "取消静音", en: "Unmute" },
   notFound: { "zh-Hant": "找不到頁面", "zh-Hans": "找不到页面", en: "Page not found" },
   backHome: { "zh-Hant": "回首頁", "zh-Hans": "回首页", en: "Back to home" },
   collectionTitle: { "zh-Hant": "收藏", "zh-Hans": "收藏", en: "Collection" },
