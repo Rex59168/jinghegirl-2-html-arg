@@ -282,19 +282,26 @@
 
 原本每個案件頁的「相關連結」會直接放一個「原始檔案　XXX.txt」超連結到 `file/XXX.html`——這在真實機構網站上不合理：公開的案件資料庫不會直接連到一份原始 .txt 證據檔。現已從三個案件頁（JH-2022-002／JH-2025-003／JH-2026-004）移除這個連結。
 
-三個檔案改成在 `legacy.html`（周妤的舊網站）底部，以「頁面底部殘留的連結，年代不明，未清除」這種中性技術性註記呈現，而不是她的新台詞——**周妤本作仍然只有原本那一句話**，這三個連結是頁面本身的殘留物，不是她說的。玩家仍然可以從 `case/JH-2025-003.html` 的「原始協尋頁面（已停止更新）」連結找到 `legacy.html`，再從那裡找到 007.txt／012.txt／015.txt，整條收藏解鎖鏈路沒有斷。
+三個檔案改成在 `legacy.html`（周妤的舊網站）底部，以「頁面底部殘留的連結，年代不明，未清除」這種中性技術性註記呈現，而不是她的新台詞——**周妤本作仍然只有原本那一句話**，這三個連結是頁面本身的殘留物，不是她說的。玩家仍然可以從 `case/JH-2025-003.html` 的「原始協尋頁面（已停止更新）」連結找到 `legacy.html`，再從那裡找到 007.txt／012.txt／015.txt，整條收藏解鎖鏈路沒有斷。`legacy.html` 現在也會呼叫 `flags.notePageSeen('page-legacy')`，作為「二次更新」觸發條件的一部分（見「8. 進度旗標與解鎖規則」）。
+
+### 第六幕的線索改成要玩家自己找
+
+原本 `archive2019.html`／`market.html` 兩步都是旁白直接把答案講完，玩家沒有機會自己發現，跟「他從來沒有藏過，只是沒有人去看」這句主題句有落差。現已調整：
+
+- `archive2019.html` 從單獨一行「○先生　河東區「某某里」」改成一份完整的 2019 年感謝名單（`page.rows`），裡面混了好幾筆平凡的填充捐款人跟兩筆「依當事人要求移除」的空白列，真正對應到徵信錄那一筆的紀錄埋在裡面，玩家要自己認出來。
+- `market.html` 的窗／橋墩線索（原本的 `page.windowNote`）改成掛在腳踏車那筆商品自己的 `photoNote` 欄位，用跟案件頁 PDF 一樣的 `<details>／<summary>「放大看」` 收合，玩家要自己點開才看得到，不是表格下面就直接印出來的一段話。
 
 ---
 
-## 8. 進度旗標與解鎖規則（`flags.js`，未變動）
+## 8. 進度旗標與解鎖規則（`flags.js`）
 
 `store` 內存一個扁平物件：
 
 ```js
 {
-  nickname: "", howYouKnew: "",
-  seen: {},              // { "JH-2022-002": true, "file-007": true, "page-trust": true, ... }
-  midUpdateFired: false, collectionUnlocked: false,
+  nickname: "", howYouKnew: "", introCompletedAt: 0,
+  seen: {},              // { "JH-2022-002": true, "file-007": true, "page-trust": true, "page-legacy": true, ... }
+  midUpdateFired: false, secondUpdateFired: false, collectionUnlocked: false,
   refusedCount: 0, finished: false,
   notebook: [], trustPuzzleSolved: false
 }
@@ -302,10 +309,15 @@
 
 | 事件 | 條件 |
 |---|---|
-| 中段更新（林晞尋獲公告） | `seen` 內含 `JH-2026-004` 且 `seen` 內含任兩個舊案 |
+| 中段更新（林晞尋獲公告） | `seen` 內含 `JH-2026-004` 且 `seen` 內含任兩個舊案，**且**距離 `introCompletedAt`（志工登錄完成時間）已過至少 2 小時真實時間 |
+| 二次更新（JH-2026-004 摘要修正） | 中段更新已觸發，且 `legacy.html`、`015.txt` 都看過 |
 | 收藏頁解鎖 | 三個 `.txt` 頁面（007/012/015）都看過 |
-| 第六幕解鎖 | 收藏頁看完，且徵信錄、存檔頁、二手快照三頁都看過 |
+| 第六幕解鎖 | 收藏頁看完，徵信錄、存檔頁、二手快照三頁都看過，**且徵信錄謎題必須解出**（`trustPuzzleSolved === true`） |
 | 白屏封站 | `finished === true` 之後，任何頁面都導向 `gone.html` |
+
+**中段更新的真實時間門檻**：原本只看玩家有沒有看過幾個頁面，跟現實時間完全無關，玩家可以一次坐下十分鐘內看完全部劇情。現在額外要求距離志工登錄（`intro.html` 完成時間，存成 `introCompletedAt`）至少過了 2 小時真實時間，才會觸發林晞尋獲公告——模擬「機構網站在你不在時默默更新」的節奏感。這個延遲時間寫在 `flags.js` 的 `MID_UPDATE_MIN_DELAY_MS` 常數，可自行調整；`admin.html` 有一顆「把志工登錄時間往前撥 3 小時」的按鈕方便測試跳過這道門檻，另一顆「強制觸發中段更新」按鈕則是完全繞過所有條件的硬開關。
+
+**徵信錄謎題現為必經關卡**：`isWalkUnlocked()` 新增 `trustPuzzleSolved` 檢查，玩家必須自己把三筆匿名捐款日期跟資料庫裡的失蹤日期核對正確，才能真正解鎖第六幕——原本這一步就算不解也能推進，跟「你以為是自己查出來的」這條情感線缺乏玩法支撐，現已修正。連續答錯三次後，`trust.html` 會多顯示一句提示（`page.puzzle.hint`），避免真的卡死。`admin.html` 的兩顆「解鎖第六幕」測試按鈕已同步加上 `store.set('trustPuzzleSolved', true)`，另有一顆「強制觸發二次更新」按鈕可跳過整條鏈路直接測試。
 
 **已修正的舊 bug**：`admin.html` 的「強制解鎖收藏頁」「強制解鎖第六幕」「解鎖並直接跳到第六幕」三顆按鈕，過去直接呼叫 `store.markSeen(...)`，繞過了 `flags.checkCollectionUnlocked()` 這個只在 `flags.notePageSeen()` 內才會觸發的旗標寫入，導致按鈕標記了頁面已讀、卻沒有真的解鎖。現已改為同時直接 `store.set('collectionUnlocked', true)`。
 
@@ -315,32 +327,33 @@
 
 ### 這個網站是什麼
 
-一個台灣的失蹤兒少協尋基金會的公開資料庫。它是一個真的在辦事的機構做的網站，2016 年前後外包給廠商，之後只有內容更新、沒有改版。**它是一部恐怖作品，但它不能長得像恐怖作品。**
+一個台灣的失蹤兒少協尋基金會的公開資料庫。它是一個真的在辦事的機構做的網站，參考真實協尋機構（例如兒福聯盟的失蹤兒童少年資料管理中心、NCMEC 等）常見的做法：正常維護、正常改版、看起來就是一個 2020 年代還在營運的正牌 NGO 網站。**它是一部恐怖作品，但它不需要靠「看起來很虛構／很陽春」來自證清白——一句話說清楚是虛構作品就夠了，其餘一律照真實機構網站的標準做。**
 
-### 唯一的設計論點
+### 設計方向的轉折（本輪重構）
 
-> 整個網站存在的目的，是為了讓結局那一面紅色成立。
+早期版本走的是「全站幾乎沒有顏色、乏味即美術指導」的極簡路線，理由是要讓結局那面紅色顯得突兀。這個方向後來被推翻：**現在改成正常現代網站該有的樣子**——色彩、圓角、陰影、hero 橫幅、卡片式排版、hover 效果都可以用，不再自我設限成「越乏味越好」。「重複提醒讀者這是虛構作品」也一併拿掉：進站告示只講一次，其餘頁面（包含頁尾）一律用機構自己站得住腳的說法（例如「本會無實體服務據點」），不再需要每頁加註「本頁資料為虛構」。
 
-全站幾乎沒有顏色。所以最後那滿版的紅，是玩家在這個作品裡看到的第一個真正的顏色。這一條決定所有其他決定。任何會讓網站「好看」「有氣氛」「有設計感」的東西，都在削弱結局。**乏味是本案的美術指導方向，不是偷懶。**
+唯一保留下來的舊決定：結局那面紅（`--end-red`）依然是全站唯一使用這個色值的地方，作為劇情高潮的視覺標記；`.txt` 檔案頁與收藏頁依然維持等寬字、不套用機構視覺——那是他的東西，不是基金會的東西，這個對比要保留。**另外一條不是美術規範、而是內容底線：全站任何頁面都不放真人照片（含案件照片）**，案件照片一律用「[證件照掃描，畫質不佳]」這種文字說明帶過，不管視覺設計怎麼改，這一條不能鬆動——避免虛構案件的視覺呈現被誤認、混淆成真實協尋案件。仍然不做的東西：任何「懸疑感」裝飾（血跡、雜訊、故障效果、閃爍、監視器邊框）——這部作品要看起來像正常機構網站，不是恐怖遊戲網站；深色模式也不做，機構網站不會預設深色。
 
-### 明確禁止
-
-深色模式、暗底配霓虹色；米白／奶油色底＋高對比襯線大標＋陶土橘點綴；報紙感排版、細線分隔、大留白的雜誌風 hero；漸層、陰影、毛玻璃、圓角卡片、hover 放大；進場動畫、視差、打字機效果、滾動觸發動畫；任何「懸疑感」的裝飾（血跡、雜訊、故障效果、閃爍、監視器邊框）；自訂 icon set、插畫、裝飾線條；任何超過 1.6 的行高，或任何看起來像 2024 年設計的東西。
-
-### 色票（只有這些）
+### 色票
 
 ```
---paper      #ffffff   底
---ink        #1a1a1a   內文
---ink-weak   #666666   次要資訊、日期
---rule       #d4d4d4   表格線、分隔線
---link       #0645ad   連結（未訪問）
---link-seen  #551a8b   連結（已訪問）★ 一定要做
---chrome     #2b4c7e   頁首橫幅的機構藍
---end-red    #c8102e   只在結局出現，全站其他地方一次都不准用
+--paper       #ffffff   卡片／輸入框底色
+--surface     #f4f6f9   頁面底色（淺灰，讓白色卡片浮起來）
+--card-bg     #ffffff   卡片背景
+--ink         #1a1a1a   內文
+--ink-weak    #666666   次要資訊、日期
+--rule        #e1e5ea   表格線、分隔線
+--link        #1c5fd6   連結（未訪問）
+--link-seen   #6a3ea1   連結（已訪問）
+--chrome      #1c4e9e   品牌藍（頁首、hero、按鈕）
+--chrome-dark #143a78   品牌藍深色（hover、頁尾）
+--accent      #e2711d   強調橘（捐款按鈕等 CTA）
+--accent-dark #c25c11   強調橘 hover
+--end-red     #c8102e   只在結局出現，全站其他地方一次都不准用
 ```
 
-狀態標籤是全站唯一有色塊的元素：
+狀態標籤（藥丸形狀，`border-radius: 999px`）：
 
 ```
 協尋中  底 #fff3cd  字 #664d03
@@ -348,7 +361,7 @@
 已結案  底 #e2e3e5  字 #41464b
 ```
 
-◆ 這是本站的 signature：「已尋獲」是綠色的，不分死活。這個綠色必須看起來像任何一個政府網站上的「已完成」標籤。它的殺傷力全部來自於它有多正常。
+◆ 「已尋獲」是綠色的，不分死活——這個 signature 保留，只是現在放在一個色彩更豐富的頁面裡，殺傷力來自於它跟其他正常綠色狀態標籤長得一模一樣。
 
 ### 字體
 
@@ -357,22 +370,23 @@
 --font-mono: ui-monospace, "Courier New", monospace
 ```
 
-沒有第三種字體。沒有 display face。不要載入 Google Fonts。`--font-mono` 只用在 `.txt` 頁面與收藏頁——那是他的東西，不是基金會的東西。**這是全站唯一的字體對比，也是唯一暗示「有另一個人在這裡」的視覺手段。**
+不載入 Google Fonts，系統字體已經夠現代、夠可靠。`--font-mono` 仍然只用在 `.txt` 頁面與收藏頁，維持「這是他的東西」的字體對比。
 
 ### 版面
 
-- 最大寬度 `72ch`，置中，兩側 `padding: 1rem`。
-- 頁首：機構藍橫幅，左邊機構全名（純文字，不做 logo），右邊一顆捐款按鈕。橫幅高度不超過 64px。
-- 麵包屑：`首頁 › 尋人資料庫 › JH-2026-004`，`--ink-weak`，12px。
-- 案件頁用 `<table>`，`border-collapse: collapse`，1px `--rule` 橫線，只有橫線。
-- 捐款按鈕：藍底白字，直角，`padding: 8px 16px`。每一頁都在同一個位置。
-- 頁尾：三行小字（統編、地址欄位寫「本頁資料為虛構」、更新日期），`--ink-weak` 11px。
+- 最大寬度 `1080px`（`--max-width`），文字密集的內容（告示、表單）用較窄的 `--content-width: 72ch`。
+- 頁首：品牌藍漸層橫幅（`linear-gradient(135deg, var(--chrome), var(--chrome-dark))`），左邊機構全名，右邊橘色圓角捐款按鈕（`--accent`，有 hover 上浮效果）。
+- 頁首下方一條白底導覽列（首頁/關於我們/常見問題/聯絡我們），連結 hover 時底線變橘色。
+- `#main` 是一張浮在 `--surface` 灰底上的白色卡片：`border-radius: var(--radius)`、`box-shadow: var(--shadow-sm)`。
+- 首頁有一個 hero 橫幅（`.home-hero`，跟頁首同款漸層）放機構簡介，下面接一排統計卡片（`.home-stats`，4 張：累計受理／協尋中／已尋獲／已結案）。
+- 案件頁與徵信錄等橫向表格維持 `<table>`，但表頭有淺灰底色、列有 hover 效果。
+- 頁尾改成品牌深藍色滿版色塊（`.site-footer` 深底白字），裡面的連結加底線；不再寫「本頁資料為虛構」，改成機構自己站得住腳的說法（見 `ORG_CHROME.footer.address`）。
 
 ### 手機
 
-單欄。表格改為 `label / value` 上下堆疊。頁首橫幅不收合、不做漢堡選單——這種網站不會做。
+單欄。表格改為 `label / value` 上下堆疊，統計卡片改 2×2 排列，導覽列自動換行。
 
-### 結局頁（唯一可以放手的地方）
+### 結局頁（依然是唯一可以徹底放手的地方）
 
 `.endgame-red`：`position: fixed`，滿版 `--end-red`，`z-index: 9999`。上面沒有任何裝飾、沒有漸層、沒有 vignette。四秒後右下角出現的那行字：`--font-mono`，11px，`rgba(0,0,0,.55)`，`margin: 0 16px 16px 0`。不要讓它閃、不要讓它發光、不要加陰影。`.endgame-black`：滿版 `#000`。原設計靠 `door_key.wav`／`door_hinge.wav` 兩支音效撐出「聲音／靜音」的節奏；決定不做音效後，改用純 CSS 畫一道貼齊畫面右邊緣的髮絲光線（`.endgame-black__crack`）取代聲音的角色：先明滅三次代表鎖的動靜（3 秒），再裂開變寬到 46px 代表門被推開（1 秒），最後完全靜止不動（1 秒，★ 最重要的一秒——原本「靜音比聲音響」的邏輯，改成「靜止比動態響」）。這道光線是結局頁唯一的視覺效果：不加漸層以外的裝飾、不發光暈、不用陰影，`prefers-reduced-motion` 時直接關閉動畫改成瞬間切換，維持跟結局紅一樣的克制。
 
@@ -389,13 +403,15 @@
 .case-table .case-table__label .case-table__value
 .status .status--searching .status--found .status--closed
 .announcement .announcement__date .announcement__title .announcement__body
+.home-hero .home-hero__title .home-hero__body   首頁 hero 橫幅
+.home-stats .home-stats__card .home-stats__value .home-stats__label   首頁統計卡片
 .file-view            .txt 頁面，等寬字
 .file-view__up        解鎖收藏後出現的 ".." 連結
 .collection           收藏頁，等寬字
 .walk .walk__line .walk__question
 .choice .choice__btn
 .endgame-black .endgame-black__crack .endgame-red .endgame-red__stamp
-.site-footer
+.site-footer .site-footer__inner
 .gone
 .case-list .case-list__item .case-list__id .case-list__name .case-list__filter   首頁案件清單與狀態篩選下拉選單
 .intro-form .intro-form__field .intro-form__label .intro-form__input .intro-form__textarea .intro-form__submit .intro-form__note
@@ -404,7 +420,7 @@
 .note-block            單行小提示，比照 --ink-weak 處理
 .content-warning .content-warning__box .content-warning__title .content-warning__body .content-warning__continue
 .lang-switcher .lang-switcher__label .lang-switcher__option .lang-switcher__option--active
-.admin-panel .admin-panel__state .admin-panel__button   不算在「乏味即美術指導」規範內，可正常做成好用的除錯介面
+.admin-panel .admin-panel__state .admin-panel__button   不算在機構視覺規範內，等寬字純除錯介面，可正常做成好用的樣子
 .trust-puzzle__input .trust-puzzle__feedback
 .notebook__button .notebook__badge .notebook__backdrop .notebook__panel .notebook__header .notebook__title .notebook__close .notebook__list .notebook__empty
 ```
@@ -419,8 +435,8 @@
 
 第六幕結局音效已決定不做，直接移除 `audio/` 資料夾與 `door_key.wav`／`door_hinge.wav` 的播放邏輯，改用純 CSS 視覺效果（見「9. 視覺設計規範」結局頁段落）撐出原本音效負責的節奏，理由與內容變更已併入本文件對應章節（第 3 節場 34、第 7 節技術架構表、第 9 節結局頁）。
 
+`JH-2026-004` 的 `summaryRevised` 欄位已重新加回並接上觸發條件（見「8. 進度旗標與解鎖規則」的「二次更新」列）：中段更新之後，玩家再看過 `legacy.html` 跟 `015.txt`，案情摘要會修正成多一句「最後一次留下紀錄為 07:14」，並寫進筆記本。徵信錄謎題也已改為第六幕的必經關卡（見同節說明），`archive2019.html`／`market.html` 的關鍵線索改成要玩家自己從一份填充過的名單裡認出來、或自己點開才看到（見「7. 技術架構」頁面清單旁的說明），不再是旁白直接講完。
+
 早期草稿曾寫「五個案件」的措辭問題已解決（現有 20 筆，遠超過原本的疑慮）。
 
-尚未決定、需要人來拍板的舊有事項：
-
-1. `JH-2026-004` 原本有一個 `summaryRevised`（09/04 取得新事證後修正）欄位，目前沒有任何觸發機制讀取它，本輪重構時已從 `case/JH-2026-004.html` 的資料中移除（避免留著死欄位）。要幫這個「第二次中段更新」設計觸發條件，還是就此作罷？
+尚未決定、需要人來拍板的舊有事項：目前沒有。

@@ -74,6 +74,8 @@ export const LABELS = {
   sortId: { "zh-Hant": "案件編號", "zh-Hans": "案件编号", en: "Case No." },
   sortName: { "zh-Hant": "姓名", "zh-Hans": "姓名", en: "Name" },
   sortStatusOpt: { "zh-Hant": "狀態", "zh-Hans": "状态", en: "Status" },
+  district: { "zh-Hant": "地區", "zh-Hans": "地区", en: "District" },
+  viewDetail: { "zh-Hant": "放大看", "zh-Hans": "放大看", en: "Zoom in" },
   officeHours: { "zh-Hant": "服務時間", "zh-Hans": "服务时间", en: "Office Hours" },
   phone: { "zh-Hant": "協尋專線", "zh-Hans": "协寻专线", en: "Search Hotline" },
   email: { "zh-Hant": "電子郵件", "zh-Hans": "电子邮件", en: "Email" }
@@ -90,7 +92,7 @@ export const ORG_CHROME = {
   donate: { "zh-Hant": "捐款支持我們", "zh-Hans": "捐款支持我们", en: "Support Us — Donate" },
   footer: {
     taxId: { "zh-Hant": "統一編號：00000000", "zh-Hans": "统一编号：00000000", en: "Tax ID: 00000000" },
-    address: { "zh-Hant": "地址：（本頁資料為虛構）", "zh-Hans": "地址：（本页资料为虚构）", en: "Address: (fictional — this page is a work of fiction)" },
+    address: { "zh-Hant": "本會無實體服務據點，如需聯繫請洽下方協尋專線或電子郵件。", "zh-Hans": "本会无实体服务据点，如需联系请洽下方协寻专线或电子邮件。", en: "This foundation has no physical service location. Please contact us via the hotline or email below." },
     updated: { "zh-Hant": "資料更新日期　2026/09/05", "zh-Hans": "资料更新日期　2026/09/05", en: "Last updated 2026/09/05" }
   }
 };

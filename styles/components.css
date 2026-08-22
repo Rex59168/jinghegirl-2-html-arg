@@ -9,7 +9,7 @@
 .case-table th,
 .case-table td {
   text-align: left;
-  padding: 0.5em 0.75em 0.5em 0;
+  padding: 0.65em 0.75em 0.65em 0;
   border-bottom: 1px solid var(--rule);
   vertical-align: top;
 }
@@ -17,7 +17,7 @@
 .case-table__label {
   width: 9em;
   color: var(--ink-weak);
-  font-weight: 400;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -33,6 +33,7 @@
 .case-table__value details summary {
   cursor: pointer;
   color: var(--link);
+  font-weight: 600;
 }
 
 .case-table__value a {
@@ -44,8 +45,10 @@
 
 .status {
   display: inline-block;
-  padding: 2px 8px;
-  font-size: 0.85rem;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .status--searching {
@@ -66,8 +69,10 @@
 /* announcement */
 
 .announcement {
-  border: 1px solid var(--rule);
-  padding: 1rem;
+  background: #eaf1fc;
+  border-left: 4px solid var(--chrome);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
   margin: 0 0 1.5rem 0;
 }
 
@@ -78,12 +83,69 @@
 }
 
 .announcement__title {
-  font-size: 1rem;
+  font-size: 1.05rem;
   margin: 0 0 0.5em 0;
+  color: var(--chrome-dark);
 }
 
 .announcement__body {
   margin: 0;
+}
+
+/* home hero + stats */
+
+.home-hero {
+  background: linear-gradient(135deg, var(--chrome), var(--chrome-dark));
+  color: #ffffff;
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.home-hero__title {
+  font-size: 1.4rem;
+  margin: 0 0 0.5em 0;
+}
+
+.home-hero__body {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.95rem;
+}
+
+.home-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin: 0 0 1.5rem 0;
+}
+
+.home-stats__card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  text-align: center;
+}
+
+.home-stats__value {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--chrome-dark);
+}
+
+.home-stats__label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--ink-weak);
+  margin-top: 0.2em;
+}
+
+@media (max-width: 600px) {
+  .home-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* home case list */
@@ -112,14 +174,19 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 0.4em 1.5em;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 0.75em 1em;
+  margin: 0 0 1rem 0;
 }
 
 .case-list__filter,
 .case-list__sort {
   font-family: inherit;
   font-size: 0.9rem;
-  padding: 0.3em;
+  padding: 0.4em 0.6em;
   border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
   background: var(--paper);
   color: var(--ink);
 }
@@ -149,16 +216,25 @@
 
 .intro-form__label {
   font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .intro-form__input,
 .intro-form__textarea {
   font-family: inherit;
   font-size: 1rem;
-  padding: 0.5em;
+  padding: 0.65em 0.75em;
   border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
   background: var(--paper);
   color: var(--ink);
+  transition: border-color var(--transition-fast) ease, box-shadow var(--transition-fast) ease;
+}
+
+.intro-form__input:focus,
+.intro-form__textarea:focus {
+  border-color: var(--chrome);
+  box-shadow: 0 0 0 3px rgba(28, 78, 158, 0.15);
 }
 
 .intro-form__textarea {
@@ -168,11 +244,18 @@
 
 .intro-form__submit {
   align-self: flex-start;
-  background: var(--link);
+  background: var(--chrome);
   color: #ffffff;
   border: none;
-  padding: 8px 16px;
-  cursor: pointer;
+  padding: 10px 22px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.intro-form__submit:hover {
+  background: var(--chrome-dark);
+  transform: translateY(-1px);
 }
 
 .intro-form__note {
@@ -191,15 +274,22 @@
 
 .data-table__cell {
   text-align: left;
-  padding: 0.5em 0.75em 0.5em 0;
+  padding: 0.65em 0.75em 0.65em 0;
   border-bottom: 1px solid var(--rule);
   vertical-align: top;
 }
 
 .data-table thead .data-table__cell {
   color: var(--ink-weak);
-  font-weight: 400;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: var(--surface);
+}
+
+.data-table tbody tr:hover {
+  background: var(--surface);
 }
 
 .data-table tbody tr[hidden] {
@@ -244,7 +334,7 @@
 .content-warning {
   position: fixed;
   inset: 0;
-  background: var(--paper);
+  background: var(--surface);
   color: var(--ink);
   z-index: 10000;
   display: flex;
@@ -259,7 +349,11 @@
 }
 
 .content-warning__box {
-  max-width: var(--max-width);
+  max-width: var(--content-width);
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 2rem;
 }
 
 .content-warning__title {
@@ -272,12 +366,19 @@
 }
 
 .content-warning__continue {
-  background: var(--link);
+  background: var(--chrome);
   color: #ffffff;
   border: none;
-  padding: 8px 16px;
+  padding: 10px 22px;
   font-size: 1rem;
-  cursor: pointer;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.content-warning__continue:hover {
+  background: var(--chrome-dark);
+  transform: translateY(-1px);
 }
 
 /* language switcher */
@@ -303,7 +404,9 @@
   cursor: default;
 }
 
-/* .txt file pages + collection: monospace, undesigned */
+/* .txt file pages + collection: monospace, undesigned — this stays plain on
+   purpose, it's the one place in the redesigned site that's deliberately not
+   "normal modern website" chrome, since it's meant to read as raw recovered text */
 
 .file-view,
 .collection {
@@ -340,18 +443,26 @@
 }
 
 .choice__btn {
-  background: var(--link);
+  background: var(--chrome);
   color: #ffffff;
   border: none;
-  padding: 8px 24px;
+  padding: 10px 26px;
   font-size: 1rem;
-  cursor: pointer;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+}
+
+.choice__btn:hover:not(:disabled) {
+  background: var(--chrome-dark);
+  transform: translateY(-1px);
 }
 
 .choice__btn:disabled {
   background: var(--rule);
   color: var(--ink-weak);
   cursor: default;
+  box-shadow: none;
 }
 
 /* admin/debug panel — not part of the in-universe design language, dev tool only */
@@ -361,8 +472,9 @@
 }
 
 .admin-panel__state {
-  background: #f5f5f5;
+  background: var(--surface);
   border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
   padding: 1rem;
   font-size: 0.85rem;
   white-space: pre-wrap;
@@ -375,6 +487,7 @@
   text-align: left;
   background: var(--paper);
   border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
   color: var(--ink);
   padding: 0.6em 0.8em;
   margin: 0 0 0.5em 0;
@@ -384,7 +497,7 @@
 }
 
 .admin-panel__button:hover {
-  background: #f0f0f0;
+  background: var(--surface);
 }
 
 /* trust page puzzle */
@@ -394,8 +507,9 @@
   max-width: 100%;
   font-family: inherit;
   font-size: 0.9rem;
-  padding: 0.3em;
+  padding: 0.4em 0.5em;
   border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
   background: var(--paper);
   color: var(--ink);
 }
@@ -410,25 +524,27 @@
 
 .notebook__button {
   position: fixed;
-  left: 8px;
-  bottom: 8px;
+  left: 12px;
+  bottom: 12px;
   z-index: 9000;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  color: var(--ink);
-  padding: 6px 10px;
+  background: var(--chrome);
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 16px;
   font-size: 0.8rem;
-  cursor: pointer;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
 }
 
 .notebook__badge {
-  color: var(--ink-weak);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .notebook__backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(20, 30, 50, 0.4);
   z-index: 9001;
   opacity: 0;
   pointer-events: none;
@@ -448,6 +564,7 @@
   width: min(320px, 85vw);
   background: var(--paper);
   border-right: 1px solid var(--rule);
+  box-shadow: var(--shadow-md);
   z-index: 9002;
   transform: translateX(-100%);
   transition: transform var(--transition-fast) ease;
@@ -469,6 +586,7 @@
 .notebook__close {
   background: none;
   border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
   color: var(--ink);
   padding: 2px 8px;
   cursor: pointer;

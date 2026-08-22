@@ -52,9 +52,12 @@
     lastSeen: { "zh-Hant": "靖河市河東區", "zh-Hans": "靖河市河东区", en: "Jinghe City, Hedong District" },
     status: "協尋中",
     summary: { "zh-Hant": "當日 06:40 離家後失去聯繫。", "zh-Hans": "当日 06:40 离家后失去联系。", en: "Left home at 06:40 that day and has not been in contact since." },
+    summaryRevised: { "zh-Hant": "經 2026/09/04 取得之雲端備份紀錄佐證，確認當日 06:40 離家，最後一次留下紀錄為 07:14。", "zh-Hans": "经 2026/09/04 取得之云端备份记录佐证，确认当日 06:40 离家，最后一次留下记录为 07:14。", en: "Confirmed by cloud-backup records obtained 2026/09/04: she left home at 06:40 that day, and her last recorded activity was at 07:14." },
     photoNote: { "zh-Hant": "證件照掃描，畫質不佳", "zh-Hans": "证件照扫描，画质不佳", en: "Scanned ID photo, poor quality" },
     note: { "zh-Hant": "報案後九天，初步研判為自行離家。", "zh-Hans": "报案后九天，初步研判为自行离家。", en: "Nine days after the report was filed, the preliminary assessment was voluntary departure." },
   };
+
+  const REVISED_FACT = { "zh-Hant": "JH-2026-004 摘要已修正：最後一次留下紀錄為 07:14。", "zh-Hans": "JH-2026-004 摘要已修正：最后一次留下记录为 07:14。", en: "JH-2026-004's summary was revised: her last recorded activity was at 07:14." };
 
   guard.enter({}, () => {
     chrome.mount({ breadcrumb: [homeCrumb(store.get('locale')), t(LABELS.breadcrumbDb, store.get('locale')), CASE.id] });
@@ -63,6 +66,9 @@
       document.getElementById('main').replaceChildren(renderCaseDetail(CASE, store.get('locale')));
       const statusKey = CASE.id === 'JH-2025-003' && flags.isMidUpdateFired() ? CASE.statusAfterMidUpdate : CASE.status;
       notebook.addFact('case-' + CASE.id, CASE.name + '（' + CASE.id + '）　' + CASE.missing + '　' + t(STATUS_VALUES[statusKey], store.get('locale')), 'case/' + CASE.id + '.html');
+      if (flags.isSecondUpdateFired()) {
+        notebook.addFact('case-revised-' + CASE.id, t(REVISED_FACT, store.get('locale')), 'case/' + CASE.id + '.html');
+      }
     }
     render();
     chrome.onLocaleChange(render);

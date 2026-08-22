@@ -37,8 +37,16 @@
 
   const PAGE = {
     title: { "zh-Hant": "感謝名單（2019 年版）", "zh-Hans": "感谢名单（2019 年版）", en: "Thank-You List (2019 Version)" },
-    note: { "zh-Hant": "本頁為 2019 年網站存檔。本會自 2020 年起改採匿名徵信。", "zh-Hans": "本页为 2019 年网站存档。本会自 2020 年起改采匿名征信。", en: "This page is a 2019 site archive. Since 2020, this foundation has used anonymous disclosure." },
-    row: { name: { "zh-Hant": "○先生", "zh-Hans": "○先生", en: "Mr. ○" }, district: { "zh-Hant": "河東區　「某某里」", "zh-Hans": "河东区　「某某里」", en: "Hedong District — [a certain neighborhood]" } }
+    note: { "zh-Hant": "本頁為 2019 年網站存檔。本會自 2020 年起改採匿名徵信。部分捐款人事後要求移除公開資訊，本存檔未同步更新。", "zh-Hans": "本页为 2019 年网站存档。本会自 2020 年起改采匿名征信。部分捐款人事后要求移除公开信息，本存档未同步更新。", en: "This page is a 2019 site archive. Since 2020, this foundation has used anonymous disclosure. Some donors later requested their public information be removed; this archive was never updated to match." },
+    rows: [
+      { name: { "zh-Hant": "王先生", "zh-Hans": "王先生", en: "Mr. Wang" }, district: { "zh-Hant": "河西區　興安里", "zh-Hans": "河西区　兴安里", en: "Hexi District — Xing'an Neighborhood" } },
+      { name: { "zh-Hant": "（已移除）", "zh-Hans": "（已移除）", en: "(Removed)" }, district: { "zh-Hant": "—", "zh-Hans": "—", en: "—" }, note: { "zh-Hant": "依當事人要求移除", "zh-Hans": "依当事人要求移除", en: "Removed at donor's request" } },
+      { name: { "zh-Hant": "陳小姐", "zh-Hans": "陈小姐", en: "Ms. Chen" }, district: { "zh-Hant": "中山區　東門里", "zh-Hans": "中山区　东门里", en: "Zhongshan District — Dongmen Neighborhood" } },
+      { name: { "zh-Hant": "○先生", "zh-Hans": "○先生", en: "Mr. ○" }, district: { "zh-Hant": "河東區　「某某里」", "zh-Hans": "河东区　「某某里」", en: "Hedong District — [a certain neighborhood]" } },
+      { name: { "zh-Hant": "（已移除）", "zh-Hans": "（已移除）", en: "(Removed)" }, district: { "zh-Hant": "—", "zh-Hans": "—", en: "—" }, note: { "zh-Hant": "依當事人要求移除", "zh-Hans": "依当事人要求移除", en: "Removed at donor's request" } },
+      { name: { "zh-Hant": "李先生", "zh-Hans": "李先生", en: "Mr. Li" }, district: { "zh-Hant": "大同區　仁愛里", "zh-Hans": "大同区　仁爱里", en: "Datong District — Ren'ai Neighborhood" } },
+      { name: { "zh-Hant": "林小姐", "zh-Hans": "林小姐", en: "Ms. Lin" }, district: { "zh-Hant": "河西區　福德里", "zh-Hans": "河西区　福德里", en: "Hexi District — Fude Neighborhood" } }
+    ]
   };
 
   const ARCHIVE_SEEN_FACT = { "zh-Hant": "2019 年網站存檔：捐款人當年還沒匿名，留了姓氏跟里別。", "zh-Hans": "2019年网站存档：捐款人当年还没匿名，留了姓氏跟里别。", en: "2019 site archive: donors weren't anonymous back then — a surname and neighborhood are on record." };

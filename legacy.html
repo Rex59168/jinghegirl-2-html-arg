@@ -31,6 +31,7 @@
   import * as chrome from './scripts/chrome.js';
   import { renderLegacy } from './scripts/render.js';
   import { store } from './scripts/store.js';
+  import * as flags from './scripts/flags.js';
 
   const PAGE = {
     title: { "zh-Hant": "協尋　林晞", "zh-Hans": "协寻　林晞", en: "Searching for Lin Xi" },
@@ -43,6 +44,7 @@
 
   guard.enter({}, () => {
     chrome.mountBare();
+    flags.notePageSeen('page-legacy');
     function render() {
       document.getElementById('main').replaceChildren(renderLegacy(PAGE, store.get('locale')));
     }

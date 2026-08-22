@@ -1,11 +1,16 @@
 :root {
   --paper: #ffffff;
+  --surface: #f4f6f9;
+  --card-bg: #ffffff;
   --ink: #1a1a1a;
   --ink-weak: #666666;
-  --rule: #d4d4d4;
-  --link: #0645ad;
-  --link-seen: #551a8b;
-  --chrome: #2b4c7e;
+  --rule: #e1e5ea;
+  --link: #1c5fd6;
+  --link-seen: #6a3ea1;
+  --chrome: #1c4e9e;
+  --chrome-dark: #143a78;
+  --accent: #e2711d;
+  --accent-dark: #c25c11;
   --end-red: #c8102e;
 
   --status-searching-bg: #fff3cd;
@@ -18,10 +23,16 @@
   --font-ui: system-ui, "Noto Sans TC", "微軟正黑體", sans-serif;
   --font-mono: ui-monospace, "Courier New", monospace;
 
-  --max-width: 72ch;
+  --max-width: 1080px;
+  --content-width: 72ch;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow-sm: 0 1px 3px rgba(20, 30, 50, 0.08);
+  --shadow-md: 0 6px 20px rgba(20, 30, 50, 0.1);
 
   --transition-fast: 150ms;
-  --transition-base: 300ms;
+  --transition-base: 250ms;
 }
 
 @media (prefers-reduced-motion: reduce) {

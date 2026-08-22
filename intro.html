@@ -58,6 +58,7 @@
       const node = renderIntro(PAGE, store.get('locale'), (data) => {
         store.set('nickname', data.nickname);
         store.set('howYouKnew', data.howYouKnew);
+        store.set('introCompletedAt', Date.now());
         location.href = 'index.html';
       });
       document.getElementById('main').replaceChildren(node);

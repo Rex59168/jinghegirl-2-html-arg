@@ -64,6 +64,8 @@ export function mount({ breadcrumb = [] } = {}) {
   breadcrumbEl.textContent = breadcrumb.join(' › ');
 
   footerEl.innerHTML = '';
+  const inner = document.createElement('div');
+  inner.className = 'site-footer__inner';
   const p1 = document.createElement('p');
   p1.textContent = t(ORG_CHROME.footer.taxId, store.get('locale'));
   const p2 = document.createElement('p');
@@ -82,10 +84,11 @@ export function mount({ breadcrumb = [] } = {}) {
     a.textContent = text;
     links.appendChild(a);
   });
-  footerEl.appendChild(p1);
-  footerEl.appendChild(p2);
-  footerEl.appendChild(p3);
-  footerEl.appendChild(links);
+  inner.appendChild(p1);
+  inner.appendChild(p2);
+  inner.appendChild(p3);
+  inner.appendChild(links);
+  footerEl.appendChild(inner);
 
   document.getElementById('app').hidden = false;
   mountLangSwitchers();

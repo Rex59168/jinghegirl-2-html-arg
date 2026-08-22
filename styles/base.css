@@ -12,11 +12,11 @@ body {
 }
 
 body {
-  background: var(--paper);
+  background: var(--surface);
   color: var(--ink);
   font-family: var(--font-ui);
   font-size: 16px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 /* #app is the page shell. It stretches to fill the viewport so a short page's
@@ -46,18 +46,19 @@ dd {
 }
 
 h1 {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 h2 {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
 }
 
 h3,
 h4 {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 700;
 }
 
@@ -68,16 +69,23 @@ ol {
 
 a {
   color: var(--link);
+  transition: color var(--transition-fast) ease;
 }
 
 a:visited {
   color: var(--link-seen);
 }
 
+a:hover {
+  color: var(--chrome-dark);
+}
+
 button {
   font-family: inherit;
   font-size: 1rem;
-  border-radius: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: transform var(--transition-fast) ease, box-shadow var(--transition-fast) ease, background var(--transition-fast) ease;
 }
 
 table {

@@ -50,7 +50,10 @@ export function homeCrumb(locale) {
 export function renderHome(page, locale) {
   const root = el('div');
 
-  root.appendChild(el('p', 'note-block', t(page.homeIntro, locale)));
+  const hero = el('div', 'home-hero');
+  hero.appendChild(el('h1', 'home-hero__title', t(page.heroTitle, locale)));
+  hero.appendChild(el('p', 'home-hero__body', t(page.homeIntro, locale)));
+  root.appendChild(hero);
 
   if (flags.isMidUpdateFired()) {
     const card = el('div', 'announcement');
@@ -66,14 +69,20 @@ export function renderHome(page, locale) {
   page.cases.forEach((c) => {
     counts[statusKeyOf(c)] = (counts[statusKeyOf(c)] || 0) + 1;
   });
-  const statsLine = el('p', 'note-block');
   const unit = label('statsUnit', locale);
-  statsLine.textContent =
-    label('statsTotal', locale) + '　' + page.cases.length + unit +
-    '　｜　' + statusLabel('協尋中', locale) + ' ' + counts['協尋中'] + unit +
-    '　' + statusLabel('已尋獲', locale) + ' ' + counts['已尋獲'] + unit +
-    '　' + statusLabel('已結案', locale) + ' ' + counts['已結案'] + unit;
-  root.appendChild(statsLine);
+  const statsGrid = el('div', 'home-stats');
+  [
+    [label('statsTotal', locale), page.cases.length],
+    [statusLabel('協尋中', locale), counts['協尋中']],
+    [statusLabel('已尋獲', locale), counts['已尋獲']],
+    [statusLabel('已結案', locale), counts['已結案']]
+  ].forEach(([statLabel, value]) => {
+    const card = el('div', 'home-stats__card');
+    card.appendChild(el('span', 'home-stats__value', String(value) + unit));
+    card.appendChild(el('span', 'home-stats__label', statLabel));
+    statsGrid.appendChild(card);
+  });
+  root.appendChild(statsGrid);
 
   const controlsWrap = el('div', 'case-list__controls');
   const filterLabel = el('label', null, label('filterLabel', locale) + '　');
@@ -247,7 +256,8 @@ export function renderCaseDetail(c, locale) {
     tbody.appendChild(tableRow(label('belongings', locale), t(c.recovery.belongings, locale)));
   }
 
-  tbody.appendChild(tableRow(label('summary', locale), t(c.summary, locale)));
+  const summaryText = c.summaryRevised && flags.isSecondUpdateFired() ? c.summaryRevised : c.summary;
+  tbody.appendChild(tableRow(label('summary', locale), t(summaryText, locale)));
 
   const details = document.createElement('details');
   const summaryEl = document.createElement('summary');
@@ -388,8 +398,10 @@ export function renderTrust(page, locale, onSolved) {
 
   root.appendChild(el('p', null, t(page.puzzle.prompt, locale)));
   const resultMsg = el('p', 'note-block');
+  const hintMsg = el('p', 'note-block');
   const checkBtn = el('button', 'choice__btn', t(page.puzzle.check, locale));
   checkBtn.type = 'button';
+  let attempts = 0;
   checkBtn.addEventListener('click', async () => {
     checkBtn.disabled = true;
     const results = await Promise.all(
@@ -405,16 +417,22 @@ export function renderTrust(page, locale, onSolved) {
     if (allCorrect) {
       store.set('trustPuzzleSolved', true);
       resultMsg.textContent = t(page.puzzle.allCorrect, locale);
+      hintMsg.textContent = '';
       inputs.forEach(({ input: i }) => (i.disabled = true));
       root.appendChild(link(label('archiveLink', locale), 'archive2019.html'));
       if (onSolved) onSolved();
     } else {
+      attempts += 1;
       resultMsg.textContent = t(page.puzzle.incorrect, locale);
+      if (attempts >= 3 && page.puzzle.hint) {
+        hintMsg.textContent = t(page.puzzle.hint, locale);
+      }
       checkBtn.disabled = false;
     }
   });
   root.appendChild(checkBtn);
   root.appendChild(resultMsg);
+  root.appendChild(hintMsg);
 
   return root;
 }
@@ -423,7 +441,27 @@ export function renderArchive2019(page, locale) {
   const root = el('div');
   root.appendChild(el('h1', null, t(page.title, locale)));
   root.appendChild(el('p', null, t(page.note, locale)));
-  root.appendChild(el('p', null, t(page.row.name, locale) + '　' + t(page.row.district, locale)));
+
+  const table = el('table', 'data-table');
+  const thead = el('thead');
+  const headRow = el('tr', 'data-table__row');
+  [label('donorName', locale), label('district', locale), label('note', locale)].forEach((h) => {
+    headRow.appendChild(el('th', 'data-table__cell', h));
+  });
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = el('tbody');
+  page.rows.forEach((r) => {
+    const tr = el('tr', 'data-table__row');
+    tr.appendChild(el('td', 'data-table__cell', t(r.name, locale)));
+    tr.appendChild(el('td', 'data-table__cell', t(r.district, locale)));
+    tr.appendChild(el('td', 'data-table__cell', r.note ? t(r.note, locale) : ''));
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  root.appendChild(table);
+
   root.appendChild(link(label('closeSnapshot', locale), 'index.html'));
   return root;
 }
@@ -458,11 +496,23 @@ export function renderMarket(page, locale) {
       metaTr.appendChild(metaTd);
       tbody.appendChild(metaTr);
     }
+    if (item.photoNote) {
+      const photoTr = el('tr', 'data-table__row');
+      const photoTd = el('td', 'data-table__cell');
+      photoTd.colSpan = 4;
+      const details = document.createElement('details');
+      const summaryEl = document.createElement('summary');
+      summaryEl.textContent = label('viewDetail', locale);
+      details.appendChild(summaryEl);
+      details.appendChild(el('p', 'note-block', t(item.photoNote, locale)));
+      photoTd.appendChild(details);
+      photoTr.appendChild(photoTd);
+      tbody.appendChild(photoTr);
+    }
   });
   table.appendChild(tbody);
   root.appendChild(table);
 
-  root.appendChild(el('p', 'note-block', t(page.windowNote, locale)));
   root.appendChild(link(label('closeSnapshot', locale), 'index.html'));
   return root;
 }
@@ -612,8 +662,8 @@ export function renderAccessibility(page, locale) {
 
 function stateDump() {
   const keys = [
-    'locale', 'nickname', 'howYouKnew', 'firstVisitDate', 'warningSeen',
-    'midUpdateFired', 'collectionUnlocked', 'refusedCount', 'finished'
+    'locale', 'nickname', 'howYouKnew', 'firstVisitDate', 'warningSeen', 'introCompletedAt',
+    'midUpdateFired', 'secondUpdateFired', 'collectionUnlocked', 'trustPuzzleSolved', 'refusedCount', 'finished'
   ];
   const lines = keys.map((k) => k + ': ' + JSON.stringify(store.get(k)));
   lines.push('seen: ' + JSON.stringify(store.get('seen')));
@@ -656,6 +706,17 @@ export function renderAdmin() {
     store.set('midUpdateFired', true);
   });
 
+  button('把「志工登錄時間」往前撥 3 小時（跳過中段更新的真實時間門檻）', () => {
+    store.set('introCompletedAt', Date.now() - 3 * 60 * 60 * 1000);
+  });
+
+  button('強制觸發二次更新（JH-2026-004 摘要修正）', () => {
+    store.set('midUpdateFired', true);
+    store.markSeen('page-legacy');
+    store.markSeen('file-015');
+    store.set('secondUpdateFired', true);
+  });
+
   button('強制解鎖收藏頁（標記三個 .txt 已讀）', () => {
     store.markSeen('file-007');
     store.markSeen('file-012');
@@ -669,6 +730,7 @@ export function renderAdmin() {
     store.markSeen('file-015');
     store.set('collectionUnlocked', true);
     store.markSeen('page-trust');
+    store.set('trustPuzzleSolved', true);
     store.markSeen('page-archive2019');
     store.markSeen('page-market');
     store.markSeen('page-collection');
@@ -680,6 +742,7 @@ export function renderAdmin() {
     store.markSeen('file-015');
     store.set('collectionUnlocked', true);
     store.markSeen('page-trust');
+    store.set('trustPuzzleSolved', true);
     store.markSeen('page-archive2019');
     store.markSeen('page-market');
     store.markSeen('page-collection');
