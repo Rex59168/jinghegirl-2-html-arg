@@ -1,0 +1,32 @@
+:root {
+  --paper: #ffffff;
+  --ink: #1a1a1a;
+  --ink-weak: #666666;
+  --rule: #d4d4d4;
+  --link: #0645ad;
+  --link-seen: #551a8b;
+  --chrome: #2b4c7e;
+  --end-red: #c8102e;
+
+  --status-searching-bg: #fff3cd;
+  --status-searching-fg: #664d03;
+  --status-found-bg: #d1e7dd;
+  --status-found-fg: #0f5132;
+  --status-closed-bg: #e2e3e5;
+  --status-closed-fg: #41464b;
+
+  --font-ui: system-ui, "Noto Sans TC", "微軟正黑體", sans-serif;
+  --font-mono: ui-monospace, "Courier New", monospace;
+
+  --max-width: 72ch;
+
+  --transition-fast: 150ms;
+  --transition-base: 300ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+  }
+}

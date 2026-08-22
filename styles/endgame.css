@@ -1,0 +1,38 @@
+.endgame-black {
+  position: fixed;
+  inset: 0;
+  background: #000000;
+  z-index: 9999;
+}
+
+.endgame-red {
+  position: fixed;
+  inset: 0;
+  background: var(--end-red);
+  z-index: 9999;
+}
+
+.endgame-red__stamp {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin: 0 16px 16px 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.55);
+  transition: opacity var(--transition-base) ease;
+}
+
+.gone {
+  text-align: center;
+  padding-top: 15vh;
+}
+
+.gone p {
+  margin: 0 0 0.5em 0;
+}
+
+.gone .site-header__donate {
+  display: inline-block;
+  margin-top: 2rem;
+}

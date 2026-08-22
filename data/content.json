@@ -1,0 +1,387 @@
+{
+  "_notice": "DEV NOTE (not rendered): all names, orgs, case numbers, accounts, and dates are fictional. Do not map to real people or events. Every user-facing string in this file is an i18n object keyed zh-Hant / zh-Hans / en unless noted otherwise (ids, dates, route paths, and proper nouns are locale-neutral plain strings).",
+  "locales": ["zh-Hant", "zh-Hans", "en"],
+  "defaultLocale": "zh-Hant",
+
+  "labels": {
+    "home": { "zh-Hant": "首頁", "zh-Hans": "首页", "en": "Home" },
+    "language": { "zh-Hant": "語言", "zh-Hans": "语言", "en": "Language" },
+    "langNames": {
+      "zh-Hant": { "zh-Hant": "繁體中文", "zh-Hans": "繁体中文", "en": "Traditional Chinese" },
+      "zh-Hans": { "zh-Hant": "簡體中文", "zh-Hans": "简体中文", "en": "Simplified Chinese" },
+      "en": { "zh-Hant": "英文", "zh-Hans": "英文", "en": "English" }
+    },
+    "caseId": { "zh-Hant": "案件編號", "zh-Hans": "案件编号", "en": "Case No." },
+    "name": { "zh-Hant": "姓名", "zh-Hans": "姓名", "en": "Name" },
+    "ageAtDisappearance": { "zh-Hant": "失蹤時年齡", "zh-Hans": "失踪时年龄", "en": "Age When Missing" },
+    "missingDate": { "zh-Hant": "失蹤日期", "zh-Hans": "失踪日期", "en": "Date Missing" },
+    "lastSeen": { "zh-Hant": "最後目擊地點", "zh-Hans": "最后目击地点", "en": "Last Seen" },
+    "status": { "zh-Hant": "狀態", "zh-Hans": "状态", "en": "Status" },
+    "summary": { "zh-Hant": "案情摘要", "zh-Hans": "案情摘要", "en": "Case Summary" },
+    "poster": { "zh-Hant": "協尋啟事 PDF", "zh-Hans": "协寻启事 PDF", "en": "Search Notice (PDF)" },
+    "viewPdf": { "zh-Hant": "檢視 PDF", "zh-Hans": "查看 PDF", "en": "View PDF" },
+    "relatedLinks": { "zh-Hant": "相關連結", "zh-Hans": "相关链接", "en": "Related Links" },
+    "note": { "zh-Hant": "備註", "zh-Hans": "备注", "en": "Note" },
+    "recoveryDate": { "zh-Hant": "尋獲日期", "zh-Hans": "寻获日期", "en": "Date Recovered" },
+    "recoveryPlace": { "zh-Hant": "尋獲地點", "zh-Hans": "寻获地点", "en": "Location Recovered" },
+    "condition": { "zh-Hant": "遺體狀況", "zh-Hans": "遗体状况", "en": "Condition" },
+    "cause": { "zh-Hant": "死因", "zh-Hans": "死因", "en": "Cause of Death" },
+    "timeOfDeath": { "zh-Hant": "死亡時間", "zh-Hans": "死亡时间", "en": "Time of Death" },
+    "belongings": { "zh-Hant": "隨身物品", "zh-Hans": "随身物品", "en": "Belongings" },
+    "statusHistory": { "zh-Hant": "狀態異動紀錄", "zh-Hans": "状态异动记录", "en": "Status History" },
+    "breadcrumbDb": { "zh-Hant": "尋人資料庫", "zh-Hans": "寻人数据库", "en": "Missing Persons Database" },
+    "continue": { "zh-Hant": "繼續", "zh-Hans": "继续", "en": "Continue" },
+    "mute": { "zh-Hant": "靜音", "zh-Hans": "静音", "en": "Mute" },
+    "unmute": { "zh-Hant": "取消靜音", "zh-Hans": "取消静音", "en": "Unmute" },
+    "notFound": { "zh-Hant": "找不到頁面", "zh-Hans": "找不到页面", "en": "Page not found" },
+    "backHome": { "zh-Hant": "回首頁", "zh-Hans": "回首页", "en": "Back to home" },
+    "collectionTitle": { "zh-Hant": "收藏", "zh-Hans": "收藏", "en": "Collection" },
+    "trustBreadcrumb": { "zh-Hant": "徵信專區", "zh-Hans": "征信专区", "en": "Donor Disclosure" },
+    "archiveBreadcrumb": { "zh-Hant": "網站存檔", "zh-Hans": "网站存档", "en": "Site Archive" },
+    "introBreadcrumb": { "zh-Hant": "志工登錄", "zh-Hans": "志工登录", "en": "Volunteer Sign-in" },
+    "date": { "zh-Hant": "日期", "zh-Hans": "日期", "en": "Date" },
+    "amount": { "zh-Hant": "金額", "zh-Hans": "金额", "en": "Amount" },
+    "donorName": { "zh-Hant": "姓名", "zh-Hans": "姓名", "en": "Name" },
+    "zip": { "zh-Hant": "郵遞區號", "zh-Hans": "邮递区号", "en": "Postal Code" },
+    "year": { "zh-Hant": "年度", "zh-Hans": "年度", "en": "Year" },
+    "listingTitle": { "zh-Hant": "商品", "zh-Hans": "商品", "en": "Item" },
+    "posted": { "zh-Hant": "刊登日期", "zh-Hans": "刊登日期", "en": "Posted" },
+    "deal": { "zh-Hant": "交易方式", "zh-Hans": "交易方式", "en": "Deal" },
+    "spot": { "zh-Hant": "面交地點", "zh-Hans": "面交地点", "en": "Meetup Spot" },
+    "seller": { "zh-Hant": "賣家", "zh-Hans": "卖家", "en": "Seller" },
+    "attachment": { "zh-Hant": "附件", "zh-Hans": "附件", "en": "Attachment" },
+    "recoveredFromLabel": { "zh-Hant": "來源", "zh-Hans": "来源", "en": "Source" },
+    "filed": { "zh-Hant": "建檔", "zh-Hans": "建档", "en": "Filed" },
+    "lastUpdated": { "zh-Hant": "最後更新", "zh-Hans": "最后更新", "en": "Last Updated" },
+    "sourceFile": { "zh-Hant": "原始檔案", "zh-Hans": "原始档案", "en": "Source File" },
+    "evidenceChatlog": { "zh-Hant": "附件：雲端備份對話紀錄", "zh-Hans": "附件：云端备份对话记录", "en": "Attachment: Recovered Chat Log (Cloud Backup)" },
+    "evidenceSchoolNotice": { "zh-Hant": "校方公告（比對用）", "zh-Hans": "校方公告（比对用）", "en": "School Notice (for comparison)" },
+    "relatedMarketSnapshot": { "zh-Hant": "疑似相關網路紀錄快照", "zh-Hans": "疑似相关网络记录快照", "en": "Possibly related online record snapshot" },
+    "archiveLink": { "zh-Hant": "查看 2019 年網站存檔", "zh-Hans": "查看 2019 年网站存档", "en": "View the 2019 site archive" },
+    "trustFooterLink": { "zh-Hant": "歷年徵信錄", "zh-Hans": "历年征信录", "en": "Historical Donor Disclosure" },
+    "comments": { "zh-Hant": "留言數", "zh-Hans": "留言数", "en": "Comments" },
+    "replies": { "zh-Hant": "回覆數", "zh-Hans": "回复数", "en": "Replies" },
+    "upLink": { "zh-Hant": "..", "zh-Hans": "..", "en": ".." },
+    "closeSnapshot": { "zh-Hant": "關閉快照，回協尋基金會", "zh-Hans": "关闭快照，回协寻基金会", "en": "Close snapshot, return to the foundation site" },
+    "navAbout": { "zh-Hant": "關於我們", "zh-Hans": "关于我们", "en": "About Us" },
+    "navFaq": { "zh-Hant": "常見問題", "zh-Hans": "常见问题", "en": "FAQ" },
+    "navContact": { "zh-Hant": "聯絡我們", "zh-Hans": "联络我们", "en": "Contact" },
+    "navPrivacy": { "zh-Hant": "隱私權政策", "zh-Hans": "隐私权政策", "en": "Privacy Policy" },
+    "navAccessibility": { "zh-Hant": "無障礙宣告", "zh-Hans": "无障碍宣告", "en": "Accessibility Statement" },
+    "statsTotal": { "zh-Hant": "累計受理案件", "zh-Hans": "累计受理案件", "en": "Total Cases Filed" },
+    "statsUnit": { "zh-Hant": "件", "zh-Hans": "件", "en": "" },
+    "filterAll": { "zh-Hant": "全部狀態", "zh-Hans": "全部状态", "en": "All Statuses" },
+    "filterLabel": { "zh-Hant": "篩選", "zh-Hans": "筛选", "en": "Filter" },
+    "officeHours": { "zh-Hant": "服務時間", "zh-Hans": "服务时间", "en": "Office Hours" },
+    "phone": { "zh-Hant": "協尋專線", "zh-Hans": "协寻专线", "en": "Search Hotline" },
+    "email": { "zh-Hant": "電子郵件", "zh-Hans": "电子邮件", "en": "Email" }
+  },
+
+  "statusValues": {
+    "協尋中": { "zh-Hant": "協尋中", "zh-Hans": "协寻中", "en": "Searching" },
+    "已尋獲": { "zh-Hant": "已尋獲", "zh-Hans": "已寻获", "en": "Found" },
+    "已結案": { "zh-Hant": "已結案", "zh-Hans": "已结案", "en": "Closed" }
+  },
+
+  "org": {
+    "name": { "zh-Hant": "社團法人臺灣失蹤兒少協尋關懷基金會", "zh-Hans": "社团法人台湾失踪儿少协寻关怀基金会", "en": "Taiwan Missing Children & Youth Search and Care Foundation" },
+    "short": { "zh-Hant": "協尋基金會", "zh-Hans": "协寻基金会", "en": "Search Foundation" },
+    "db": { "zh-Hant": "尋人資料庫", "zh-Hans": "寻人数据库", "en": "Missing Persons Database" },
+    "donate": { "zh-Hant": "捐款支持我們", "zh-Hans": "捐款支持我们", "en": "Support Us — Donate" },
+    "homeIntro": { "zh-Hant": "本資料庫收錄本會受理之協尋案件，資料依規定定期更新。個別案件之偵辦進度請洽相關司法警察機關，本會不受理案情查詢。", "zh-Hans": "本数据库收录本会受理之协寻案件，资料依规定定期更新。个别案件之侦办进度请洽相关司法警察机关，本会不受理案情查询。", "en": "This database lists search cases accepted by this foundation and is updated periodically as required. For investigation progress on a specific case, please contact the relevant law enforcement agency; this foundation does not handle case-progress inquiries." },
+    "footer": {
+      "taxId": { "zh-Hant": "統一編號：00000000", "zh-Hans": "统一编号：00000000", "en": "Tax ID: 00000000" },
+      "address": { "zh-Hant": "地址：（本頁資料為虛構）", "zh-Hans": "地址：（本页资料为虚构）", "en": "Address: (fictional — this page is a work of fiction)" },
+      "updated": { "zh-Hant": "資料更新日期　2026/09/05", "zh-Hans": "资料更新日期　2026/09/05", "en": "Last updated 2026/09/05" }
+    }
+  },
+
+  "about": {
+    "title": { "zh-Hant": "關於我們", "zh-Hans": "关于我们", "en": "About Us" },
+    "introTitle": { "zh-Hant": "本會簡介", "zh-Hans": "本会简介", "en": "Foundation Overview" },
+    "introBody": { "zh-Hant": "社團法人臺灣失蹤兒少協尋關懷基金會成立於民國一百年，由數個地方協尋團體整合而成，致力於協助失蹤兒童及少年家庭進行協尋登記、資料建置與後續關懷服務。", "zh-Hans": "社团法人台湾失踪儿少协寻关怀基金会成立于民国一百年，由数个地方协寻团体整合而成，致力于协助失踪儿童及少年家庭进行协寻登记、资料建置与后续关怀服务。", "en": "The Taiwan Missing Children & Youth Search and Care Foundation was established in ROC year 100 (2011), formed from the merger of several regional search groups. It assists families of missing children and youth with case registration, record-keeping, and follow-up care." },
+    "servicesTitle": { "zh-Hant": "服務項目", "zh-Hans": "服务项目", "en": "Services" },
+    "services": [
+      { "zh-Hant": "協尋案件受理與建檔", "zh-Hans": "协寻案件受理与建档", "en": "Search case intake and filing" },
+      { "zh-Hant": "案件狀態更新公告", "zh-Hans": "案件状态更新公告", "en": "Case status update announcements" },
+      { "zh-Hant": "家屬關懷服務轉介", "zh-Hans": "家属关怀服务转介", "en": "Referral for family support services" },
+      { "zh-Hant": "年度捐款徵信公告", "zh-Hans": "年度捐款征信公告", "en": "Annual donation disclosure" }
+    ],
+    "hoursTitle": { "zh-Hant": "服務時間", "zh-Hans": "服务时间", "en": "Office Hours" },
+    "hoursBody": { "zh-Hant": "週一至週五 09:00–17:00（國定假日休館）。本會恕不提供臨櫃服務，如需申請協尋登記請使用線上表單。", "zh-Hans": "周一至周五 09:00–17:00（国定假日休馆）。本会恕不提供临柜服务，如需申请协寻登记请使用线上表单。", "en": "Monday–Friday, 09:00–17:00 (closed on national holidays). This foundation does not offer in-person counter service; please use the online form to register a search case." }
+  },
+
+  "faq": {
+    "title": { "zh-Hant": "常見問題", "zh-Hans": "常见问题", "en": "Frequently Asked Questions" },
+    "items": [
+      {
+        "q": { "zh-Hant": "案件狀態「協尋中」「已尋獲」「已結案」代表什麼？", "zh-Hans": "案件状态「协寻中」「已寻获」「已结案」代表什么？", "en": "What do the case statuses \"Searching,\" \"Found,\" and \"Closed\" mean?" },
+        "a": { "zh-Hant": "「協尋中」指案件已受理，仍在協尋階段。「已尋獲」指協尋對象已由本會或相關單位尋獲，後續處理視個案情況而定。「已結案」指案件相關程序已完成，不再列入積極協尋名單。", "zh-Hans": "「协寻中」指案件已受理，仍在协寻阶段。「已寻获」指协寻对象已由本会或相关单位寻获，后续处理视个案情况而定。「已结案」指案件相关程序已完成，不再列入积极协寻名单。", "en": "\"Searching\" means the case has been accepted and search is ongoing. \"Found\" means the subject has been located by this foundation or a related agency; subsequent handling depends on the individual case. \"Closed\" means all related procedures have been completed and the case is no longer on the active search list." }
+      },
+      {
+        "q": { "zh-Hant": "如何協助協尋？", "zh-Hans": "如何协助协寻？", "en": "How can I help with a search?" },
+        "a": { "zh-Hant": "如發現疑似協尋名單中人士，請撥打 110 或 113，或聯繫本會（見「聯絡我們」）。本網站僅提供資料查詢，不提供直接救援服務。", "zh-Hans": "如发现疑似协寻名单中人士，请拨打 110 或 113，或联系本会（见「联络我们」）。本网站仅提供资料查询，不提供直接救援服务。", "en": "If you believe you have spotted someone on the search list, please call the police or the relevant hotline, or contact this foundation (see \"Contact\"). This website provides information lookup only and does not offer direct rescue services." }
+      },
+      {
+        "q": { "zh-Hant": "案件資料多久更新一次？", "zh-Hans": "案件资料多久更新一次？", "en": "How often is case data updated?" },
+        "a": { "zh-Hant": "案件狀態依機關通報與本會查證進度不定期更新，恕不提供個別案件之進度查詢客服服務。", "zh-Hans": "案件状态依机关通报与本会查证进度不定期更新，恕不提供个别案件之进度查询客服服务。", "en": "Case statuses are updated irregularly, based on agency notifications and this foundation's verification progress. We do not offer a customer-service line for individual case-progress inquiries." }
+      },
+      {
+        "q": { "zh-Hant": "我可以查詢已結案案件的詳細資料嗎？", "zh-Hans": "我可以查询已结案案件的详细资料吗？", "en": "Can I request details on a closed case?" },
+        "a": { "zh-Hant": "已結案案件之詳細資料依規定僅保留於本會內部檔案，網站僅公開基本欄位。", "zh-Hans": "已结案案件之详细资料依规定仅保留于本会内部档案，网站仅公开基本栏位。", "en": "Detailed records for closed cases are retained only in this foundation's internal files as required; the website discloses only basic fields." }
+      },
+      {
+        "q": { "zh-Hant": "我要如何捐款？", "zh-Hans": "我要如何捐款？", "en": "How do I donate?" },
+        "a": { "zh-Hant": "請點擊網站上方「捐款支持我們」按鈕。本會依法公布年度捐款徵信，詳見「歷年徵信錄」。", "zh-Hans": "请点击网站上方「捐款支持我们」按钮。本会依法公布年度捐款征信，详见「历年征信录」。", "en": "Please use the \"Support Us — Donate\" button at the top of the site. This foundation publishes donation disclosures as required by law; see \"Historical Donor Disclosure.\"" }
+      }
+    ]
+  },
+
+  "contact": {
+    "title": { "zh-Hant": "聯絡我們", "zh-Hans": "联络我们", "en": "Contact" },
+    "hoursBody": { "zh-Hant": "週一至週五 09:00–17:00（國定假日休館）", "zh-Hans": "周一至周五 09:00–17:00（国定假日休馆）", "en": "Monday–Friday, 09:00–17:00 (closed on national holidays)" },
+    "phoneValue": "0800-000-000",
+    "emailValue": "help@example-foundation.org",
+    "noCounter": { "zh-Hant": "本會無實體服務據點，恕不提供臨櫃服務，如需聯繫請優先使用電話或電子郵件。", "zh-Hans": "本会无实体服务据点，恕不提供临柜服务，如需联系请优先使用电话或电子邮件。", "en": "This foundation has no physical service location and does not offer in-person counter service. Please contact us by phone or email." }
+  },
+
+  "privacy": {
+    "title": { "zh-Hant": "隱私權政策", "zh-Hans": "隐私权政策", "en": "Privacy Policy" },
+    "body": [
+      { "zh-Hant": "本網站於協尋登記表單中蒐集之顯示名稱與相關文字內容，僅儲存於使用者本機裝置，不會上傳或外送至本會伺服器。", "zh-Hans": "本网站于协寻登记表单中收集之显示名称与相关文字内容，仅储存于使用者本机装置，不会上传或外送至本会服务器。", "en": "The display name and related text collected via this site's registration form are stored only on the user's own device and are never uploaded or transmitted to this foundation's servers." },
+      { "zh-Hant": "本會依相關法規保存捐款人資料，僅於年度徵信公告中揭露必要欄位。", "zh-Hans": "本会依相关法规保存捐款人资料，仅于年度征信公告中揭露必要栏位。", "en": "This foundation retains donor records in accordance with applicable regulations and discloses only the fields required in the annual donor disclosure." },
+      { "zh-Hant": "如對本政策有任何疑問，請透過「聯絡我們」頁面與本會聯繫。", "zh-Hans": "如对本政策有任何疑问，请透过「联络我们」页面与本会联系。", "en": "If you have any questions about this policy, please contact us via the \"Contact\" page." }
+    ]
+  },
+
+  "donate": {
+    "title": { "zh-Hant": "捐款支持我們", "zh-Hans": "捐款支持我们", "en": "Support Us — Donate" },
+    "intro": { "zh-Hant": "本會之協尋案件建檔、資料查證與家屬關懷服務，主要仰賴社會大眾捐款支持。您的捐款將用於案件行政作業、協尋啟事印製與寄送，以及家屬關懷轉介等用途。", "zh-Hans": "本会之协寻案件建档、资料查证与家属关怀服务，主要仰赖社会大众捐款支持。您的捐款将用于案件行政作业、协寻启事印制与寄送，以及家属关怀转介等用途。", "en": "This foundation's case filing, verification, and family support services rely primarily on public donations. Contributions are used for case administration, printing and mailing of search notices, and referrals for family support services." },
+    "bankTitle": { "zh-Hant": "匯款捐款", "zh-Hans": "汇款捐款", "en": "Bank Transfer" },
+    "bankLines": [
+      { "zh-Hant": "戶名：社團法人臺灣失蹤兒少協尋關懷基金會", "zh-Hans": "户名：社团法人台湾失踪儿少协寻关怀基金会", "en": "Account Name: Taiwan Missing Children & Youth Search and Care Foundation" },
+      { "zh-Hant": "銀行、帳號：請撥打協尋專線索取，恕不於網站公開", "zh-Hans": "银行、账号：请拨打协寻专线索取，恕不于网站公开", "en": "Bank & Account Number: available by phone via our hotline; not published on this site" }
+    ],
+    "receiptTitle": { "zh-Hant": "捐款收據", "zh-Hans": "捐款收据", "en": "Donation Receipts" },
+    "receiptBody": { "zh-Hant": "如需開立收據作為列舉扣除額申報使用，請於匯款後主動聯繫本會，並提供匯款資訊與聯絡方式，本會將於十四個工作天內回覆。", "zh-Hans": "如需开立收据作为列举扣除额申报使用，请于汇款后主动联系本会，并提供汇款资讯与联络方式，本会将于十四个工作天内回复。", "en": "If you require a receipt for itemized tax-deduction purposes, please contact us after transferring your donation with the transfer details and your contact information. We will respond within fourteen business days." },
+    "disclosureTitle": { "zh-Hant": "捐款徵信", "zh-Hans": "捐款征信", "en": "Donation Disclosure" },
+    "disclosureBody": { "zh-Hant": "本會依規定於「歷年徵信錄」公布年度捐款紀錄。捐款人如不希望姓名公開，請於聯繫時告知，本會將以匿名方式處理，僅公布必要欄位。", "zh-Hans": "本会依规定于「历年征信录」公布年度捐款纪录。捐款人如不希望姓名公开，请于联系时告知，本会将以匿名方式处理，仅公布必要栏位。", "en": "This foundation publishes annual donation records in the \"Historical Donor Disclosure\" as required. Donors who prefer not to have their name published may inform us when contacting the foundation, and we will list the donation anonymously, disclosing only the required fields." }
+  },
+
+  "accessibility": {
+    "title": { "zh-Hant": "無障礙宣告", "zh-Hans": "无障碍宣告", "en": "Accessibility Statement" },
+    "body": [
+      { "zh-Hant": "本網站依網站無障礙開發規範，通過 AA 檢測等級。", "zh-Hans": "本网站依网站无障碍开发规范，通过 AA 检测等级。", "en": "This website has been developed in accordance with web accessibility guidelines and conforms to Level AA." },
+      { "zh-Hant": "建議使用 Chrome、Edge、Firefox、Safari 最新版本瀏覽本網站。", "zh-Hans": "建议使用 Chrome、Edge、Firefox、Safari 最新版本浏览本网站。", "en": "For the best experience, please use the latest version of Chrome, Edge, Firefox, or Safari." },
+      { "zh-Hant": "如您在使用本網站時遭遇無障礙相關問題，歡迎透過「聯絡我們」頁面與本會聯繫。", "zh-Hans": "如您在使用本网站时遭遇无障碍相关问题，欢迎透过「联络我们」页面与本会联系。", "en": "If you encounter any accessibility issues while using this website, please contact us via the \"Contact\" page." }
+    ]
+  },
+
+  "contentWarning": {
+    "title": { "zh-Hant": "觀看前請注意", "zh-Hans": "观看前请注意", "en": "Please Note Before Viewing" },
+    "body": { "zh-Hant": "本作品為虛構創作，內容包含失蹤、死亡與暴力暗示。故事中的人物、機構與事件均為虛構。", "zh-Hans": "本作品为虚构创作，内容包含失踪、死亡与暴力暗示。故事中的人物、机构与事件均为虚构。", "en": "This work is fiction. It contains references to disappearance, death, and implied violence. All characters, organizations, and events depicted are fictional." },
+    "continue": { "zh-Hant": "我了解，開始", "zh-Hans": "我了解，开始", "en": "I understand, begin" }
+  },
+
+  "intro": {
+    "title": { "zh-Hant": "協尋志工登錄", "zh-Hans": "协寻志工登录", "en": "Volunteer Sign-in" },
+    "fields": [
+      { "id": "nickname", "label": { "zh-Hant": "顯示名稱", "zh-Hans": "显示名称", "en": "Display Name" }, "maxlength": 20 },
+      { "id": "howYouKnew", "label": { "zh-Hant": "你是怎麼知道這件事的？", "zh-Hans": "你是怎么知道这件事的？", "en": "How did you hear about this?" }, "type": "textarea", "maxlength": 200 }
+    ],
+    "submit": { "zh-Hant": "送出登錄", "zh-Hans": "送出登录", "en": "Submit" },
+    "note": { "zh-Hant": "本表單資料僅儲存於您的裝置。", "zh-Hans": "本表单资料仅储存于您的装置。", "en": "This form's data is stored only on your device." }
+  },
+
+  "cases": [
+    {
+      "id": "JH-2018-001",
+      "name": "方○○",
+      "age": 17,
+      "missing": "2018/05/22",
+      "lastSeen": { "zh-Hant": "靖河市河西區　興安街一帶", "zh-Hans": "靖河市河西区　兴安街一带", "en": "Jinghe City, Hexi District — near Xing'an Street" },
+      "status": "協尋中",
+      "summary": { "zh-Hant": "當日放學後未返家。相關線索請洽本會。", "zh-Hans": "当日放学后未返家。相关线索请洽本会。", "en": "Did not return home after school that day. Please contact us with any information." },
+      "photoNote": { "zh-Hant": "證件照掃描，畫質不佳", "zh-Hans": "证件照扫描，画质不佳", "en": "Scanned ID photo, poor quality" },
+      "note": { "zh-Hant": "八年了，狀態沒有動過。", "zh-Hans": "八年了，状态没有动过。", "en": "Eight years. The status hasn't moved." }
+    },
+    {
+      "id": "JH-2022-002",
+      "name": "林昭",
+      "age": 18,
+      "missing": "2022/09/03",
+      "lastSeen": { "zh-Hant": "靖河市　青川站", "zh-Hans": "靖河市　青川站", "en": "Jinghe City — Qingchuan Station" },
+      "status": "已結案",
+      "statusHistory": [
+        { "date": "2022/09/06", "value": "協尋中" },
+        { "date": "2026/03/24", "value": "已尋獲" },
+        { "date": "2026/05/11", "value": "已結案" }
+      ],
+      "recovery": {
+        "date": "2026/03/02",
+        "place": { "zh-Hant": "靖河下游", "zh-Hans": "靖河下游", "en": "Downstream of the Jing River" },
+        "condition": { "zh-Hant": "高度腐敗，長期浸泡", "zh-Hans": "高度腐败，长期浸泡", "en": "Severely decomposed; long submersion" },
+        "cause": { "zh-Hant": "無法判定", "zh-Hans": "无法判定", "en": "Undetermined" },
+        "timeOfDeath": { "zh-Hant": "無法判定", "zh-Hans": "无法判定", "en": "Undetermined" },
+        "belongings": { "zh-Hant": "無", "zh-Hans": "无", "en": "None" }
+      },
+      "summary": { "zh-Hant": "本案已結案。感謝各界協助。", "zh-Hans": "本案已结案。感谢各界协助。", "en": "This case is closed. Thank you for your assistance." },
+      "removedNote": { "zh-Hant": "年齡推估模擬圖已於 2026/05 下架", "zh-Hans": "年龄推估模拟图已于 2026/05 下架", "en": "The age-progression composite image was taken down in 2026/05." }
+    },
+    {
+      "id": "JH-2025-003",
+      "name": "林晞",
+      "age": 17,
+      "missing": "2025/08/14",
+      "lastSeen": { "zh-Hant": "靖河市　文昌站", "zh-Hans": "靖河市　文昌站", "en": "Jinghe City — Wenchang Station" },
+      "status": "協尋中",
+      "statusAfterMidUpdate": "已尋獲",
+      "recovery": {
+        "date": "2026/08/17",
+        "place": { "zh-Hant": "靖河下游", "zh-Hans": "靖河下游", "en": "Downstream of the Jing River" },
+        "condition": { "zh-Hant": "高度腐敗，長期浸泡，另有魚類啃食痕", "zh-Hans": "高度腐败，长期浸泡，另有鱼类啃食痕", "en": "Severely decomposed; long submersion; some fish-scavenging marks" },
+        "cause": { "zh-Hant": "無法判定", "zh-Hans": "无法判定", "en": "Undetermined" },
+        "timeOfDeath": { "zh-Hant": "無法判定", "zh-Hans": "无法判定", "en": "Undetermined" },
+        "belongings": { "zh-Hant": "無", "zh-Hans": "无", "en": "None" }
+      },
+      "summary": { "zh-Hant": "本案由本會於 2025 年 11 月接手建檔。", "zh-Hans": "本案由本会于 2025 年 11 月接手建档。", "en": "This case was taken over and filed by this foundation in November 2025." },
+      "links": [
+        { "label": { "zh-Hant": "原始協尋頁面（已停止更新）", "zh-Hans": "原始协寻页面（已停止更新）", "en": "Original search page (no longer updated)" }, "route": "#/legacy" }
+      ]
+    },
+    {
+      "id": "JH-2026-004",
+      "name": "陳語安",
+      "age": 16,
+      "missing": "2026/08/26",
+      "lastSeen": { "zh-Hant": "靖河市河東區", "zh-Hans": "靖河市河东区", "en": "Jinghe City, Hedong District" },
+      "status": "協尋中",
+      "summary": { "zh-Hant": "當日 06:40 離家後失去聯繫。", "zh-Hans": "当日 06:40 离家后失去联系。", "en": "Left home at 06:40 that day and has not been in contact since." },
+      "summaryRevised": { "zh-Hant": "當日 06:40 離家，前往學校。校方當日無課程。09/04 取得新事證後修正。", "zh-Hans": "当日 06:40 离家，前往学校。校方当日无课程。09/04 取得新事证后修正。", "en": "Left home at 06:40, heading to school. The school had no classes that day. Revised on 09/04 after new evidence came to light." },
+      "note": { "zh-Hant": "報案後九天，初步研判為自行離家。", "zh-Hans": "报案后九天，初步研判为自行离家。", "en": "Nine days after the report was filed, the preliminary assessment was voluntary departure." }
+    }
+  ],
+
+  "announcement": {
+    "date": "2026/08/17",
+    "title": { "zh-Hant": "靖河下游尋獲遺體　比對確認為 JH-2025-003", "zh-Hans": "靖河下游寻获遗体　比对确认为 JH-2025-003", "en": "Body recovered downstream of the Jing River — confirmed as JH-2025-003" },
+    "body": { "zh-Hant": "本會接獲通知，靖河下游尋獲之遺體經比對確認為本會協尋個案 JH-2025-003。案件狀態已更新。感謝長期協助本案的各界人士。", "zh-Hans": "本会接获通知，靖河下游寻获之遗体经比对确认为本会协寻个案 JH-2025-003。案件状态已更新。感谢长期协助本案的各界人士。", "en": "This foundation has been notified that a body recovered downstream of the Jing River has been confirmed, through comparison, to be search case JH-2025-003. The case status has been updated. Thank you to everyone who has assisted with this case." }
+  },
+
+  "files": {
+    "007": { "name": "林　昭", "created": "2022/02/19", "updated": "2024/03/11" },
+    "012": { "name": "林　晞", "created": "2023/08/14", "updatedBefore": null, "updatedAfterMidUpdate": "2026/08/17" },
+    "015": { "name": "陳語安", "created": "2026/08/26 06:52" }
+  },
+
+  "chatlog": {
+    "date": "2026/08/26",
+    "recoveredFrom": { "zh-Hant": "雲端備份，2026/09/04 取得", "zh-Hans": "云端备份，2026/09/04 取得", "en": "Cloud backup, retrieved 2026/09/04" },
+    "messages": [
+      { "t": "06:12", "who": "戴筠", "text": { "zh-Hant": "我們已經到教室了，你怎麼還沒來", "zh-Hans": "我们已经到教室了，你怎么还没来", "en": "We're already in the classroom, why aren't you here yet" }, "attachment": { "zh-Hant": "教室照片（截圖）", "zh-Hans": "教室照片（截图）", "en": "Classroom photo (screenshot)" } },
+      { "t": "06:14", "who": "陳語安", "text": { "zh-Hant": "？？不是禮拜五嗎", "zh-Hans": "？？不是礼拜五吗", "en": "?? Isn't it Friday?" } },
+      { "t": "06:14", "who": "戴筠", "text": { "zh-Hant": "改了啊 昨天發的公告", "zh-Hans": "改了啊 昨天发的公告", "en": "It got changed. The notice went out yesterday" } },
+      { "t": "06:15", "who": "黃品彤", "text": { "zh-Hant": "你沒看群組喔", "zh-Hans": "你没看群组喔", "en": "You didn't check the group chat?" } },
+      { "t": "06:16", "who": "陳語安", "text": { "zh-Hant": "幹", "zh-Hans": "干", "en": "Fuck." } },
+      { "t": "07:14", "who": "陳語安", "text": { "zh-Hant": "", "zh-Hans": "", "en": "" }, "attachment": { "zh-Hant": "校門照片（鎖鏈、鐵門、空的操場）", "zh-Hans": "校门照片（锁链、铁门、空的操场）", "en": "Photo of the school gate (chained, locked gate, empty field)" } },
+      { "t": "07:15", "who": "廖恩瑜", "text": { "zh-Hant": "[貼圖]", "zh-Hans": "[贴图]", "en": "[Sticker]" } },
+      { "t": "07:15", "who": "黃品彤", "text": { "zh-Hant": "不是吧", "zh-Hans": "不是吧", "en": "No way" } },
+      { "t": "07:17", "who": "戴筠", "text": { "zh-Hant": "她真的去了", "zh-Hans": "她真的去了", "en": "She actually went" } },
+      { "t": "07:19", "who": "廖恩瑜", "text": { "zh-Hant": "[貼圖]", "zh-Hans": "[贴图]", "en": "[Sticker]" } },
+      { "t": "07:22", "who": "黃品彤", "text": { "zh-Hant": "[貼圖]", "zh-Hans": "[贴图]", "en": "[Sticker]" } },
+      { "t": "07:25", "who": "廖恩瑜", "text": { "zh-Hant": "欸她怎麼沒回", "zh-Hans": "欸她怎么没回", "en": "Hey why isn't she replying" } },
+      { "t": "07:31", "who": "黃品彤", "text": { "zh-Hant": "語安？", "zh-Hans": "语安？", "en": "Yu-An?" } }
+    ],
+    "footer": { "zh-Hant": "07:31 之後無新訊息。", "zh-Hans": "07:31 之后无新讯息。", "en": "No new messages after 07:31." }
+  },
+
+  "school": {
+    "announcementReal": {
+      "posted": "2026/08/19",
+      "text": { "zh-Hant": "本校 115 學年度返校日訂於 08/28（五）上午 8:00，請同學準時到校。", "zh-Hans": "本校 115 学年度返校日订于 08/28（五）上午 8:00，请同学准时到校。", "en": "The school's 115th academic-year return day is scheduled for 08/28 (Friday) at 8:00 AM. Please arrive on time." }
+    }
+  },
+
+  "trust": {
+    "title": { "zh-Hant": "歷年徵信錄", "zh-Hans": "历年征信录", "en": "Historical Donor Disclosure" },
+    "note": { "zh-Hant": "本會依規定公布捐款徵信，此頁彙整歷年紀錄。匿名捐款者僅列郵遞區號以利收據寄送。", "zh-Hans": "本会依规定公布捐款征信，此页汇整历年记录。匿名捐款者仅列邮递区号以利收据寄送。", "en": "This foundation publishes donation disclosures as required; this page compiles records across years. Anonymous donors are listed only by postal code for receipt mailing purposes." },
+    "rows": [
+      { "date": "08/26", "year": "2026", "amount": "1,000", "name": { "zh-Hant": "無名氏", "zh-Hans": "无名氏", "en": "Anonymous" }, "zip": { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", "en": "[Hedong District postal code]" }, "matchCaseId": "JH-2026-004" },
+      { "date": "08/14", "year": "2025", "amount": "1,000", "name": { "zh-Hant": "無名氏", "zh-Hans": "无名氏", "en": "Anonymous" }, "zip": { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", "en": "[Hedong District postal code]" }, "matchCaseId": "JH-2025-003" },
+      { "date": "09/03", "year": "2022", "amount": "1,000", "name": { "zh-Hant": "無名氏", "zh-Hans": "无名氏", "en": "Anonymous" }, "zip": { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", "en": "[Hedong District postal code]" }, "matchCaseId": "JH-2022-002" }
+    ]
+  },
+
+  "trustPuzzle": {
+    "answerHeader": { "zh-Hant": "你覺得是誰", "zh-Hans": "你觉得是谁", "en": "Your guess" },
+    "prompt": { "zh-Hant": "如果你看得出哪一筆對應到哪個案子，填入案件編號或姓名，再核對。", "zh-Hans": "如果你看得出哪一笔对应到哪个案子，填入案件编号或姓名，再核对。", "en": "If you can tell which entry lines up with which case, fill in the case number or name, then check." },
+    "check": { "zh-Hant": "核對", "zh-Hans": "核对", "en": "Check" },
+    "incorrect": { "zh-Hant": "還沒對上。", "zh-Hans": "还没对上。", "en": "Not matching yet." },
+    "allCorrect": { "zh-Hant": "三筆都對上了。金額也一模一樣。這不是巧合。", "zh-Hans": "三笔都对上了。金额也一模一样。这不是巧合。", "en": "All three match. The amount is identical too. This isn't a coincidence." }
+  },
+
+  "notebookFacts": {
+    "trustSeen": { "zh-Hant": "歷年徵信錄：三筆匿名捐款，金額都一樣，日期不同。", "zh-Hans": "历年征信录：三笔匿名捐款，金额都一样，日期不同。", "en": "Historical donor disclosure: three anonymous donations, same amount, different dates." },
+    "archiveSeen": { "zh-Hant": "2019 年網站存檔：捐款人當年還沒匿名，留了姓氏跟里別。", "zh-Hans": "2019年网站存档：捐款人当年还没匿名，留了姓氏跟里别。", "en": "2019 site archive: donors weren't anonymous back then — a surname and neighborhood are on record." },
+    "marketSeen": { "zh-Hant": "二手賣場 @rec_1029：面交地點三年沒換過，同一間超商。", "zh-Hans": "二手卖场 @rec_1029：面交地点三年没换过，同一间超商。", "en": "Secondhand seller @rec_1029: the meetup spot hasn't changed in three years — same convenience store." },
+    "midUpdate": { "zh-Hant": "靖河下游尋獲遺體，比對確認為 JH-2025-003 林晞。", "zh-Hans": "靖河下游寻获遗体，比对确认为 JH-2025-003 林晞。", "en": "A body recovered downstream of the Jing River was confirmed as JH-2025-003, Lin Xi." }
+  },
+
+  "notebook": {
+    "buttonLabel": { "zh-Hant": "筆記本", "zh-Hans": "笔记本", "en": "Notebook" },
+    "title": { "zh-Hant": "已知事項", "zh-Hans": "已知事项", "en": "Known Facts" },
+    "empty": { "zh-Hant": "還沒有已知事項。繼續往下看。", "zh-Hans": "还没有已知事项。继续往下看。", "en": "No known facts yet. Keep reading." },
+    "close": { "zh-Hant": "關閉", "zh-Hans": "关闭", "en": "Close" }
+  },
+
+  "archive2019": {
+    "title": { "zh-Hant": "感謝名單（2019 年版）", "zh-Hans": "感谢名单（2019 年版）", "en": "Thank-You List (2019 Version)" },
+    "note": { "zh-Hant": "本頁為 2019 年網站存檔。本會自 2020 年起改採匿名徵信。", "zh-Hans": "本页为 2019 年网站存档。本会自 2020 年起改采匿名征信。", "en": "This page is a 2019 site archive. Since 2020, this foundation has used anonymous disclosure." },
+    "row": { "name": { "zh-Hant": "○先生", "zh-Hans": "○先生", "en": "Mr. ○" }, "district": { "zh-Hant": "河東區　「某某里」", "zh-Hans": "河东区　「某某里」", "en": "Hedong District — [a certain neighborhood]" } }
+  },
+
+  "market": {
+    "seller": "@rec_1029",
+    "note": { "zh-Hant": "賣場快照。賣家回覆數 0。", "zh-Hans": "卖场快照。卖家回复数 0。", "en": "Storefront snapshot. Seller replies: 0." },
+    "listings": [
+      { "title": { "zh-Hant": "電風扇", "zh-Hans": "电风扇", "en": "Electric fan" }, "posted": "2023/07", "deal": { "zh-Hant": "僅面交", "zh-Hans": "仅面交", "en": "In-person pickup only" }, "spot": { "zh-Hant": "河東區　同一間超商", "zh-Hans": "河东区　同一间超商", "en": "Hedong District — same convenience store" }, "photoRoom": true },
+      { "title": { "zh-Hant": "書櫃", "zh-Hans": "书柜", "en": "Bookshelf" }, "posted": "2024/01", "deal": { "zh-Hant": "僅面交", "zh-Hans": "仅面交", "en": "In-person pickup only" }, "spot": { "zh-Hant": "河東區　同一間超商", "zh-Hans": "河东区　同一间超商", "en": "Hedong District — same convenience store" }, "photoRoom": true },
+      { "title": { "zh-Hant": "腳踏車", "zh-Hans": "脚踏车", "en": "Bicycle" }, "posted": "2025/04", "deal": { "zh-Hant": "僅面交", "zh-Hans": "仅面交", "en": "In-person pickup only" }, "spot": { "zh-Hant": "河東區　同一間超商", "zh-Hans": "河东区　同一间超商", "en": "Hedong District — same convenience store" }, "photoRoom": true, "windowVisible": true },
+      { "title": "「#188」", "posted": "2023/08/14", "deal": { "zh-Hant": "面交・可議價", "zh-Hans": "面交・可议价", "en": "In-person, negotiable" }, "spot": { "zh-Hant": "河東區　同一間超商", "zh-Hans": "河东区　同一间超商", "en": "Hedong District — same convenience store" }, "comments": 47, "replies": 0, "stillListed": true }
+    ],
+    "windowNote": { "zh-Hant": "腳踏車那張，商品只佔畫面三分之一。右上角是窗。窗外有護岸，和一根橋墩。橋墩上有編號。", "zh-Hans": "脚踏车那张，商品只占画面三分之一。右上角是窗。窗外有护岸，和一根桥墩。桥墩上有编号。", "en": "In the bicycle photo, the item fills only a third of the frame. The upper right shows a window. Outside it: a riverbank embankment, and a bridge pier. The pier has a number on it." }
+  },
+
+  "legacy": {
+    "title": { "zh-Hant": "協尋　林晞", "zh-Hans": "协寻　林晞", "en": "Searching for Lin Xi" },
+    "author": "周妤",
+    "note": { "zh-Hant": "（已停止更新）", "zh-Hans": "（已停止更新）", "en": "(No longer updated)" },
+    "line": { "zh-Hant": "拜託，如果有人看到晞，拜託跟我說一聲。", "zh-Hans": "拜托，如果有人看到晞，拜托跟我说一声。", "en": "Please — if anyone has seen Xi, please let me know." }
+  },
+
+  "walk": {
+    "steps": [
+      { "zh-Hant": "徵信錄　→　一個行政區", "zh-Hans": "征信录　→　一个行政区", "en": "Donor disclosure → a district" },
+      { "zh-Hant": "存檔頁　→　一個里", "zh-Hans": "存档页　→　一个里", "en": "Archived page → a neighborhood" },
+      { "zh-Hant": "面交點　→　幾條街", "zh-Hans": "面交点　→　几条街", "en": "Meetup spot → a few streets" },
+      { "zh-Hant": "窗　　　→　樓層、朝向", "zh-Hans": "窗　　　→　楼层、朝向", "en": "Window → floor and orientation" }
+    ],
+    "lines": [
+      { "zh-Hant": "巷子。機車。鐵門。", "zh-Hans": "巷子。机车。铁门。", "en": "The alley. A scooter. An iron gate." },
+      { "zh-Hant": "樓梯間的聲控燈，走三階才亮。", "zh-Hans": "楼梯间的声控灯，走三阶才亮。", "en": "The stairwell's sound-activated light — it takes three steps before it turns on." },
+      { "zh-Hant": "五樓。", "zh-Hans": "五楼。", "en": "Fifth floor." }
+    ],
+    "question": { "zh-Hant": "你要殺了他嗎？", "zh-Hans": "你要杀了他吗？", "en": "Are you going to kill him?" },
+    "yes": { "zh-Hant": "是", "zh-Hans": "是", "en": "Yes" },
+    "no": { "zh-Hant": "否", "zh-Hans": "否", "en": "No" },
+    "refusedText": { "zh-Hant": "你已經走到這裡了。", "zh-Hans": "你已经走到这里了。", "en": "You've already come this far." }
+  },
+
+  "endgame": {
+    "stampLabel": { "zh-Hant": "016.txt　建檔　", "zh-Hans": "016.txt　建档　", "en": "016.txt　filed　" },
+    "gone": [
+      { "zh-Hant": "社團法人臺灣失蹤兒少協尋關懷基金會", "zh-Hans": "社团法人台湾失踪儿少协寻关怀基金会", "en": "Taiwan Missing Children & Youth Search and Care Foundation" },
+      { "zh-Hant": "尋人資料庫　目前無法使用", "zh-Hans": "寻人数据库　目前无法使用", "en": "Missing Persons Database — currently unavailable" }
+    ]
+  }
+}

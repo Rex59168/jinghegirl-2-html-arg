@@ -1,0 +1,133 @@
+.site-header {
+  background: var(--chrome);
+  color: #ffffff;
+  min-height: 48px;
+  max-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 1rem;
+}
+
+.site-header[hidden] {
+  display: none;
+}
+
+.site-header__name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site-header__donate {
+  flex-shrink: 0;
+  background: var(--link);
+  color: #ffffff;
+  text-decoration: none;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.site-header__donate:visited {
+  color: #ffffff;
+}
+
+.site-nav {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.5rem 1rem 0 1rem;
+  font-size: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.5rem;
+}
+
+.breadcrumb {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0.75rem 1rem 0 1rem;
+  color: var(--ink-weak);
+  font-size: 12px;
+}
+
+#main {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.lang-switcher {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1rem;
+  color: var(--ink-weak);
+  font-size: 12px;
+}
+
+.site-footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1rem;
+  color: var(--ink-weak);
+  font-size: 11px;
+}
+
+.site-footer p {
+  margin: 0 0 0.25em 0;
+}
+
+.site-footer a {
+  font-size: 11px;
+}
+
+@media (max-width: 600px) {
+  .case-table,
+  .case-table tbody,
+  .case-table tr,
+  .case-table th,
+  .case-table td,
+  .data-table,
+  .data-table thead,
+  .data-table tbody,
+  .data-table tr,
+  .data-table th,
+  .data-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .case-table tr {
+    padding: 0.5em 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .case-table th,
+  .case-table td {
+    border-bottom: none;
+    padding: 0.15em 0;
+  }
+
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table tbody tr {
+    padding: 0.5em 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .data-table td {
+    border-bottom: none;
+    padding: 0.15em 0;
+  }
+
+  .choice {
+    flex-direction: column;
+  }
+}
