@@ -8,6 +8,7 @@ html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
 }
 
 body {
@@ -16,6 +17,20 @@ body {
   font-family: var(--font-ui);
   font-size: 16px;
   line-height: 1.5;
+}
+
+/* #app is the page shell. It stretches to fill the viewport so a short page's
+   footer (or, on chrome-less pages, its lone content block) settles at the
+   bottom of the window instead of leaving a page that looks cut off partway
+   down a blank canvas — most visible on tall mobile screens with short pages. */
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#app[hidden] {
+  display: none;
 }
 
 h1,
