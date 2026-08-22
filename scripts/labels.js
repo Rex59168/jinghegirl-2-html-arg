@@ -77,6 +77,20 @@ export const LABELS = {
   district: { "zh-Hant": "地區", "zh-Hans": "地区", en: "District" },
   viewDetail: { "zh-Hant": "放大看", "zh-Hans": "放大看", en: "Zoom in" },
   correspondingCase: { "zh-Hant": "對應案件", "zh-Hans": "对应案件", en: "Corresponding Case" },
+  newsTitle: { "zh-Hant": "最新消息", "zh-Hans": "最新消息", en: "Latest News" },
+  quickServicesTitle: { "zh-Hant": "服務項目", "zh-Hans": "服务项目", en: "Services" },
+  partnersTitle: { "zh-Hant": "合作單位", "zh-Hans": "合作单位", en: "Partner Organizations" },
+  historyTitle: { "zh-Hant": "本會沿革", "zh-Hans": "本会沿革", en: "Foundation History" },
+  orgStatsTitle: { "zh-Hant": "本會概況", "zh-Hans": "本会概况", en: "Foundation at a Glance" },
+  footerAboutTitle: { "zh-Hant": "關於本會", "zh-Hans": "关于本会", en: "About" },
+  footerServicesTitle: { "zh-Hant": "服務項目", "zh-Hans": "服务项目", en: "Services" },
+  footerContactTitle: { "zh-Hant": "聯絡資訊", "zh-Hans": "联络信息", en: "Contact" },
+  quickLinkVolunteer: { "zh-Hant": "志工登錄", "zh-Hans": "志工登录", en: "Volunteer Sign-in" },
+  quickLinkDonate: { "zh-Hant": "捐款支持", "zh-Hans": "捐款支持", en: "Donate" },
+  quickLinkFaq: { "zh-Hant": "常見問題", "zh-Hans": "常见问题", en: "FAQ" },
+  quickLinkContact: { "zh-Hant": "聯絡我們", "zh-Hans": "联络我们", en: "Contact Us" },
+  quickLinkTrust: { "zh-Hant": "歷年徵信錄", "zh-Hans": "历年征信录", en: "Donor Disclosure" },
+  quickLinkAbout: { "zh-Hant": "關於本會", "zh-Hans": "关于本会", en: "About Us" },
   chooseCasePlaceholder: { "zh-Hant": "請選擇", "zh-Hans": "请选择", en: "Please choose" },
   officeHours: { "zh-Hant": "服務時間", "zh-Hans": "服务时间", en: "Office Hours" },
   phone: { "zh-Hant": "協尋專線", "zh-Hans": "协寻专线", en: "Search Hotline" },
@@ -95,7 +109,10 @@ export const ORG_CHROME = {
   footer: {
     taxId: { "zh-Hant": "統一編號：00000000", "zh-Hans": "统一编号：00000000", en: "Tax ID: 00000000" },
     address: { "zh-Hant": "本會無實體服務據點，如需聯繫請洽下方協尋專線或電子郵件。", "zh-Hans": "本会无实体服务据点，如需联系请洽下方协寻专线或电子邮件。", en: "This foundation has no physical service location. Please contact us via the hotline or email below." },
-    updated: { "zh-Hant": "資料更新日期　2026/09/05", "zh-Hans": "资料更新日期　2026/09/05", en: "Last updated 2026/09/05" }
+    updated: { "zh-Hant": "資料更新日期　2026/09/05", "zh-Hans": "资料更新日期　2026/09/05", en: "Last updated 2026/09/05" },
+    phoneValue: "0800-000-000",
+    emailValue: "help@example-foundation.org",
+    hoursValue: { "zh-Hant": "週一至週五 09:00–17:00", "zh-Hans": "周一至周五 09:00–17:00", en: "Mon–Fri, 09:00–17:00" }
   }
 };
 

@@ -167,6 +167,16 @@
 | 結尾要玩家承認的事 | 你在做他做的事 | 你已經做完了 |
 | 最後一個畫面 | 黑幕五秒 | 滿版紅，角落一行 `016.txt` |
 
+### 與前作的技術銜接（跨 repo，進行中）
+
+前作 `jinghegirl-HTML-ARG` 與本作維持**兩個獨立部署的靜態站**，不合併成同一份 codebase（前作是全域 `<script>`＋`jh_` 前綴的舊架構，跟本作的 ES module／`jh4:` 前綴完全不同，沒有共用的必要，且兩者若部署在同一個 `*.github.io` 網域下，前綴不同也剛好避免 localStorage 互相踩到）。兩作之間唯一的橋接點是前作結局頁 `ending/index.html`：
+
+- 原本「全黑後停留 5 秒，什麼都不放」改成先淡入一句時間跳躍字幕「一年後。」（`SKIP_CAPTION_BY_LANG`），再進入原本逐字打字的那八句台詞（未改動）。
+- 逐字打字結束後，新增一段「信件」卡片（`#blackout-letter`）：告知玩家尋人資料庫多了一筆新案件——陳語安、16 歲、河東人、失蹤日期 2026/8/26，附一顆連到本作的連結（`target="_blank"`），停留約 3 秒後淡出，才接原本的頁尾（求助資訊／你留下了什麼／截圖／重置）。信件文案三語皆有（`LETTER_BY_LANG`），做法比照這個檔案裡既有的 `LINES_BY_LANG`／`ZY_FINAL_NEWS` 模式（直接依 `JH_I18N.getLang()` 挑字串，不吃自動翻譯的 MutationObserver，理由跟既有註解一致：一次性/逐字插入的文字，自動翻譯抓不準）。
+- 連結網址暫時寫死 `https://rex59168.github.io/jinghegirl-2-html-arg/`（假設值，還沒經過使用者確認實際部署位置，push 前需要覆核）。
+- 前作本體（`index.html` 這個入口頁）**尚未變動**——使用者已決定這一步先擱置，之後再拍板要「改成轉址頁」「整頁刪除」還是「先動前作結局，入口的事之後再說」（目前選的是最後一項）。
+- 這批修改目前只存在於使用者本機另外 clone 出來的 `jinghegirl-HTML-ARG` 工作目錄（在 `main` 分支旁另外簽出了實際有內容的 `claude/github-web-game-mobile-2oavid` 分支——`main` 目前只有一份 README，真正的全部章節內容在那個分支上），**尚未 commit、尚未 push**，等使用者自己看過再決定後續。
+
 ---
 
 ## 7. 技術架構
@@ -380,9 +390,10 @@
 - 頁首：品牌藍漸層橫幅（`linear-gradient(135deg, var(--chrome), var(--chrome-dark))`），左邊機構全名，右邊橘色圓角捐款按鈕（`--accent`，有 hover 上浮效果）。
 - 頁首下方一條白底導覽列（首頁/關於我們/常見問題/聯絡我們），連結 hover 時底線變橘色。
 - `#main` 是一張浮在 `--surface` 灰底上的白色卡片：`border-radius: var(--radius)`、`box-shadow: var(--shadow-sm)`。
-- 首頁有一個 hero 橫幅（`.home-hero`，跟頁首同款漸層）放機構簡介，下面接一排統計卡片（`.home-stats`，4 張：累計受理／協尋中／已尋獲／已結案）。
+- 首頁有一個 hero 橫幅（`.home-hero`，跟頁首同款漸層）放機構簡介，下面接一排統計卡片（`.home-stats`，4 張：累計受理／協尋中／已尋獲／已結案，各配一個小圖示），再來是「服務項目」快速連結卡片格（`.home-quicklinks`，6 格：志工登錄／捐款支持／歷年徵信錄／聯絡我們／常見問題／關於本會），案件表格下方接「最新消息」（`.home-news`，幾則行政性的填充公告，跟中段更新那則真正的公告是分開的兩個東西）跟「合作單位」（`.home-partners`，幾個虛構的合作機關名稱藥丸標籤）。`about.html` 同樣加了「本會概況」統計卡片跟「本會沿革」時間軸。這些都是刻意的資訊密度填充——內容本身大多平淡、甚至無關緊要，目的只是讓網站不要看起來太空曠單薄，不算劇情。
+- 圖示一律用 `render.js` 裡手畫的極簡線條 SVG（`icon(name)`，`ICON_PATHS` 定義在同檔案），不引用任何圖示庫、不下載任何圖片——這個網站永遠不放照片（尤其是人像），案件照片一律用文字說明帶過，這條線在填充內容時也沒有鬆動。
 - 案件頁與徵信錄等橫向表格維持 `<table>`，但表頭有淺灰底色、列有 hover 效果。
-- 頁尾改成品牌深藍色滿版色塊（`.site-footer` 深底白字），裡面的連結加底線；不再寫「本頁資料為虛構」，改成機構自己站得住腳的說法（見 `ORG_CHROME.footer.address`）。
+- 頁尾改成品牌深藍色滿版色塊，裡面分三欄（關於本會／服務項目／聯絡資訊），欄位以下才是統編／聯絡方式一類的底列小字；不再寫「本頁資料為虛構」，改成機構自己站得住腳的說法（見 `ORG_CHROME.footer.address`）。
 
 ### 手機
 
@@ -413,7 +424,11 @@
 .walk .walk__line .walk__question
 .choice .choice__btn
 .endgame-black .endgame-black__crack .endgame-red .endgame-red__stamp
-.site-footer .site-footer__inner
+.site-footer .site-footer__inner .site-footer__columns .site-footer__column .site-footer__bottom
+.home-stats__icon
+.home-quicklinks .home-quicklinks__item .home-quicklinks__icon
+.home-news .home-news__item .home-news__date .home-news__title
+.home-partners .home-partners__badge
 .gone
 .case-list .case-list__item .case-list__id .case-list__name .case-list__filter   首頁案件清單與狀態篩選下拉選單
 .intro-form .intro-form__field .intro-form__label .intro-form__input .intro-form__textarea .intro-form__submit .intro-form__note
@@ -441,6 +456,8 @@
 `JH-2026-004` 的 `summaryRevised` 欄位已重新加回並接上觸發條件（見「8. 進度旗標與解鎖規則」的「二次更新」列）：中段更新之後，玩家再看過 `legacy.html` 跟 `015.txt`，案情摘要會修正成多一句「最後一次留下紀錄為 07:14」，並寫進筆記本。徵信錄謎題也已改為第六幕的必經關卡，且拆成 `trust.html`（純展示）＋一封不具名訊息（`mail.js`）＋另開新分頁的 `worksheet.html`（實際作答，下拉選單比對）三段式流程（見「8. 進度旗標與解鎖規則」說明）。`archive2019.html`／`market.html` 的關鍵線索改成要玩家自己從一份填充過的名單裡認出來、或自己點開才看到（見「7. 技術架構」頁面清單旁的說明），不再是旁白直接講完。
 
 早期草稿曾寫「五個案件」的措辭問題已解決（現有 20 筆，遠超過原本的疑慮）。
+
+**內容密度加強**：改完視覺設計後網站曾經一度偏空曠，補了一輪純資訊量的填充（見「9. 視覺設計規範」版面段落）：首頁加了服務項目快速連結、最新消息、合作單位三個區塊；`about.html` 加了本會概況統計卡片跟沿革時間軸；頁尾改三欄式。全部用手畫的極簡 SVG 圖示補視覺重量，沒有引入任何外部圖片或圖示庫——這個網站的立場一直是不放照片，這次也一樣沒破例。過程中修掉一個真的 bug：改寫頁尾時不小心把 `chrome.js` 的 `mountBare()` 整個函式弄丟了，導致所有 chrome:false 頁面（`admin.html` 起頭連鎖影響到全部測試）當掉，已補回並重新跑過全站 53 頁健檢確認修好。
 
 **全站健檢**：改完視覺設計與比對表機制後，用 headless Chrome 把全站每一頁（首頁、六個機構制式頁面、`trust/worksheet/archive2019/market/legacy/collection/admin`、20 個案件頁、15 個 `.txt` 頁、`walk.html`、`gone.html`）都跑過一輪，確認每頁都有正常渲染內容、沒有 `undefined`／`[object Object]` 這類殘留、zero console 例外。過程中順手修掉一個小疏漏：`gone.html`（封站白頁）先前透過 `chrome.mountBare()` 還是會冒出筆記本／訊息按鈕，跟「網站已經無法使用」的設定矛盾——現在改呼叫 `chrome.mountBare({ skipWidgets: true })`，封站後這兩個工具也一併停用，只留語言切換。
 

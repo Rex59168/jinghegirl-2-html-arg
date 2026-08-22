@@ -65,30 +65,72 @@ export function mount({ breadcrumb = [] } = {}) {
   breadcrumbEl.textContent = breadcrumb.join(' › ');
 
   footerEl.innerHTML = '';
+  const loc = store.get('locale');
   const inner = document.createElement('div');
   inner.className = 'site-footer__inner';
+
+  const columns = document.createElement('div');
+  columns.className = 'site-footer__columns';
+
+  function footerColumn(titleText, items) {
+    const col = document.createElement('div');
+    col.className = 'site-footer__column';
+    const h = document.createElement('strong');
+    h.textContent = titleText;
+    col.appendChild(h);
+    const list = document.createElement('ul');
+    items.forEach(({ text, href }) => {
+      const li = document.createElement('li');
+      if (href) {
+        const a = document.createElement('a');
+        a.href = href;
+        a.textContent = text;
+        li.appendChild(a);
+      } else {
+        li.textContent = text;
+      }
+      list.appendChild(li);
+    });
+    col.appendChild(list);
+    return col;
+  }
+
+  columns.appendChild(
+    footerColumn(t(LABELS.footerAboutTitle, loc), [
+      { text: t(LABELS.navAbout, loc), href: 'about.html' },
+      { text: t(LABELS.navFaq, loc), href: 'faq.html' },
+      { text: t(ORG_CHROME.donate, loc), href: 'donate.html' }
+    ])
+  );
+  columns.appendChild(
+    footerColumn(t(LABELS.footerServicesTitle, loc), [
+      { text: t(LABELS.trustFooterLink, loc), href: 'trust.html' },
+      { text: t(LABELS.navContact, loc), href: 'contact.html' },
+      { text: t(LABELS.navPrivacy, loc), href: 'privacy.html' },
+      { text: t(LABELS.navAccessibility, loc), href: 'accessibility.html' }
+    ])
+  );
+  columns.appendChild(
+    footerColumn(t(LABELS.footerContactTitle, loc), [
+      { text: t(LABELS.phone, loc) + '　' + ORG_CHROME.footer.phoneValue },
+      { text: t(LABELS.email, loc) + '　' + ORG_CHROME.footer.emailValue },
+      { text: t(ORG_CHROME.footer.hoursValue, loc) }
+    ])
+  );
+  inner.appendChild(columns);
+
+  const bottomBar = document.createElement('div');
+  bottomBar.className = 'site-footer__bottom';
   const p1 = document.createElement('p');
-  p1.textContent = t(ORG_CHROME.footer.taxId, store.get('locale'));
+  p1.textContent = t(ORG_CHROME.footer.taxId, loc);
   const p2 = document.createElement('p');
-  p2.textContent = t(ORG_CHROME.footer.address, store.get('locale'));
+  p2.textContent = t(ORG_CHROME.footer.address, loc);
   const p3 = document.createElement('p');
-  p3.textContent = t(ORG_CHROME.footer.updated, store.get('locale'));
-  const links = document.createElement('p');
-  [
-    ['trust.html', t(LABELS.trustFooterLink, store.get('locale'))],
-    ['privacy.html', t(LABELS.navPrivacy, store.get('locale'))],
-    ['accessibility.html', t(LABELS.navAccessibility, store.get('locale'))]
-  ].forEach(([href, text], i) => {
-    if (i > 0) links.appendChild(document.createTextNode('　|　'));
-    const a = document.createElement('a');
-    a.href = href;
-    a.textContent = text;
-    links.appendChild(a);
-  });
-  inner.appendChild(p1);
-  inner.appendChild(p2);
-  inner.appendChild(p3);
-  inner.appendChild(links);
+  p3.textContent = t(ORG_CHROME.footer.updated, loc);
+  bottomBar.appendChild(p1);
+  bottomBar.appendChild(p2);
+  bottomBar.appendChild(p3);
+  inner.appendChild(bottomBar);
   footerEl.appendChild(inner);
 
   document.getElementById('app').hidden = false;
@@ -108,3 +150,4 @@ export function mountBare({ skipWidgets = false } = {}) {
   notebook.mount();
   mail.mount();
 }
+

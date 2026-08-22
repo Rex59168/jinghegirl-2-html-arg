@@ -28,6 +28,34 @@ function statusLabel(key, locale) {
   return t(STATUS_VALUES[key], locale);
 }
 
+// Small hand-drawn line-icon set — plain geometric shapes, not sourced from any
+// icon library or photo, so there's nothing to license and nothing that could be
+// mistaken for a real photograph anywhere on the site.
+const ICON_PATHS = {
+  users: ['<circle cx="8" cy="8" r="3"></circle>', '<circle cx="17" cy="9" r="2.5"></circle>', '<path d="M2 20c0-3.3 2.7-5 6-5s6 1.7 6 5"></path>', '<path d="M15 20c0-2.5 1.8-4 4.5-4S22 17.5 22 20"></path>'],
+  heart: ['<path d="M12 20s-7-4.2-9.3-8.6C1.2 8.4 2.3 5 5.8 5c2 0 3.7 1.3 6.2 4 2.5-2.7 4.2-4 6.2-4 3.5 0 4.6 3.4 3.1 6.4C19 15.8 12 20 12 20z"></path>'],
+  mail: ['<rect x="2.5" y="5" width="19" height="14" rx="1.5"></rect>', '<path d="M3 6.5l9 6.5 9-6.5"></path>'],
+  phone: ['<path d="M5 4h3l1.5 4-2 1.5c1 2.5 2.5 4 5 5l1.5-2 4 1.5v3c0 1-1 2-2 2C10 19 5 14 5 8c0-1.5.5-3 0-4z"></path>'],
+  document: ['<path d="M6 2.5h8l4 4v15H6z"></path>', '<path d="M14 2.5v4h4"></path>', '<path d="M9 12h6M9 15.5h6"></path>'],
+  bell: ['<path d="M12 3c-3 0-5 2.3-5 5.5V13l-1.5 3h13L17 13V8.5C17 5.3 15 3 12 3z"></path>', '<path d="M10 19a2 2 0 004 0"></path>'],
+  shield: ['<path d="M12 3l7 3v5.5c0 4.6-3 7.8-7 9.5-4-1.7-7-4.9-7-9.5V6z"></path>'],
+  building: ['<rect x="4" y="3" width="16" height="18"></rect>', '<path d="M8 7.5h2M14 7.5h2M8 11.5h2M14 11.5h2M8 15.5h2M14 15.5h2"></path>', '<path d="M10 21v-4h4v4"></path>']
+};
+
+function icon(name, className) {
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.6');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.innerHTML = (ICON_PATHS[name] || []).join('');
+  if (className) svg.setAttribute('class', className);
+  return svg;
+}
+
 function tableRow(labelText, valueNode) {
   const tr = document.createElement('tr');
   const th = el('th', 'case-table__label', labelText);
@@ -68,17 +96,33 @@ export function renderHome(page, locale) {
   const unit = label('statsUnit', locale);
   const statsGrid = el('div', 'home-stats');
   [
-    [label('statsTotal', locale), page.cases.length],
-    [statusLabel('協尋中', locale), counts['協尋中']],
-    [statusLabel('已尋獲', locale), counts['已尋獲']],
-    [statusLabel('已結案', locale), counts['已結案']]
-  ].forEach(([statLabel, value]) => {
+    [label('statsTotal', locale), page.cases.length, 'document'],
+    [statusLabel('協尋中', locale), counts['協尋中'], 'bell'],
+    [statusLabel('已尋獲', locale), counts['已尋獲'], 'heart'],
+    [statusLabel('已結案', locale), counts['已結案'], 'shield']
+  ].forEach(([statLabel, value, iconName]) => {
     const card = el('div', 'home-stats__card');
+    card.appendChild(icon(iconName, 'home-stats__icon'));
     card.appendChild(el('span', 'home-stats__value', String(value) + unit));
     card.appendChild(el('span', 'home-stats__label', statLabel));
     statsGrid.appendChild(card);
   });
   root.appendChild(statsGrid);
+
+  if (page.quickLinks) {
+    const quickTitle = el('h2', null, label('quickServicesTitle', locale));
+    root.appendChild(quickTitle);
+    const quickGrid = el('div', 'home-quicklinks');
+    page.quickLinks.forEach((q) => {
+      const a = document.createElement('a');
+      a.className = 'home-quicklinks__item';
+      a.href = q.href;
+      a.appendChild(icon(q.icon, 'home-quicklinks__icon'));
+      a.appendChild(el('span', null, label(q.labelKey, locale)));
+      quickGrid.appendChild(a);
+    });
+    root.appendChild(quickGrid);
+  }
 
   const controlsWrap = el('div', 'case-list__controls');
   const filterLabel = el('label', null, label('filterLabel', locale) + '　');
@@ -168,6 +212,27 @@ export function renderHome(page, locale) {
   buildRows(sortSelect.value);
   select.addEventListener('change', applyFilter);
   sortSelect.addEventListener('change', () => buildRows(sortSelect.value));
+
+  if (page.news) {
+    root.appendChild(el('h2', null, label('newsTitle', locale)));
+    const newsList = el('ul', 'home-news');
+    page.news.forEach((n) => {
+      const li = el('li', 'home-news__item');
+      li.appendChild(el('span', 'home-news__date', n.date));
+      li.appendChild(el('span', 'home-news__title', t(n.title, locale)));
+      newsList.appendChild(li);
+    });
+    root.appendChild(newsList);
+  }
+
+  if (page.partners) {
+    root.appendChild(el('h2', null, label('partnersTitle', locale)));
+    const partnerRow = el('div', 'home-partners');
+    page.partners.forEach((p) => {
+      partnerRow.appendChild(el('span', 'home-partners__badge', t(p, locale)));
+    });
+    root.appendChild(partnerRow);
+  }
 
   return root;
 }
@@ -625,10 +690,30 @@ export function renderAbout(page, locale) {
   root.appendChild(el('h2', null, t(page.introTitle, locale)));
   root.appendChild(el('p', null, t(page.introBody, locale)));
 
+  if (page.orgStats) {
+    root.appendChild(el('h2', null, label('orgStatsTitle', locale)));
+    const statsGrid = el('div', 'home-stats');
+    page.orgStats.forEach((s) => {
+      const card = el('div', 'home-stats__card');
+      card.appendChild(icon(s.icon, 'home-stats__icon'));
+      card.appendChild(el('span', 'home-stats__value', t(s.value, locale)));
+      card.appendChild(el('span', 'home-stats__label', t(s.label, locale)));
+      statsGrid.appendChild(card);
+    });
+    root.appendChild(statsGrid);
+  }
+
   root.appendChild(el('h2', null, t(page.servicesTitle, locale)));
   const list = el('ul', null);
   page.services.forEach((s) => list.appendChild(el('li', null, t(s, locale))));
   root.appendChild(list);
+
+  if (page.history) {
+    root.appendChild(el('h2', null, label('historyTitle', locale)));
+    const historyList = el('ul', null);
+    page.history.forEach((h) => historyList.appendChild(el('li', null, h.year + '　' + t(h.text, locale))));
+    root.appendChild(historyList);
+  }
 
   root.appendChild(el('h2', null, t(page.hoursTitle, locale)));
   root.appendChild(el('p', null, t(page.hoursBody, locale)));
