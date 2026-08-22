@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>隱私權政策｜社團法人臺灣失蹤兒少協尋關懷基金會</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="site-header">
+    <span class="site-header__name"></span>
+    <a class="site-header__donate" href="javascript:void(0)"></a>
+  </header>
+  <nav class="site-nav" id="site-nav"></nav>
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderPrivacy, homeCrumb } from './scripts/render.js';
+  import { LABELS } from './scripts/labels.js';
+  import { t } from './scripts/i18n.js';
+
+  const PAGE = {
+    title: { "zh-Hant": "隱私權政策", "zh-Hans": "隐私权政策", en: "Privacy Policy" },
+    body: [
+      { "zh-Hant": "本網站於協尋登記表單中蒐集之顯示名稱與相關文字內容，僅儲存於使用者本機裝置，不會上傳或外送至本會伺服器。", "zh-Hans": "本网站于协寻登记表单中收集之显示名称与相关文字内容，仅储存于使用者本机装置，不会上传或外送至本会服务器。", en: "The display name and related text collected via this site's registration form are stored only on the user's own device and are never uploaded or transmitted to this foundation's servers." },
+      { "zh-Hant": "本會依相關法規保存捐款人資料，僅於年度徵信公告中揭露必要欄位。", "zh-Hans": "本会依相关法规保存捐款人资料，仅于年度征信公告中揭露必要栏位。", en: "This foundation retains donor records in accordance with applicable regulations and discloses only the fields required in the annual donor disclosure." },
+      { "zh-Hant": "如對本政策有任何疑問，請透過「聯絡我們」頁面與本會聯繫。", "zh-Hans": "如对本政策有任何疑问，请透过「联络我们」页面与本会联系。", en: "If you have any questions about this policy, please contact us via the \"Contact\" page." }
+    ]
+  };
+
+  guard.enter({}, () => {
+    chrome.mount({ breadcrumb: [homeCrumb(store.get('locale')), t(LABELS.navPrivacy, store.get('locale'))] });
+    function render() {
+      document.getElementById('main').replaceChildren(renderPrivacy(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

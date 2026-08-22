@@ -1,12 +1,15 @@
 import { store } from './store.js';
 import { t } from './i18n.js';
+import { NOTEBOOK_UI } from './labels.js';
 
 let btnEl = null;
 let panelEl = null;
 let bodyEl = null;
 let backdropEl = null;
-let currentContent = null;
-let currentLocale = 'zh-Hant';
+
+function locale() {
+  return store.get('locale');
+}
 
 function allFacts() {
   return store.get('notebook') || [];
@@ -34,13 +37,13 @@ function renderBadge() {
 }
 
 function renderBody() {
-  if (!bodyEl || !currentContent) return;
+  if (!bodyEl) return;
   const facts = allFacts();
   bodyEl.innerHTML = '';
   if (facts.length === 0) {
     const p = document.createElement('p');
     p.className = 'notebook__empty';
-    p.textContent = t(currentContent.notebook.empty, currentLocale);
+    p.textContent = t(NOTEBOOK_UI.empty, locale());
     bodyEl.appendChild(p);
     return;
   }
@@ -49,7 +52,7 @@ function renderBody() {
   facts.forEach((f) => {
     const li = document.createElement('li');
     const a = document.createElement('a');
-    a.href = '#' + f.route;
+    a.href = f.route;
     a.textContent = f.text;
     a.addEventListener('click', close);
     li.appendChild(a);
@@ -69,21 +72,17 @@ function close() {
   panelEl.classList.remove('notebook__panel--open');
 }
 
-export function refreshText(content, locale) {
-  currentContent = content;
-  currentLocale = locale;
+export function refreshText() {
   if (!btnEl) return;
-  btnEl.querySelector('.notebook__label').textContent = t(content.notebook.buttonLabel, locale);
-  panelEl.querySelector('.notebook__title').textContent = t(content.notebook.title, locale);
-  panelEl.querySelector('.notebook__close').textContent = t(content.notebook.close, locale);
+  btnEl.querySelector('.notebook__label').textContent = t(NOTEBOOK_UI.buttonLabel, locale());
+  panelEl.querySelector('.notebook__title').textContent = t(NOTEBOOK_UI.title, locale());
+  panelEl.querySelector('.notebook__close').textContent = t(NOTEBOOK_UI.close, locale());
   if (panelEl.classList.contains('notebook__panel--open')) renderBody();
 }
 
-export function mount(content, locale) {
-  currentContent = content;
-  currentLocale = locale;
+export function mount() {
   if (btnEl) {
-    refreshText(content, locale);
+    refreshText();
     return;
   }
 
@@ -120,6 +119,6 @@ export function mount(content, locale) {
     if (e.key === 'Escape') close();
   });
 
-  refreshText(content, locale);
+  refreshText();
   renderBadge();
 }

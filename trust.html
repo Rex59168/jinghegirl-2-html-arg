@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>歷年徵信錄｜社團法人臺灣失蹤兒少協尋關懷基金會</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="site-header">
+    <span class="site-header__name"></span>
+    <a class="site-header__donate" href="javascript:void(0)"></a>
+  </header>
+  <nav class="site-nav" id="site-nav"></nav>
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderTrust, homeCrumb } from './scripts/render.js';
+  import { LABELS } from './scripts/labels.js';
+  import { t } from './scripts/i18n.js';
+  import * as flags from './scripts/flags.js';
+  import * as notebook from './scripts/notebook.js';
+
+  // Puzzle answers are stored as SHA-256 hashes of the normalized case id/name,
+  // never as plaintext — solving it requires the actual date/victim deduction,
+  // not a peek at page source.
+  const PAGE = {
+    title: { "zh-Hant": "歷年徵信錄", "zh-Hans": "历年征信录", en: "Historical Donor Disclosure" },
+    note: { "zh-Hant": "本會依規定公布捐款徵信，此頁彙整歷年紀錄。匿名捐款者僅列郵遞區號以利收據寄送。", "zh-Hans": "本会依规定公布捐款征信，此页汇整历年记录。匿名捐款者仅列邮递区号以利收据寄送。", en: "This foundation publishes donation disclosures as required; this page compiles records across years. Anonymous donors are listed only by postal code for receipt mailing purposes." },
+    rows: [
+      { date: "08/26", year: "2026", amount: "1,000", name: { "zh-Hant": "無名氏", "zh-Hans": "无名氏", en: "Anonymous" }, zip: { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", en: "[Hedong District postal code]" }, matchHashes: ["71a40ca3677a0637fdb7c01126c84877007bb0217fea8e785e8dc2f96d7c0092", "c63d81ff8ddad7e8e6d8258752cec8af1e1986dc71cf55ef2c04953470317e43"] },
+      { date: "08/14", year: "2025", amount: "1,000", name: { "zh-Hant": "無名氏", "zh-Hans": "无名氏", en: "Anonymous" }, zip: { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", en: "[Hedong District postal code]" }, matchHashes: ["89c11aee6aa38d7def3d6263c9a73ea57602c43aec97085ceba74c54d79d345e", "f7a6b41a1260e18572d3f683a98ec90250677fecd51574d339f32e2a493208b8"] },
+      { date: "09/03", year: "2022", amount: "1,000", name: { "zh-Hant": "無名氏", "zh-Hans": "无名氏", en: "Anonymous" }, zip: { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", en: "[Hedong District postal code]" }, matchHashes: ["563488987dcc01f09a73966aa34674e3aa7c9e2f8b2b94574ac62e1d3bc42b1e", "390a4bbb7c659c4b12951dc4e49a77f0b3dac957e0325afe685377b5e002ed57"] }
+    ],
+    puzzle: {
+      answerHeader: { "zh-Hant": "你覺得是誰", "zh-Hans": "你觉得是谁", en: "Your guess" },
+      prompt: { "zh-Hant": "如果你看得出哪一筆對應到哪個案子，填入案件編號或姓名，再核對。", "zh-Hans": "如果你看得出哪一笔对应到哪个案子，填入案件编号或姓名，再核对。", en: "If you can tell which entry lines up with which case, fill in the case number or name, then check." },
+      check: { "zh-Hant": "核對", "zh-Hans": "核对", en: "Check" },
+      incorrect: { "zh-Hant": "還沒對上。", "zh-Hans": "还没对上。", en: "Not matching yet." },
+      allCorrect: { "zh-Hant": "三筆都對上了。金額也一模一樣。這不是巧合。", "zh-Hans": "三笔都对上了。金额也一模一样。这不是巧合。", en: "All three match. The amount is identical too. This isn't a coincidence." }
+    }
+  };
+
+  const TRUST_SEEN_FACT = { "zh-Hant": "歷年徵信錄：三筆匿名捐款，金額都一樣，日期不同。", "zh-Hans": "历年征信录：三笔匿名捐款，金额都一样，日期不同。", en: "Historical donor disclosure: three anonymous donations, same amount, different dates." };
+
+  guard.enter({}, () => {
+    chrome.mount({ breadcrumb: [homeCrumb(store.get('locale')), t(LABELS.trustBreadcrumb, store.get('locale'))] });
+    flags.notePageSeen('page-trust');
+    notebook.addFact('trust-seen', t(TRUST_SEEN_FACT, store.get('locale')), 'trust.html');
+
+    function render() {
+      document.getElementById('main').replaceChildren(renderTrust(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

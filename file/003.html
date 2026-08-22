@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>003.txt</title>
+<base href="../">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+</div>
+
+<script type="module">
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderFileLines, appendUpLink } from './scripts/render.js';
+  import * as flags from './scripts/flags.js';
+  import { store } from './scripts/store.js';
+
+  guard.enter({}, () => {
+    chrome.mountBare();
+    flags.notePageSeen('file-003');
+    function render() {
+      document.getElementById('main').replaceChildren(appendUpLink(renderFileLines(['003.txt', '—']), store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

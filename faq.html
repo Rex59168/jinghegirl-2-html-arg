@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>常見問題｜社團法人臺灣失蹤兒少協尋關懷基金會</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="site-header">
+    <span class="site-header__name"></span>
+    <a class="site-header__donate" href="javascript:void(0)"></a>
+  </header>
+  <nav class="site-nav" id="site-nav"></nav>
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderFaq, homeCrumb } from './scripts/render.js';
+  import { LABELS } from './scripts/labels.js';
+  import { t } from './scripts/i18n.js';
+
+  const PAGE = {
+    title: { "zh-Hant": "常見問題", "zh-Hans": "常见问题", en: "Frequently Asked Questions" },
+    items: [
+      {
+        q: { "zh-Hant": "案件狀態「協尋中」「已尋獲」「已結案」代表什麼？", "zh-Hans": "案件状态「协寻中」「已寻获」「已结案」代表什么？", en: "What do the case statuses \"Searching,\" \"Found,\" and \"Closed\" mean?" },
+        a: { "zh-Hant": "「協尋中」指案件已受理，仍在協尋階段。「已尋獲」指協尋對象已由本會或相關單位尋獲，後續處理視個案情況而定。「已結案」指案件相關程序已完成，不再列入積極協尋名單。", "zh-Hans": "「协寻中」指案件已受理，仍在协寻阶段。「已寻获」指协寻对象已由本会或相关单位寻获，后续处理视个案情况而定。「已结案」指案件相关程序已完成，不再列入积极协寻名单。", en: "\"Searching\" means the case has been accepted and search is ongoing. \"Found\" means the subject has been located by this foundation or a related agency; subsequent handling depends on the individual case. \"Closed\" means all related procedures have been completed and the case is no longer on the active search list." }
+      },
+      {
+        q: { "zh-Hant": "如何協助協尋？", "zh-Hans": "如何协助协寻？", en: "How can I help with a search?" },
+        a: { "zh-Hant": "如發現疑似協尋名單中人士，請撥打 110 或 113，或聯繫本會（見「聯絡我們」）。本網站僅提供資料查詢，不提供直接救援服務。", "zh-Hans": "如发现疑似协寻名单中人士，请拨打 110 或 113，或联系本会（见「联络我们」）。本网站仅提供资料查询，不提供直接救援服务。", en: "If you believe you have spotted someone on the search list, please call the police or the relevant hotline, or contact this foundation (see \"Contact\"). This website provides information lookup only and does not offer direct rescue services." }
+      },
+      {
+        q: { "zh-Hant": "案件資料多久更新一次？", "zh-Hans": "案件资料多久更新一次？", en: "How often is case data updated?" },
+        a: { "zh-Hant": "案件狀態依機關通報與本會查證進度不定期更新，恕不提供個別案件之進度查詢客服服務。", "zh-Hans": "案件状态依机关通报与本会查证进度不定期更新，恕不提供个别案件之进度查询客服服务。", en: "Case statuses are updated irregularly, based on agency notifications and this foundation's verification progress. We do not offer a customer-service line for individual case-progress inquiries." }
+      },
+      {
+        q: { "zh-Hant": "我可以查詢已結案案件的詳細資料嗎？", "zh-Hans": "我可以查询已结案案件的详细资料吗？", en: "Can I request details on a closed case?" },
+        a: { "zh-Hant": "已結案案件之詳細資料依規定僅保留於本會內部檔案，網站僅公開基本欄位。", "zh-Hans": "已结案案件之详细资料依规定仅保留于本会内部档案，网站仅公开基本栏位。", en: "Detailed records for closed cases are retained only in this foundation's internal files as required; the website discloses only basic fields." }
+      },
+      {
+        q: { "zh-Hant": "我要如何捐款？", "zh-Hans": "我要如何捐款？", en: "How do I donate?" },
+        a: { "zh-Hant": "請點擊網站上方「捐款支持我們」按鈕。本會依法公布年度捐款徵信，詳見「歷年徵信錄」。", "zh-Hans": "请点击网站上方「捐款支持我们」按钮。本会依法公布年度捐款征信，详见「历年征信录」。", en: "Please use the \"Support Us — Donate\" button at the top of the site. This foundation publishes donation disclosures as required by law; see \"Historical Donor Disclosure.\"" }
+      }
+    ]
+  };
+
+  guard.enter({}, () => {
+    chrome.mount({ breadcrumb: [homeCrumb(store.get('locale')), t(LABELS.navFaq, store.get('locale'))] });
+    function render() {
+      document.getElementById('main').replaceChildren(renderFaq(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

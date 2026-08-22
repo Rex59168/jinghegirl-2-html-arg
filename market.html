@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>@rec_1029｜二手賣場快照</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderMarket } from './scripts/render.js';
+  import * as flags from './scripts/flags.js';
+  import * as notebook from './scripts/notebook.js';
+  import { t } from './scripts/i18n.js';
+
+  const PAGE = {
+    seller: "@rec_1029",
+    note: { "zh-Hant": "賣場快照。賣家回覆數 0。", "zh-Hans": "卖场快照。卖家回复数 0。", en: "Storefront snapshot. Seller replies: 0." },
+    listings: [
+      { title: { "zh-Hant": "電風扇", "zh-Hans": "电风扇", en: "Electric fan" }, posted: "2023/07", deal: { "zh-Hant": "僅面交", "zh-Hans": "仅面交", en: "In-person pickup only" }, spot: { "zh-Hant": "河東區　同一間超商", "zh-Hans": "河东区　同一间超商", en: "Hedong District — same convenience store" } },
+      { title: { "zh-Hant": "書櫃", "zh-Hans": "书柜", en: "Bookshelf" }, posted: "2024/01", deal: { "zh-Hant": "僅面交", "zh-Hans": "仅面交", en: "In-person pickup only" }, spot: { "zh-Hant": "河東區　同一間超商", "zh-Hans": "河东区　同一间超商", en: "Hedong District — same convenience store" } },
+      { title: { "zh-Hant": "腳踏車", "zh-Hans": "脚踏车", en: "Bicycle" }, posted: "2025/04", deal: { "zh-Hant": "僅面交", "zh-Hans": "仅面交", en: "In-person pickup only" }, spot: { "zh-Hant": "河東區　同一間超商", "zh-Hans": "河东区　同一间超商", en: "Hedong District — same convenience store" } },
+      { title: "「#188」", posted: "2023/08/14", deal: { "zh-Hant": "面交・可議價", "zh-Hans": "面交・可议价", en: "In-person, negotiable" }, spot: { "zh-Hant": "河東區　同一間超商", "zh-Hans": "河东区　同一间超商", en: "Hedong District — same convenience store" }, comments: 47, replies: 0 }
+    ],
+    windowNote: { "zh-Hant": "腳踏車那張，商品只佔畫面三分之一。右上角是窗。窗外有護岸，和一根橋墩。橋墩上有編號。", "zh-Hans": "脚踏车那张，商品只占画面三分之一。右上角是窗。窗外有护岸，和一根桥墩。桥墩上有编号。", en: "In the bicycle photo, the item fills only a third of the frame. The upper right shows a window. Outside it: a riverbank embankment, and a bridge pier. The pier has a number on it." }
+  };
+
+  const MARKET_SEEN_FACT = { "zh-Hant": "二手賣場 @rec_1029：面交地點三年沒換過，同一間超商。", "zh-Hans": "二手卖场 @rec_1029：面交地点三年没换过，同一间超商。", en: "Secondhand seller @rec_1029: the meetup spot hasn't changed in three years — same convenience store." };
+
+  guard.enter({}, () => {
+    chrome.mountBare();
+    flags.notePageSeen('page-market');
+    notebook.addFact('market-seen', t(MARKET_SEEN_FACT, store.get('locale')), 'market.html');
+    function render() {
+      document.getElementById('main').replaceChildren(renderMarket(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

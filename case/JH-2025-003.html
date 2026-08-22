@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<base href="../">
+<title>JH-2025-003｜尋人資料庫｜社團法人臺灣失蹤兒少協尋關懷基金會</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="site-header">
+    <span class="site-header__name"></span>
+    <a class="site-header__donate" href="javascript:void(0)"></a>
+  </header>
+  <nav class="site-nav" id="site-nav"></nav>
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderCaseDetail, homeCrumb } from './scripts/render.js';
+  import { LABELS, STATUS_VALUES } from './scripts/labels.js';
+  import { t } from './scripts/i18n.js';
+  import * as flags from './scripts/flags.js';
+  import * as notebook from './scripts/notebook.js';
+
+  const CASE = {
+    id: "JH-2025-003",
+    name: "林晞",
+    age: 17,
+    missing: "2025/08/14",
+    lastSeen: { "zh-Hant": "靖河市　文昌站", "zh-Hans": "靖河市　文昌站", en: "Jinghe City — Wenchang Station" },
+    status: "協尋中",
+    statusAfterMidUpdate: "已尋獲",
+    recovery: {
+      date: "2026/08/17",
+      place: { "zh-Hant": "靖河下游", "zh-Hans": "靖河下游", en: "Downstream of the Jing River" },
+      condition: { "zh-Hant": "高度腐敗，長期浸泡，另有魚類啃食痕", "zh-Hans": "高度腐败，长期浸泡，另有鱼类啃食痕", en: "Severely decomposed; long submersion; some fish-scavenging marks" },
+      cause: { "zh-Hant": "無法判定", "zh-Hans": "无法判定", en: "Undetermined" },
+      timeOfDeath: { "zh-Hant": "無法判定", "zh-Hans": "无法判定", en: "Undetermined" },
+      belongings: { "zh-Hant": "無", "zh-Hans": "无", en: "None" }
+    },
+    summary: { "zh-Hant": "本案由本會於 2025 年 11 月接手建檔。", "zh-Hans": "本案由本会于 2025 年 11 月接手建档。", en: "This case was taken over and filed by this foundation in November 2025." },
+    photoNote: { "zh-Hant": "證件照掃描，畫質不佳", "zh-Hans": "证件照扫描，画质不佳", en: "Scanned ID photo, poor quality" },
+    links: [
+      { label: { "zh-Hant": "原始協尋頁面（已停止更新）", "zh-Hans": "原始协寻页面（已停止更新）", en: "Original search page (no longer updated)" }, href: "legacy.html" }
+    ],
+    fileId: "012"
+  };
+
+  guard.enter({}, () => {
+    chrome.mount({ breadcrumb: [homeCrumb(store.get('locale')), t(LABELS.breadcrumbDb, store.get('locale')), CASE.id] });
+
+    function render() {
+      document.getElementById('main').replaceChildren(renderCaseDetail(CASE, store.get('locale')));
+      const statusKey = flags.isMidUpdateFired() ? CASE.statusAfterMidUpdate : CASE.status;
+      notebook.addFact('case-' + CASE.id, CASE.name + '（' + CASE.id + '）　' + CASE.missing + '　' + t(STATUS_VALUES[statusKey], store.get('locale')), 'case/' + CASE.id + '.html');
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

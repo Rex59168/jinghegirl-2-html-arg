@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>關於我們｜社團法人臺灣失蹤兒少協尋關懷基金會</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="site-header">
+    <span class="site-header__name"></span>
+    <a class="site-header__donate" href="javascript:void(0)"></a>
+  </header>
+  <nav class="site-nav" id="site-nav"></nav>
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderAbout, homeCrumb } from './scripts/render.js';
+  import { LABELS } from './scripts/labels.js';
+  import { t } from './scripts/i18n.js';
+
+  const PAGE = {
+    title: { "zh-Hant": "關於我們", "zh-Hans": "关于我们", en: "About Us" },
+    introTitle: { "zh-Hant": "本會簡介", "zh-Hans": "本会简介", en: "Foundation Overview" },
+    introBody: { "zh-Hant": "社團法人臺灣失蹤兒少協尋關懷基金會成立於民國一百年，由數個地方協尋團體整合而成，致力於協助失蹤兒童及少年家庭進行協尋登記、資料建置與後續關懷服務。", "zh-Hans": "社团法人台湾失踪儿少协寻关怀基金会成立于民国一百年，由数个地方协寻团体整合而成，致力于协助失踪儿童及少年家庭进行协寻登记、资料建置与后续关怀服务。", en: "The Taiwan Missing Children & Youth Search and Care Foundation was established in ROC year 100 (2011), formed from the merger of several regional search groups. It assists families of missing children and youth with case registration, record-keeping, and follow-up care." },
+    servicesTitle: { "zh-Hant": "服務項目", "zh-Hans": "服务项目", en: "Services" },
+    services: [
+      { "zh-Hant": "協尋案件受理與建檔", "zh-Hans": "协寻案件受理与建档", en: "Search case intake and filing" },
+      { "zh-Hant": "案件狀態更新公告", "zh-Hans": "案件状态更新公告", en: "Case status update announcements" },
+      { "zh-Hant": "家屬關懷服務轉介", "zh-Hans": "家属关怀服务转介", en: "Referral for family support services" },
+      { "zh-Hant": "年度捐款徵信公告", "zh-Hans": "年度捐款征信公告", en: "Annual donation disclosure" }
+    ],
+    hoursTitle: { "zh-Hant": "服務時間", "zh-Hans": "服务时间", en: "Office Hours" },
+    hoursBody: { "zh-Hant": "週一至週五 09:00–17:00（國定假日休館）。本會恕不提供臨櫃服務，如需申請協尋登記請使用線上表單。", "zh-Hans": "周一至周五 09:00–17:00（国定假日休馆）。本会恕不提供临柜服务，如需申请协寻登记请使用线上表单。", en: "Monday–Friday, 09:00–17:00 (closed on national holidays). This foundation does not offer in-person counter service; please use the online form to register a search case." }
+  };
+
+  guard.enter({}, () => {
+    chrome.mount({ breadcrumb: [homeCrumb(store.get('locale')), t(LABELS.navAbout, store.get('locale'))] });
+    function render() {
+      document.getElementById('main').replaceChildren(renderAbout(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

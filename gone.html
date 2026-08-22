@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>尋人資料庫　目前無法使用</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+</div>
+
+<script type="module">
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderGone } from './scripts/render.js';
+  import { store } from './scripts/store.js';
+
+  const PAGE = {
+    donateLabel: { "zh-Hant": "捐款支持我們", "zh-Hans": "捐款支持我们", en: "Support Us — Donate" },
+    lines: [
+      { "zh-Hant": "社團法人臺灣失蹤兒少協尋關懷基金會", "zh-Hans": "社团法人台湾失踪儿少协寻关怀基金会", en: "Taiwan Missing Children & Youth Search and Care Foundation" },
+      { "zh-Hant": "尋人資料庫　目前無法使用", "zh-Hans": "寻人数据库　目前无法使用", en: "Missing Persons Database — currently unavailable" }
+    ]
+  };
+
+  guard.enter({ isGone: true }, () => {
+    chrome.mountBare();
+    function render() {
+      document.getElementById('main').replaceChildren(renderGone(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

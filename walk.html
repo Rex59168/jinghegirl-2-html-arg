@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>016</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+</div>
+
+<script type="module">
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderWalk } from './scripts/endgame.js';
+  import { store } from './scripts/store.js';
+
+  const WALK = {
+    steps: [
+      { "zh-Hant": "徵信錄　→　一個行政區", "zh-Hans": "征信录　→　一个行政区", en: "Donor disclosure → a district" },
+      { "zh-Hant": "存檔頁　→　一個里", "zh-Hans": "存档页　→　一个里", en: "Archived page → a neighborhood" },
+      { "zh-Hant": "面交點　→　幾條街", "zh-Hans": "面交点　→　几条街", en: "Meetup spot → a few streets" },
+      { "zh-Hant": "窗　　　→　樓層、朝向", "zh-Hans": "窗　　　→　楼层、朝向", en: "Window → floor and orientation" }
+    ],
+    lines: [
+      { "zh-Hant": "巷子。機車。鐵門。", "zh-Hans": "巷子。机车。铁门。", en: "The alley. A scooter. An iron gate." },
+      { "zh-Hant": "樓梯間的聲控燈，走三階才亮。", "zh-Hans": "楼梯间的声控灯，走三阶才亮。", en: "The stairwell's sound-activated light — it takes three steps before it turns on." },
+      { "zh-Hant": "五樓。", "zh-Hans": "五楼。", en: "Fifth floor." }
+    ],
+    question: { "zh-Hant": "你要殺了他嗎？", "zh-Hans": "你要杀了他吗？", en: "Are you going to kill him?" },
+    yes: { "zh-Hant": "是", "zh-Hans": "是", en: "Yes" },
+    no: { "zh-Hant": "否", "zh-Hans": "否", en: "No" },
+    refusedText: { "zh-Hant": "你已經走到這裡了。", "zh-Hans": "你已经走到这里了。", en: "You've already come this far." },
+    stampLabel: { "zh-Hant": "016.txt　建檔　", "zh-Hans": "016.txt　建档　", en: "016.txt　filed　" }
+  };
+
+  guard.enter({ requireWalkUnlocked: true }, () => {
+    chrome.mountBare();
+    renderWalk(WALK, store.get('locale'), document.getElementById('main'));
+  });
+</script>
+</body>
+</html>

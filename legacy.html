@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>協尋　林晞</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+</div>
+
+<script type="module">
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderLegacy } from './scripts/render.js';
+  import { store } from './scripts/store.js';
+
+  const PAGE = {
+    title: { "zh-Hant": "協尋　林晞", "zh-Hans": "协寻　林晞", en: "Searching for Lin Xi" },
+    author: "周妤",
+    note: { "zh-Hant": "（已停止更新）", "zh-Hans": "（已停止更新）", en: "(No longer updated)" },
+    line: { "zh-Hant": "拜託，如果有人看到晞，拜託跟我說一聲。", "zh-Hans": "拜托，如果有人看到晞，拜托跟我说一声。", en: "Please — if anyone has seen Xi, please let me know." }
+  };
+
+  guard.enter({}, () => {
+    chrome.mountBare();
+    function render() {
+      document.getElementById('main').replaceChildren(renderLegacy(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

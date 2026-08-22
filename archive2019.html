@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>感謝名單（2019 年版）</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderArchive2019 } from './scripts/render.js';
+  import * as flags from './scripts/flags.js';
+  import * as notebook from './scripts/notebook.js';
+  import { t } from './scripts/i18n.js';
+
+  const PAGE = {
+    title: { "zh-Hant": "感謝名單（2019 年版）", "zh-Hans": "感谢名单（2019 年版）", en: "Thank-You List (2019 Version)" },
+    note: { "zh-Hant": "本頁為 2019 年網站存檔。本會自 2020 年起改採匿名徵信。", "zh-Hans": "本页为 2019 年网站存档。本会自 2020 年起改采匿名征信。", en: "This page is a 2019 site archive. Since 2020, this foundation has used anonymous disclosure." },
+    row: { name: { "zh-Hant": "○先生", "zh-Hans": "○先生", en: "Mr. ○" }, district: { "zh-Hant": "河東區　「某某里」", "zh-Hans": "河东区　「某某里」", en: "Hedong District — [a certain neighborhood]" } }
+  };
+
+  const ARCHIVE_SEEN_FACT = { "zh-Hant": "2019 年網站存檔：捐款人當年還沒匿名，留了姓氏跟里別。", "zh-Hans": "2019年网站存档：捐款人当年还没匿名，留了姓氏跟里别。", en: "2019 site archive: donors weren't anonymous back then — a surname and neighborhood are on record." };
+
+  guard.enter({}, () => {
+    chrome.mountBare();
+    flags.notePageSeen('page-archive2019');
+    notebook.addFact('archive-seen', t(ARCHIVE_SEEN_FACT, store.get('locale')), 'archive2019.html');
+    function render() {
+      document.getElementById('main').replaceChildren(renderArchive2019(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>捐款支持我們｜社團法人臺灣失蹤兒少協尋關懷基金會</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="site-header">
+    <span class="site-header__name"></span>
+    <a class="site-header__donate" href="javascript:void(0)"></a>
+  </header>
+  <nav class="site-nav" id="site-nav"></nav>
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderDonate, homeCrumb } from './scripts/render.js';
+  import { ORG_CHROME } from './scripts/labels.js';
+  import { t } from './scripts/i18n.js';
+
+  const PAGE = {
+    title: { "zh-Hant": "捐款支持我們", "zh-Hans": "捐款支持我们", en: "Support Us — Donate" },
+    intro: { "zh-Hant": "本會之協尋案件建檔、資料查證與家屬關懷服務，主要仰賴社會大眾捐款支持。您的捐款將用於案件行政作業、協尋啟事印製與寄送，以及家屬關懷轉介等用途。", "zh-Hans": "本会之协寻案件建档、资料查证与家属关怀服务，主要仰赖社会大众捐款支持。您的捐款将用于案件行政作业、协寻启事印制与寄送，以及家属关怀转介等用途。", en: "This foundation's case filing, verification, and family support services rely primarily on public donations. Contributions are used for case administration, printing and mailing of search notices, and referrals for family support services." },
+    bankTitle: { "zh-Hant": "匯款捐款", "zh-Hans": "汇款捐款", en: "Bank Transfer" },
+    bankLines: [
+      { "zh-Hant": "戶名：社團法人臺灣失蹤兒少協尋關懷基金會", "zh-Hans": "户名：社团法人台湾失踪儿少协寻关怀基金会", en: "Account Name: Taiwan Missing Children & Youth Search and Care Foundation" },
+      { "zh-Hant": "銀行、帳號：請撥打協尋專線索取，恕不於網站公開", "zh-Hans": "银行、账号：请拨打协寻专线索取，恕不于网站公开", en: "Bank & Account Number: available by phone via our hotline; not published on this site" }
+    ],
+    receiptTitle: { "zh-Hant": "捐款收據", "zh-Hans": "捐款收据", en: "Donation Receipts" },
+    receiptBody: { "zh-Hant": "如需開立收據作為列舉扣除額申報使用，請於匯款後主動聯繫本會，並提供匯款資訊與聯絡方式，本會將於十四個工作天內回覆。", "zh-Hans": "如需开立收据作为列举扣除额申报使用，请于汇款后主动联系本会，并提供汇款资讯与联络方式，本会将于十四个工作天内回复。", en: "If you require a receipt for itemized tax-deduction purposes, please contact us after transferring your donation with the transfer details and your contact information. We will respond within fourteen business days." },
+    disclosureTitle: { "zh-Hant": "捐款徵信", "zh-Hans": "捐款征信", en: "Donation Disclosure" },
+    disclosureBody: { "zh-Hant": "本會依規定於「歷年徵信錄」公布年度捐款紀錄。捐款人如不希望姓名公開，請於聯繫時告知，本會將以匿名方式處理，僅公布必要欄位。", "zh-Hans": "本会依规定于「历年征信录」公布年度捐款纪录。捐款人如不希望姓名公开，请于联系时告知，本会将以匿名方式处理，仅公布必要栏位。", en: "This foundation publishes annual donation records in the \"Historical Donor Disclosure\" as required. Donors who prefer not to have their name published may inform us when contacting the foundation, and we will list the donation anonymously, disclosing only the required fields." }
+  };
+
+  guard.enter({}, () => {
+    chrome.mount({ breadcrumb: [homeCrumb(store.get('locale')), t(ORG_CHROME.donate, store.get('locale'))] });
+    function render() {
+      document.getElementById('main').replaceChildren(renderDonate(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

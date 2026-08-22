@@ -1,7 +1,7 @@
 import { store } from './store.js';
 import { t } from './i18n.js';
 import * as flags from './flags.js';
-import { navigate } from './router.js';
+import { LABELS } from './labels.js';
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -10,7 +10,7 @@ function el(tag, className, text) {
   return node;
 }
 
-export function renderWalk(content, locale, container) {
+export function renderWalk(walk, locale, container) {
   container.innerHTML = '';
   const root = el('div', 'walk');
   container.appendChild(root);
@@ -23,13 +23,13 @@ export function renderWalk(content, locale, container) {
   audioHinge.preload = 'auto';
   let muted = false;
 
-  const muteBtn = el('button', 'walk__mute', t(content.labels.mute, locale));
+  const muteBtn = el('button', 'walk__mute', t(LABELS.mute, locale));
   muteBtn.type = 'button';
   muteBtn.addEventListener('click', () => {
     muted = !muted;
     audioKey.muted = muted;
     audioHinge.muted = muted;
-    muteBtn.textContent = t(content.labels[muted ? 'unmute' : 'mute'], locale);
+    muteBtn.textContent = t(LABELS[muted ? 'unmute' : 'mute'], locale);
   });
   document.body.appendChild(muteBtn);
 
@@ -45,16 +45,14 @@ export function renderWalk(content, locale, container) {
   function cleanup() {
     muteBtn.remove();
     document.querySelectorAll('.endgame-black, .endgame-red').forEach((n) => n.remove());
-    window.removeEventListener('hashchange', cleanup);
   }
-  window.addEventListener('hashchange', cleanup, { once: true });
 
   function clearRoot() {
     root.innerHTML = '';
   }
 
   function continueButton(onClick) {
-    const btn = el('button', 'choice__btn', t(content.labels.continue, locale));
+    const btn = el('button', 'choice__btn', t(LABELS.continue, locale));
     btn.type = 'button';
     btn.addEventListener('click', onClick);
     return btn;
@@ -67,7 +65,7 @@ export function renderWalk(content, locale, container) {
 
   function runStep() {
     if (step >= 0 && step <= 3) {
-      renderIntroStep(t(content.walk.steps[step], locale));
+      renderIntroStep(t(walk.steps[step], locale));
     } else if (step === 4) {
       renderWalkLines();
     } else if (step === 5) {
@@ -87,7 +85,7 @@ export function renderWalk(content, locale, container) {
 
   function renderWalkLines() {
     clearRoot();
-    const lines = content.walk.lines.map((l) => t(l, locale));
+    const lines = walk.lines.map((l) => t(l, locale));
     const nodes = lines.map((text) => {
       const p = el('p', 'walk__line', text);
       p.style.opacity = '0';
@@ -106,19 +104,19 @@ export function renderWalk(content, locale, container) {
 
   function renderChoice() {
     clearRoot();
-    root.appendChild(el('p', 'walk__question', t(content.walk.question, locale)));
+    root.appendChild(el('p', 'walk__question', t(walk.question, locale)));
     const choiceWrap = el('div', 'choice');
     root.appendChild(choiceWrap);
 
     let regrowTimer = null;
     let revertTimer = null;
 
-    const yesBtn = el('button', 'choice__btn', t(content.walk.yes, locale));
+    const yesBtn = el('button', 'choice__btn', t(walk.yes, locale));
     yesBtn.type = 'button';
     yesBtn.dataset.state = 'yes';
     choiceWrap.appendChild(yesBtn);
 
-    const noBtn = el('button', 'choice__btn', t(content.walk.no, locale));
+    const noBtn = el('button', 'choice__btn', t(walk.no, locale));
     noBtn.type = 'button';
     noBtn.dataset.state = 'no';
     choiceWrap.appendChild(noBtn);
@@ -140,7 +138,7 @@ export function renderWalk(content, locale, container) {
         store.set('refusedCount', 1);
         btn.remove();
         regrowTimer = setTimeout(() => {
-          const regrown = el('button', 'choice__btn', t(content.walk.no, locale));
+          const regrown = el('button', 'choice__btn', t(walk.no, locale));
           regrown.type = 'button';
           regrown.dataset.state = 'no2';
           regrown.addEventListener('click', handleClick);
@@ -153,10 +151,10 @@ export function renderWalk(content, locale, container) {
         store.set('refusedCount', 2);
         btn.dataset.state = 'locked';
         btn.disabled = true;
-        btn.textContent = t(content.walk.refusedText, locale);
+        btn.textContent = t(walk.refusedText, locale);
         revertTimer = setTimeout(() => {
           btn.disabled = false;
-          btn.textContent = t(content.walk.yes, locale);
+          btn.textContent = t(walk.yes, locale);
           btn.dataset.state = 'yes';
         }, 3000);
         return;
@@ -204,7 +202,7 @@ export function renderWalk(content, locale, container) {
       const y = today.getFullYear();
       const m = String(today.getMonth() + 1).padStart(2, '0');
       const d = String(today.getDate()).padStart(2, '0');
-      const stamp = el('p', 'endgame-red__stamp', t(content.endgame.stampLabel, locale) + `${y}/${m}/${d}`);
+      const stamp = el('p', 'endgame-red__stamp', t(walk.stampLabel, locale) + `${y}/${m}/${d}`);
       stamp.style.opacity = '0';
       overlay.appendChild(stamp);
       requestAnimationFrame(() => {
@@ -215,7 +213,7 @@ export function renderWalk(content, locale, container) {
     setTimeout(() => {
       flags.markFinished();
       cleanup();
-      navigate('/gone');
+      location.href = 'gone.html';
     }, 5000);
   }
 

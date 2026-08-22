@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>015.txt</title>
+<base href="../">
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+</div>
+
+<script type="module">
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderFile015 } from './scripts/render.js';
+  import * as flags from './scripts/flags.js';
+  import { store } from './scripts/store.js';
+
+  const DATA = { name: "陳語安", created: "2026/08/26 06:52" };
+
+  const CHATLOG = {
+    recoveredFrom: { "zh-Hant": "雲端備份，2026/09/04 取得", "zh-Hans": "云端备份，2026/09/04 取得", en: "Cloud backup, retrieved 2026/09/04" },
+    messages: [
+      { t: "06:12", who: "戴筠", text: { "zh-Hant": "我們已經到教室了，你怎麼還沒來", "zh-Hans": "我们已经到教室了，你怎么还没来", en: "We're already in the classroom, why aren't you here yet" }, attachment: { "zh-Hant": "教室照片（截圖）", "zh-Hans": "教室照片（截图）", en: "Classroom photo (screenshot)" } },
+      { t: "06:14", who: "陳語安", text: { "zh-Hant": "？？不是禮拜五嗎", "zh-Hans": "？？不是礼拜五吗", en: "?? Isn't it Friday?" } },
+      { t: "06:14", who: "戴筠", text: { "zh-Hant": "改了啊 昨天發的公告", "zh-Hans": "改了啊 昨天发的公告", en: "It got changed. The notice went out yesterday" } },
+      { t: "06:15", who: "黃品彤", text: { "zh-Hant": "你沒看群組喔", "zh-Hans": "你没看群组喔", en: "You didn't check the group chat?" } },
+      { t: "06:16", who: "陳語安", text: { "zh-Hant": "幹", "zh-Hans": "干", en: "Fuck." } },
+      { t: "07:14", who: "陳語安", text: { "zh-Hant": "", "zh-Hans": "", en: "" }, attachment: { "zh-Hant": "校門照片（鎖鏈、鐵門、空的操場）", "zh-Hans": "校门照片（锁链、铁门、空的操场）", en: "Photo of the school gate (chained, locked gate, empty field)" } },
+      { t: "07:15", who: "廖恩瑜", text: { "zh-Hant": "[貼圖]", "zh-Hans": "[贴图]", en: "[Sticker]" } },
+      { t: "07:15", who: "黃品彤", text: { "zh-Hant": "不是吧", "zh-Hans": "不是吧", en: "No way" } },
+      { t: "07:17", who: "戴筠", text: { "zh-Hant": "她真的去了", "zh-Hans": "她真的去了", en: "She actually went" } },
+      { t: "07:19", who: "廖恩瑜", text: { "zh-Hant": "[貼圖]", "zh-Hans": "[贴图]", en: "[Sticker]" } },
+      { t: "07:22", who: "黃品彤", text: { "zh-Hant": "[貼圖]", "zh-Hans": "[贴图]", en: "[Sticker]" } },
+      { t: "07:25", who: "廖恩瑜", text: { "zh-Hant": "欸她怎麼沒回", "zh-Hans": "欸她怎么没回", en: "Hey why isn't she replying" } },
+      { t: "07:31", who: "黃品彤", text: { "zh-Hant": "語安？", "zh-Hans": "语安？", en: "Yu-An?" } }
+    ],
+    footer: { "zh-Hant": "07:31 之後無新訊息。", "zh-Hans": "07:31 之后无新讯息。", en: "No new messages after 07:31." }
+  };
+
+  const SCHOOL = {
+    posted: "2026/08/19",
+    text: { "zh-Hant": "本校 115 學年度返校日訂於 08/28（五）上午 8:00，請同學準時到校。", "zh-Hans": "本校 115 学年度返校日订于 08/28（五）上午 8:00，请同学准时到校。", en: "The school's 115th academic-year return day is scheduled for 08/28 (Friday) at 8:00 AM. Please arrive on time." }
+  };
+
+  guard.enter({}, () => {
+    chrome.mountBare();
+    flags.notePageSeen('file-015');
+    function render() {
+      document.getElementById('main').replaceChildren(renderFile015(DATA, CHATLOG, SCHOOL, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

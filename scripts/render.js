@@ -1,10 +1,10 @@
 import { store } from './store.js';
 import { t } from './i18n.js';
 import * as flags from './flags.js';
-import * as notebook from './notebook.js';
+import { LABELS, STATUS_VALUES } from './labels.js';
+import { sha256Hex } from './hash.js';
 
 const STATUS_CLASS = { 協尋中: 'searching', 已尋獲: 'found', 已結案: 'closed' };
-const CASE_FILE_MAP = { 'JH-2022-002': '007', 'JH-2025-003': '012', 'JH-2026-004': '015' };
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -13,33 +13,23 @@ function el(tag, className, text) {
   return node;
 }
 
-function link(text, route) {
+function link(text, href) {
   const a = document.createElement('a');
-  a.href = '#' + route;
+  a.href = href;
   a.textContent = text;
   return a;
-}
-
-function findCase(content, id) {
-  return content.cases.find((c) => c.id === id);
 }
 
 function normalizeAnswer(s) {
   return String(s || '').trim().toUpperCase().replace(/[-\s]/g, '');
 }
 
-function caseMatchesAnswer(c, answer) {
-  const norm = normalizeAnswer(answer);
-  if (!norm || !c) return false;
-  return normalizeAnswer(c.name) === norm || normalizeAnswer(c.id) === norm;
+function label(key, locale) {
+  return t(LABELS[key], locale);
 }
 
-function statusLabel(content, key, locale) {
-  return t(content.statusValues[key], locale);
-}
-
-function labelOf(content, key, locale) {
-  return t(content.labels[key], locale);
+function statusLabel(key, locale) {
+  return t(STATUS_VALUES[key], locale);
 }
 
 function tableRow(labelText, valueNode) {
@@ -53,51 +43,50 @@ function tableRow(labelText, valueNode) {
   return tr;
 }
 
-export function breadcrumbHome(content, locale) {
-  return labelOf(content, 'home', locale);
+export function homeCrumb(locale) {
+  return label('home', locale);
 }
 
-export function renderHome(content, locale) {
+export function renderHome(page, locale) {
   const root = el('div');
 
-  root.appendChild(el('p', 'note-block', t(content.org.homeIntro, locale)));
+  root.appendChild(el('p', 'note-block', t(page.homeIntro, locale)));
 
   if (flags.isMidUpdateFired()) {
     const card = el('div', 'announcement');
-    card.appendChild(el('p', 'announcement__date', content.announcement.date));
-    card.appendChild(el('h2', 'announcement__title', t(content.announcement.title, locale)));
-    card.appendChild(el('p', 'announcement__body', t(content.announcement.body, locale)));
+    card.appendChild(el('p', 'announcement__date', page.announcement.date));
+    card.appendChild(el('h2', 'announcement__title', t(page.announcement.title, locale)));
+    card.appendChild(el('p', 'announcement__body', t(page.announcement.body, locale)));
     root.appendChild(card);
-    notebook.addFact('mid-update', t(content.notebookFacts.midUpdate, locale), '/');
   }
 
   const statusKeyOf = (c) => (c.id === 'JH-2025-003' && flags.isMidUpdateFired() ? c.statusAfterMidUpdate : c.status);
 
   const counts = { 協尋中: 0, 已尋獲: 0, 已結案: 0 };
-  content.cases.forEach((c) => {
+  page.cases.forEach((c) => {
     counts[statusKeyOf(c)] = (counts[statusKeyOf(c)] || 0) + 1;
   });
   const statsLine = el('p', 'note-block');
-  const unit = labelOf(content, 'statsUnit', locale);
+  const unit = label('statsUnit', locale);
   statsLine.textContent =
-    labelOf(content, 'statsTotal', locale) + '　' + content.cases.length + unit +
-    '　｜　' + statusLabel(content, '協尋中', locale) + ' ' + counts['協尋中'] + unit +
-    '　' + statusLabel(content, '已尋獲', locale) + ' ' + counts['已尋獲'] + unit +
-    '　' + statusLabel(content, '已結案', locale) + ' ' + counts['已結案'] + unit;
+    label('statsTotal', locale) + '　' + page.cases.length + unit +
+    '　｜　' + statusLabel('協尋中', locale) + ' ' + counts['協尋中'] + unit +
+    '　' + statusLabel('已尋獲', locale) + ' ' + counts['已尋獲'] + unit +
+    '　' + statusLabel('已結案', locale) + ' ' + counts['已結案'] + unit;
   root.appendChild(statsLine);
 
   const filterWrap = el('p', null);
-  const filterLabel = el('label', null, labelOf(content, 'filterLabel', locale) + '　');
+  const filterLabel = el('label', null, label('filterLabel', locale) + '　');
   const select = document.createElement('select');
   select.className = 'case-list__filter';
   const allOption = document.createElement('option');
   allOption.value = '';
-  allOption.textContent = labelOf(content, 'filterAll', locale);
+  allOption.textContent = label('filterAll', locale);
   select.appendChild(allOption);
   ['協尋中', '已尋獲', '已結案'].forEach((key) => {
     const opt = document.createElement('option');
     opt.value = key;
-    opt.textContent = statusLabel(content, key, locale);
+    opt.textContent = statusLabel(key, locale);
     select.appendChild(opt);
   });
   filterLabel.appendChild(select);
@@ -105,15 +94,15 @@ export function renderHome(content, locale) {
   root.appendChild(filterWrap);
 
   const list = el('ul', 'case-list');
-  content.cases.forEach((c) => {
+  page.cases.forEach((c) => {
     const statusKey = statusKeyOf(c);
     const li = el('li', 'case-list__item');
     li.dataset.status = statusKey;
-    const a = link(c.id, '/case/' + c.id);
+    const a = link(c.id, 'case/' + c.id + '.html');
     a.className = 'case-list__id';
     li.appendChild(a);
     li.appendChild(el('span', 'case-list__name', c.name));
-    li.appendChild(el('span', 'status status--' + STATUS_CLASS[statusKey], statusLabel(content, statusKey, locale)));
+    li.appendChild(el('span', 'status status--' + STATUS_CLASS[statusKey], statusLabel(statusKey, locale)));
     list.appendChild(li);
   });
   root.appendChild(list);
@@ -128,18 +117,18 @@ export function renderHome(content, locale) {
   return root;
 }
 
-export function renderIntro(content, locale, onSubmit) {
+export function renderIntro(page, locale, onSubmit) {
   const root = el('div');
-  root.appendChild(el('h1', null, t(content.intro.title, locale)));
+  root.appendChild(el('h1', null, t(page.title, locale)));
 
   const form = el('form', 'intro-form');
   const inputs = {};
 
-  content.intro.fields.forEach((field) => {
+  page.fields.forEach((field) => {
     const wrap = el('div', 'intro-form__field');
-    const label = el('label', 'intro-form__label', t(field.label, locale));
-    label.htmlFor = 'field-' + field.id;
-    wrap.appendChild(label);
+    const fieldLabel = el('label', 'intro-form__label', t(field.label, locale));
+    fieldLabel.htmlFor = 'field-' + field.id;
+    wrap.appendChild(fieldLabel);
 
     let input;
     if (field.type === 'textarea') {
@@ -155,10 +144,10 @@ export function renderIntro(content, locale, onSubmit) {
     inputs[field.id] = input;
   });
 
-  const submit = el('button', 'intro-form__submit', t(content.intro.submit, locale));
+  const submit = el('button', 'intro-form__submit', t(page.submit, locale));
   submit.type = 'submit';
   form.appendChild(submit);
-  form.appendChild(el('p', 'intro-form__note', t(content.intro.note, locale)));
+  form.appendChild(el('p', 'intro-form__note', t(page.note, locale)));
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -172,76 +161,64 @@ export function renderIntro(content, locale, onSubmit) {
   return root;
 }
 
-export function renderCase(content, id, locale) {
-  const c = findCase(content, id);
-  if (!c) return renderNotFound(content, locale);
-
+export function renderCaseDetail(c, locale) {
   flags.noteCaseSeen(c.id);
 
   const statusKey = c.id === 'JH-2025-003' && flags.isMidUpdateFired() ? c.statusAfterMidUpdate : c.status;
   const showRecovery = c.recovery && (statusKey === '已尋獲' || statusKey === '已結案');
 
-  notebook.addFact(
-    'case-' + c.id,
-    c.name + '（' + c.id + '）　' + c.missing + '　' + statusLabel(content, statusKey, locale),
-    '/case/' + c.id
-  );
-
   const root = el('div');
   const table = el('table', 'case-table');
-  table.style.borderCollapse = 'collapse';
   const tbody = el('tbody');
 
-  tbody.appendChild(tableRow(labelOf(content, 'caseId', locale), c.id));
-  tbody.appendChild(tableRow(labelOf(content, 'name', locale), c.name));
-  tbody.appendChild(tableRow(labelOf(content, 'ageAtDisappearance', locale), String(c.age)));
-  tbody.appendChild(tableRow(labelOf(content, 'missingDate', locale), c.missing));
-  tbody.appendChild(tableRow(labelOf(content, 'lastSeen', locale), t(c.lastSeen, locale)));
+  tbody.appendChild(tableRow(label('caseId', locale), c.id));
+  tbody.appendChild(tableRow(label('name', locale), c.name));
+  tbody.appendChild(tableRow(label('ageAtDisappearance', locale), String(c.age)));
+  tbody.appendChild(tableRow(label('missingDate', locale), c.missing));
+  tbody.appendChild(tableRow(label('lastSeen', locale), t(c.lastSeen, locale)));
 
-  const statusSpan = el('span', 'status status--' + STATUS_CLASS[statusKey], statusLabel(content, statusKey, locale));
-  tbody.appendChild(tableRow(labelOf(content, 'status', locale), statusSpan));
+  const statusSpan = el('span', 'status status--' + STATUS_CLASS[statusKey], statusLabel(statusKey, locale));
+  tbody.appendChild(tableRow(label('status', locale), statusSpan));
 
   if (c.statusHistory) {
     const historyList = el('ul', null);
     c.statusHistory.forEach((h) => {
-      historyList.appendChild(el('li', null, h.date + '　' + statusLabel(content, h.value, locale)));
+      historyList.appendChild(el('li', null, h.date + '　' + statusLabel(h.value, locale)));
     });
-    tbody.appendChild(tableRow(labelOf(content, 'statusHistory', locale), historyList));
+    tbody.appendChild(tableRow(label('statusHistory', locale), historyList));
   }
 
   if (showRecovery) {
-    tbody.appendChild(tableRow(labelOf(content, 'recoveryDate', locale), c.recovery.date));
-    tbody.appendChild(tableRow(labelOf(content, 'recoveryPlace', locale), t(c.recovery.place, locale)));
-    tbody.appendChild(tableRow(labelOf(content, 'condition', locale), t(c.recovery.condition, locale)));
-    tbody.appendChild(tableRow(labelOf(content, 'cause', locale), t(c.recovery.cause, locale)));
-    tbody.appendChild(tableRow(labelOf(content, 'timeOfDeath', locale), t(c.recovery.timeOfDeath, locale)));
-    tbody.appendChild(tableRow(labelOf(content, 'belongings', locale), t(c.recovery.belongings, locale)));
+    tbody.appendChild(tableRow(label('recoveryDate', locale), c.recovery.date));
+    tbody.appendChild(tableRow(label('recoveryPlace', locale), t(c.recovery.place, locale)));
+    tbody.appendChild(tableRow(label('condition', locale), t(c.recovery.condition, locale)));
+    tbody.appendChild(tableRow(label('cause', locale), t(c.recovery.cause, locale)));
+    tbody.appendChild(tableRow(label('timeOfDeath', locale), t(c.recovery.timeOfDeath, locale)));
+    tbody.appendChild(tableRow(label('belongings', locale), t(c.recovery.belongings, locale)));
   }
 
-  tbody.appendChild(tableRow(labelOf(content, 'summary', locale), t(c.summary, locale)));
+  tbody.appendChild(tableRow(label('summary', locale), t(c.summary, locale)));
 
   const details = document.createElement('details');
-  const summary = document.createElement('summary');
-  summary.textContent = labelOf(content, 'viewPdf', locale);
-  details.appendChild(summary);
+  const summaryEl = document.createElement('summary');
+  summaryEl.textContent = label('viewPdf', locale);
+  details.appendChild(summaryEl);
   details.appendChild(el('p', null, '[' + t(c.photoNote, locale) + ']'));
-  tbody.appendChild(tableRow(labelOf(content, 'poster', locale), details));
+  tbody.appendChild(tableRow(label('poster', locale), details));
 
-  const fileId = CASE_FILE_MAP[c.id];
   const relatedWrap = el('div');
   if (c.links) {
-    c.links.forEach((l) => relatedWrap.appendChild(link(t(l.label, locale), l.route)));
+    c.links.forEach((l) => relatedWrap.appendChild(link(t(l.label, locale), l.href)));
   }
-  if (fileId) {
-    const a = link(labelOf(content, 'sourceFile', locale) + '　' + fileId + '.txt', '/file/' + fileId);
-    relatedWrap.appendChild(a);
+  if (c.fileId) {
+    relatedWrap.appendChild(link(label('sourceFile', locale) + '　' + c.fileId + '.txt', 'file/' + c.fileId + '.html'));
   }
-  if (c.links || fileId) {
-    tbody.appendChild(tableRow(labelOf(content, 'relatedLinks', locale), relatedWrap));
+  if (c.links || c.fileId) {
+    tbody.appendChild(tableRow(label('relatedLinks', locale), relatedWrap));
   }
 
   [c.note, c.removedNote].forEach((noteField) => {
-    if (noteField) tbody.appendChild(tableRow(labelOf(content, 'note', locale), t(noteField, locale)));
+    if (noteField) tbody.appendChild(tableRow(label('note', locale), t(noteField, locale)));
   });
 
   table.appendChild(tbody);
@@ -249,12 +226,12 @@ export function renderCase(content, id, locale) {
   return root;
 }
 
-function renderChatlog(content, locale) {
+export function renderChatlog(chatlog, school, locale) {
   const wrap = el('div', 'chatlog');
-  wrap.appendChild(el('h3', null, labelOf(content, 'evidenceChatlog', locale)));
-  wrap.appendChild(el('p', 'note-block', labelOf(content, 'recoveredFromLabel', locale) + '：' + t(content.chatlog.recoveredFrom, locale)));
+  wrap.appendChild(el('h3', null, label('evidenceChatlog', locale)));
+  wrap.appendChild(el('p', 'note-block', label('recoveredFromLabel', locale) + '：' + t(chatlog.recoveredFrom, locale)));
 
-  content.chatlog.messages.forEach((m) => {
+  chatlog.messages.forEach((m) => {
     const line = el('p', 'chatlog__message');
     line.appendChild(el('span', 'chatlog__time', m.t + '　'));
     line.appendChild(el('span', 'chatlog__who', m.who + '：'));
@@ -263,78 +240,80 @@ function renderChatlog(content, locale) {
     if (m.attachment) line.appendChild(el('span', 'chatlog__attachment', '［' + t(m.attachment, locale) + '］'));
     wrap.appendChild(line);
   });
-  wrap.appendChild(el('p', 'note-block', t(content.chatlog.footer, locale)));
+  wrap.appendChild(el('p', 'note-block', t(chatlog.footer, locale)));
 
-  wrap.appendChild(el('h4', null, labelOf(content, 'evidenceSchoolNotice', locale)));
-  wrap.appendChild(el('p', null, content.school.announcementReal.posted + '　' + t(content.school.announcementReal.text, locale)));
+  wrap.appendChild(el('h4', null, label('evidenceSchoolNotice', locale)));
+  wrap.appendChild(el('p', null, school.posted + '　' + t(school.text, locale)));
 
   return wrap;
 }
 
-export function renderFile(content, id, locale) {
-  flags.notePageSeen('file-' + id);
-
+export function renderFileLines(lines) {
   const root = el('div', 'file-view');
-  root.appendChild(el('p', null, id + '.txt'));
-
-  if (id === '013') {
-    root.appendChild(el('p', null, store.get('howYouKnew') || '—'));
-    root.appendChild(el('p', null, labelOf(content, 'filed', locale) + '　' + (store.get('firstVisitDate') || '—')));
-  } else if (id === '014') {
-    root.appendChild(el('p', null, '—'));
-  } else {
-    const data = content.files[id];
-    if (!data) {
-      root.appendChild(el('p', null, '—'));
-    } else {
-      root.appendChild(el('p', null, labelOf(content, 'name', locale) + '　' + data.name));
-      root.appendChild(el('p', null, labelOf(content, 'filed', locale) + '　' + data.created));
-
-      if (id === '007' && data.updated) {
-        root.appendChild(el('p', null, labelOf(content, 'lastUpdated', locale) + '　' + data.updated));
-      }
-      if (id === '012' && flags.isMidUpdateFired() && data.updatedAfterMidUpdate) {
-        root.appendChild(el('p', null, labelOf(content, 'lastUpdated', locale) + '　' + data.updatedAfterMidUpdate));
-      }
-      if (id === '015') {
-        root.appendChild(renderChatlog(content, locale));
-      }
-      if (id === '007') {
-        root.appendChild(el('p', null, labelOf(content, 'relatedMarketSnapshot', locale)));
-        root.appendChild(link(content.market.seller, '/market/rec_1029'));
-      }
-    }
-  }
-
-  if (flags.isCollectionUnlocked()) {
-    root.appendChild(link(labelOf(content, 'upLink', locale), '/collection'));
-  }
-
+  lines.forEach((line) => root.appendChild(el('p', null, line)));
   return root;
 }
 
-export function renderTrust(content, locale) {
-  flags.notePageSeen('page-trust');
-  notebook.addFact('trust-seen', t(content.notebookFacts.trustSeen, locale), '/trust');
+export function appendUpLink(root, locale) {
+  if (flags.isCollectionUnlocked()) {
+    root.appendChild(link(label('upLink', locale), 'collection.html'));
+  }
+  return root;
+}
 
+export function renderFile007(data, locale) {
+  const root = renderFileLines([
+    '007.txt',
+    label('name', locale) + '　' + data.name,
+    label('filed', locale) + '　' + data.created,
+    label('lastUpdated', locale) + '　' + data.updated
+  ]);
+  root.appendChild(el('p', null, label('relatedMarketSnapshot', locale)));
+  root.appendChild(link(data.seller, 'market.html'));
+  return appendUpLink(root, locale);
+}
+
+export function renderFile012(data, locale) {
+  const lines = ['012.txt', label('name', locale) + '　' + data.name, label('filed', locale) + '　' + data.created];
+  if (flags.isMidUpdateFired() && data.updatedAfterMidUpdate) {
+    lines.push(label('lastUpdated', locale) + '　' + data.updatedAfterMidUpdate);
+  }
+  return appendUpLink(renderFileLines(lines), locale);
+}
+
+export function renderFile015(data, chatlog, school, locale) {
+  const root = renderFileLines(['015.txt', label('name', locale) + '　' + data.name, label('filed', locale) + '　' + data.created]);
+  root.appendChild(renderChatlog(chatlog, school, locale));
+  return appendUpLink(root, locale);
+}
+
+export function renderFile013(howYouKnew, firstVisitDate, locale) {
+  return appendUpLink(renderFileLines(['013.txt', howYouKnew || '—', label('filed', locale) + '　' + (firstVisitDate || '—')]), locale);
+}
+
+export function renderFile014(locale) {
+  return appendUpLink(renderFileLines(['014.txt', '—']), locale);
+}
+
+export function renderTrust(page, locale, onSolved) {
   const root = el('div');
-  root.appendChild(el('h1', null, t(content.trust.title, locale)));
-  root.appendChild(el('p', null, t(content.trust.note, locale)));
+  root.appendChild(el('h1', null, t(page.title, locale)));
+  root.appendChild(el('p', null, t(page.note, locale)));
 
   const solved = !!store.get('trustPuzzleSolved');
 
   const table = el('table', 'data-table');
   const thead = el('thead');
   const headRow = el('tr', 'data-table__row');
-  const headers = [labelOf(content, 'year', locale), labelOf(content, 'date', locale), labelOf(content, 'amount', locale), labelOf(content, 'donorName', locale), labelOf(content, 'zip', locale)];
-  if (!solved) headers.push(t(content.trustPuzzle.answerHeader, locale));
+  const headers = [label('year', locale), label('date', locale), label('amount', locale), label('donorName', locale), label('zip', locale)];
+  if (!solved) headers.push(t(page.puzzle.answerHeader, locale));
   headers.forEach((h) => headRow.appendChild(el('th', 'data-table__cell', h)));
   thead.appendChild(headRow);
   table.appendChild(thead);
 
   const tbody = el('tbody');
   const inputs = [];
-  content.trust.rows.forEach((r) => {
+  page.rows.forEach((r) => {
     const tr = el('tr', 'data-table__row');
     tr.appendChild(el('td', 'data-table__cell', r.year));
     tr.appendChild(el('td', 'data-table__cell', r.date));
@@ -358,29 +337,35 @@ export function renderTrust(content, locale) {
   root.appendChild(table);
 
   if (solved) {
-    root.appendChild(link(labelOf(content, 'archiveLink', locale), '/archive2019'));
+    root.appendChild(link(label('archiveLink', locale), 'archive2019.html'));
     return root;
   }
 
-  root.appendChild(el('p', null, t(content.trustPuzzle.prompt, locale)));
+  root.appendChild(el('p', null, t(page.puzzle.prompt, locale)));
   const resultMsg = el('p', 'note-block');
-  const checkBtn = el('button', 'choice__btn', t(content.trustPuzzle.check, locale));
+  const checkBtn = el('button', 'choice__btn', t(page.puzzle.check, locale));
   checkBtn.type = 'button';
-  checkBtn.addEventListener('click', () => {
-    let allCorrect = true;
-    inputs.forEach(({ input, feedback, row }) => {
-      const correct = caseMatchesAnswer(findCase(content, row.matchCaseId), input.value);
-      feedback.textContent = correct ? '✓' : '✗';
-      if (!correct) allCorrect = false;
+  checkBtn.addEventListener('click', async () => {
+    checkBtn.disabled = true;
+    const results = await Promise.all(
+      inputs.map(async ({ input, row }) => {
+        const hash = await sha256Hex(normalizeAnswer(input.value));
+        return row.matchHashes.includes(hash);
+      })
+    );
+    inputs.forEach(({ feedback }, i) => {
+      feedback.textContent = results[i] ? '✓' : '✗';
     });
+    const allCorrect = results.every(Boolean);
     if (allCorrect) {
       store.set('trustPuzzleSolved', true);
-      resultMsg.textContent = t(content.trustPuzzle.allCorrect, locale);
-      checkBtn.disabled = true;
+      resultMsg.textContent = t(page.puzzle.allCorrect, locale);
       inputs.forEach(({ input: i }) => (i.disabled = true));
-      root.appendChild(link(labelOf(content, 'archiveLink', locale), '/archive2019'));
+      root.appendChild(link(label('archiveLink', locale), 'archive2019.html'));
+      if (onSolved) onSolved();
     } else {
-      resultMsg.textContent = t(content.trustPuzzle.incorrect, locale);
+      resultMsg.textContent = t(page.puzzle.incorrect, locale);
+      checkBtn.disabled = false;
     }
   });
   root.appendChild(checkBtn);
@@ -389,35 +374,31 @@ export function renderTrust(content, locale) {
   return root;
 }
 
-export function renderArchive2019(content, locale) {
-  flags.notePageSeen('page-archive2019');
-  notebook.addFact('archive-seen', t(content.notebookFacts.archiveSeen, locale), '/archive2019');
+export function renderArchive2019(page, locale) {
   const root = el('div');
-  root.appendChild(el('h1', null, t(content.archive2019.title, locale)));
-  root.appendChild(el('p', null, t(content.archive2019.note, locale)));
-  root.appendChild(el('p', null, t(content.archive2019.row.name, locale) + '　' + t(content.archive2019.row.district, locale)));
-  root.appendChild(link(labelOf(content, 'closeSnapshot', locale), '/'));
+  root.appendChild(el('h1', null, t(page.title, locale)));
+  root.appendChild(el('p', null, t(page.note, locale)));
+  root.appendChild(el('p', null, t(page.row.name, locale) + '　' + t(page.row.district, locale)));
+  root.appendChild(link(label('closeSnapshot', locale), 'index.html'));
   return root;
 }
 
-export function renderMarket(content, locale) {
-  flags.notePageSeen('page-market');
-  notebook.addFact('market-seen', t(content.notebookFacts.marketSeen, locale), '/market/rec_1029');
+export function renderMarket(page, locale) {
   const root = el('div');
-  root.appendChild(el('h1', null, content.market.seller));
-  root.appendChild(el('p', null, t(content.market.note, locale)));
+  root.appendChild(el('h1', null, page.seller));
+  root.appendChild(el('p', null, t(page.note, locale)));
 
   const table = el('table', 'data-table');
   const thead = el('thead');
   const headRow = el('tr', 'data-table__row');
-  [labelOf(content, 'listingTitle', locale), labelOf(content, 'posted', locale), labelOf(content, 'deal', locale), labelOf(content, 'spot', locale)].forEach((h) => {
+  [label('listingTitle', locale), label('posted', locale), label('deal', locale), label('spot', locale)].forEach((h) => {
     headRow.appendChild(el('th', 'data-table__cell', h));
   });
   thead.appendChild(headRow);
   table.appendChild(thead);
 
   const tbody = el('tbody');
-  content.market.listings.forEach((item) => {
+  page.listings.forEach((item) => {
     const tr = el('tr', 'data-table__row');
     tr.appendChild(el('td', 'data-table__cell', t(item.title, locale)));
     tr.appendChild(el('td', 'data-table__cell', item.posted));
@@ -428,7 +409,7 @@ export function renderMarket(content, locale) {
       const metaTr = el('tr', 'data-table__row');
       const metaTd = el('td', 'data-table__cell');
       metaTd.colSpan = 4;
-      metaTd.textContent = labelOf(content, 'comments', locale) + ' ' + item.comments + '　' + labelOf(content, 'replies', locale) + ' ' + item.replies;
+      metaTd.textContent = label('comments', locale) + ' ' + item.comments + '　' + label('replies', locale) + ' ' + item.replies;
       metaTr.appendChild(metaTd);
       tbody.appendChild(metaTr);
     }
@@ -436,141 +417,140 @@ export function renderMarket(content, locale) {
   table.appendChild(tbody);
   root.appendChild(table);
 
-  root.appendChild(el('p', 'note-block', t(content.market.windowNote, locale)));
-  root.appendChild(link(labelOf(content, 'closeSnapshot', locale), '/'));
+  root.appendChild(el('p', 'note-block', t(page.windowNote, locale)));
+  root.appendChild(link(label('closeSnapshot', locale), 'index.html'));
   return root;
 }
 
-export function renderLegacy(content, locale) {
+export function renderLegacy(page, locale) {
   const root = el('div');
-  root.appendChild(el('h1', null, t(content.legacy.title, locale)));
-  root.appendChild(el('p', null, content.legacy.author));
-  root.appendChild(el('p', null, t(content.legacy.note, locale)));
-  root.appendChild(el('p', null, t(content.legacy.line, locale)));
-  root.appendChild(link(labelOf(content, 'closeSnapshot', locale), '/'));
+  root.appendChild(el('h1', null, t(page.title, locale)));
+  root.appendChild(el('p', null, page.author));
+  root.appendChild(el('p', null, t(page.note, locale)));
+  root.appendChild(el('p', null, t(page.line, locale)));
+  root.appendChild(link(label('closeSnapshot', locale), 'index.html'));
   return root;
 }
 
-export function renderCollection(content, locale) {
-  flags.notePageSeen('page-collection');
+export function renderCollection(page, locale) {
   const root = el('div', 'collection');
 
   for (let n = 1; n <= 15; n++) {
     const id = String(n).padStart(3, '0');
     const line = el('p', null);
-    const a = link(id + '.txt', '/file/' + id);
+    const a = link(id + '.txt', 'file/' + id + '.html');
     line.appendChild(a);
 
     if (id === '007') {
-      line.appendChild(document.createTextNode('　' + content.files['007'].name + '　' + labelOf(content, 'filed', locale) + ' ' + content.files['007'].created + '　' + labelOf(content, 'lastUpdated', locale) + ' ' + content.files['007'].updated));
+      line.appendChild(document.createTextNode('　' + page.file007.name + '　' + label('filed', locale) + ' ' + page.file007.created + '　' + label('lastUpdated', locale) + ' ' + page.file007.updated));
     } else if (id === '012') {
-      const updated = flags.isMidUpdateFired() ? content.files['012'].updatedAfterMidUpdate : null;
-      let text = '　' + content.files['012'].name + '　' + labelOf(content, 'filed', locale) + ' ' + content.files['012'].created;
-      if (updated) text += '　' + labelOf(content, 'lastUpdated', locale) + ' ' + updated;
+      const updated = flags.isMidUpdateFired() ? page.file012.updatedAfterMidUpdate : null;
+      let text = '　' + page.file012.name + '　' + label('filed', locale) + ' ' + page.file012.created;
+      if (updated) text += '　' + label('lastUpdated', locale) + ' ' + updated;
       line.appendChild(document.createTextNode(text));
     } else if (id === '013') {
       line.appendChild(document.createTextNode('　' + (store.get('nickname') || '—')));
     } else if (id === '014') {
       line.appendChild(document.createTextNode('　—'));
     } else if (id === '015') {
-      line.appendChild(document.createTextNode('　' + content.files['015'].name + '　' + labelOf(content, 'filed', locale) + ' ' + content.files['015'].created));
+      line.appendChild(document.createTextNode('　' + page.file015.name + '　' + label('filed', locale) + ' ' + page.file015.created));
     }
     root.appendChild(line);
   }
 
   if (flags.isWalkUnlocked()) {
     const line = el('p', null);
-    line.appendChild(link('016.txt', '/walk'));
+    line.appendChild(link('016.txt', 'walk.html'));
     root.appendChild(line);
   }
 
   return root;
 }
 
-export function renderGone(content, locale) {
+export function renderGone(page, locale) {
   const root = el('div', 'gone');
-  content.endgame.gone.forEach((line) => root.appendChild(el('p', null, t(line, locale))));
-  const donate = el('a', 'site-header__donate', t(content.org.donate, locale));
+  page.lines.forEach((line) => root.appendChild(el('p', null, t(line, locale))));
+  const donate = el('a', 'site-header__donate', t(page.donateLabel, locale));
   donate.href = 'javascript:void(0)';
   root.appendChild(donate);
   return root;
 }
 
-export function renderAbout(content, locale) {
+export function renderAbout(page, locale) {
   const root = el('div');
-  root.appendChild(el('h1', null, t(content.about.title, locale)));
+  root.appendChild(el('h1', null, t(page.title, locale)));
 
-  root.appendChild(el('h2', null, t(content.about.introTitle, locale)));
-  root.appendChild(el('p', null, t(content.about.introBody, locale)));
+  root.appendChild(el('h2', null, t(page.introTitle, locale)));
+  root.appendChild(el('p', null, t(page.introBody, locale)));
 
-  root.appendChild(el('h2', null, t(content.about.servicesTitle, locale)));
+  root.appendChild(el('h2', null, t(page.servicesTitle, locale)));
   const list = el('ul', null);
-  content.about.services.forEach((s) => list.appendChild(el('li', null, t(s, locale))));
+  page.services.forEach((s) => list.appendChild(el('li', null, t(s, locale))));
   root.appendChild(list);
 
-  root.appendChild(el('h2', null, t(content.about.hoursTitle, locale)));
-  root.appendChild(el('p', null, t(content.about.hoursBody, locale)));
+  root.appendChild(el('h2', null, t(page.hoursTitle, locale)));
+  root.appendChild(el('p', null, t(page.hoursBody, locale)));
 
   return root;
 }
 
-export function renderFaq(content, locale) {
+export function renderFaq(page, locale) {
   const root = el('div');
-  root.appendChild(el('h1', null, t(content.faq.title, locale)));
-  content.faq.items.forEach((item) => {
+  root.appendChild(el('h1', null, t(page.title, locale)));
+  page.items.forEach((item) => {
     root.appendChild(el('h2', null, t(item.q, locale)));
     root.appendChild(el('p', null, t(item.a, locale)));
   });
   return root;
 }
 
-export function renderDonate(content, locale) {
+export function renderContact(page, locale) {
   const root = el('div');
-  root.appendChild(el('h1', null, t(content.donate.title, locale)));
-  root.appendChild(el('p', null, t(content.donate.intro, locale)));
-
-  root.appendChild(el('h2', null, t(content.donate.bankTitle, locale)));
-  const bankList = el('ul', null);
-  content.donate.bankLines.forEach((line) => bankList.appendChild(el('li', null, t(line, locale))));
-  root.appendChild(bankList);
-
-  root.appendChild(el('h2', null, t(content.donate.receiptTitle, locale)));
-  root.appendChild(el('p', null, t(content.donate.receiptBody, locale)));
-
-  root.appendChild(el('h2', null, t(content.donate.disclosureTitle, locale)));
-  root.appendChild(el('p', null, t(content.donate.disclosureBody, locale)));
-  root.appendChild(link(labelOf(content, 'trustFooterLink', locale), '/trust'));
-
-  return root;
-}
-
-export function renderContact(content, locale) {
-  const root = el('div');
-  root.appendChild(el('h1', null, t(content.contact.title, locale)));
+  root.appendChild(el('h1', null, t(page.title, locale)));
 
   const table = el('table', 'case-table');
   const tbody = el('tbody');
-  tbody.appendChild(tableRow(labelOf(content, 'officeHours', locale), t(content.contact.hoursBody, locale)));
-  tbody.appendChild(tableRow(labelOf(content, 'phone', locale), content.contact.phoneValue));
-  tbody.appendChild(tableRow(labelOf(content, 'email', locale), content.contact.emailValue));
+  tbody.appendChild(tableRow(label('officeHours', locale), t(page.hoursBody, locale)));
+  tbody.appendChild(tableRow(label('phone', locale), page.phoneValue));
+  tbody.appendChild(tableRow(label('email', locale), page.emailValue));
   table.appendChild(tbody);
   root.appendChild(table);
 
-  root.appendChild(el('p', 'note-block', t(content.contact.noCounter, locale)));
+  root.appendChild(el('p', 'note-block', t(page.noCounter, locale)));
   return root;
 }
 
-export function renderPrivacy(content, locale) {
+export function renderDonate(page, locale) {
   const root = el('div');
-  root.appendChild(el('h1', null, t(content.privacy.title, locale)));
-  content.privacy.body.forEach((p) => root.appendChild(el('p', null, t(p, locale))));
+  root.appendChild(el('h1', null, t(page.title, locale)));
+  root.appendChild(el('p', null, t(page.intro, locale)));
+
+  root.appendChild(el('h2', null, t(page.bankTitle, locale)));
+  const bankList = el('ul', null);
+  page.bankLines.forEach((line) => bankList.appendChild(el('li', null, t(line, locale))));
+  root.appendChild(bankList);
+
+  root.appendChild(el('h2', null, t(page.receiptTitle, locale)));
+  root.appendChild(el('p', null, t(page.receiptBody, locale)));
+
+  root.appendChild(el('h2', null, t(page.disclosureTitle, locale)));
+  root.appendChild(el('p', null, t(page.disclosureBody, locale)));
+  root.appendChild(link(label('trustFooterLink', locale), 'trust.html'));
+
   return root;
 }
 
-export function renderAccessibility(content, locale) {
+export function renderPrivacy(page, locale) {
   const root = el('div');
-  root.appendChild(el('h1', null, t(content.accessibility.title, locale)));
-  content.accessibility.body.forEach((p) => root.appendChild(el('p', null, t(p, locale))));
+  root.appendChild(el('h1', null, t(page.title, locale)));
+  page.body.forEach((p) => root.appendChild(el('p', null, t(p, locale))));
+  return root;
+}
+
+export function renderAccessibility(page, locale) {
+  const root = el('div');
+  root.appendChild(el('h1', null, t(page.title, locale)));
+  page.body.forEach((p) => root.appendChild(el('p', null, t(p, locale))));
   return root;
 }
 
@@ -594,12 +574,12 @@ export function renderAdmin() {
   pre.textContent = stateDump();
   root.appendChild(pre);
 
-  function button(label, onClick) {
-    const btn = el('button', 'admin-panel__button', label);
+  function button(labelText, onClick, { reload = true } = {}) {
+    const btn = el('button', 'admin-panel__button', labelText);
     btn.type = 'button';
     btn.addEventListener('click', () => {
       onClick();
-      location.reload();
+      if (reload) location.reload();
     });
     root.appendChild(btn);
     return btn;
@@ -647,19 +627,12 @@ export function renderAdmin() {
     store.markSeen('page-archive2019');
     store.markSeen('page-market');
     store.markSeen('page-collection');
-    location.hash = '#/walk';
-  });
+    location.href = 'walk.html';
+  }, { reload: false });
 
   button('清除「已結束」狀態（重新打開網站）', () => {
     store.set('finished', false);
   });
 
-  return root;
-}
-
-export function renderNotFound(content, locale) {
-  const root = el('div');
-  root.appendChild(el('h1', null, labelOf(content, 'notFound', locale)));
-  root.appendChild(link(labelOf(content, 'backHome', locale), '/'));
   return root;
 }

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>聯絡我們｜社團法人臺灣失蹤兒少協尋關懷基金會</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="site-header">
+    <span class="site-header__name"></span>
+    <a class="site-header__donate" href="javascript:void(0)"></a>
+  </header>
+  <nav class="site-nav" id="site-nav"></nav>
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import { renderContact, homeCrumb } from './scripts/render.js';
+  import { LABELS } from './scripts/labels.js';
+  import { t } from './scripts/i18n.js';
+
+  const PAGE = {
+    title: { "zh-Hant": "聯絡我們", "zh-Hans": "联络我们", en: "Contact" },
+    hoursBody: { "zh-Hant": "週一至週五 09:00–17:00（國定假日休館）", "zh-Hans": "周一至周五 09:00–17:00（国定假日休馆）", en: "Monday–Friday, 09:00–17:00 (closed on national holidays)" },
+    phoneValue: "0800-000-000",
+    emailValue: "help@example-foundation.org",
+    noCounter: { "zh-Hant": "本會無實體服務據點，恕不提供臨櫃服務，如需聯繫請優先使用電話或電子郵件。", "zh-Hans": "本会无实体服务据点，恕不提供临柜服务，如需联系请优先使用电话或电子邮件。", en: "This foundation has no physical service location and does not offer in-person counter service. Please contact us by phone or email." }
+  };
+
+  guard.enter({}, () => {
+    chrome.mount({ breadcrumb: [homeCrumb(store.get('locale')), t(LABELS.navContact, store.get('locale'))] });
+    function render() {
+      document.getElementById('main').replaceChildren(renderContact(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>
