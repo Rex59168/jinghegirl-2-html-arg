@@ -142,6 +142,21 @@
     document.body.appendChild(navBar);
 
     document.getElementById("jh-nav-back").addEventListener("click", () => {
+      // 跟一般 Android 一樣,返回鍵要先收起蓋在最上層的東西,不會直接穿透去換頁
+      // ——不然玩家會看到多工畫面、訊息、備忘錄卡住不動,分不清楚返回鍵到底有
+      // 沒有反應。依疊放順序(z-index)由上往下一層一層收。
+      if (recents.classList.contains("jh-recents--open")) {
+        closeRecents();
+        return;
+      }
+      if (messagesEl.classList.contains("jh-messages--open")) {
+        closeMessages();
+        return;
+      }
+      if (notesEl.classList.contains("jh-notes--open")) {
+        closeNotes();
+        return;
+      }
       // 交給 iframe 自己那頁的站內導覽紀錄處理(browser-chrome.js 掛的
       // window.jhGoBackInSite),不要用瀏覽器原生 history.back()——玩家還沒在
       // 站內換過頁的話,原生上一頁其實是離開整個網站,不是我們要的效果。
@@ -261,6 +276,9 @@
       lock.classList.add("jh-boot__lock--hidden");
       home.classList.add("jh-boot__home--visible");
       boot.classList.add("jh-boot--visible");
+      // 多工畫面的 z-index 比主畫面高,不主動收起來的話會一直蓋在上面,
+      // 玩家會覺得按 Home 鍵沒反應。
+      closeRecents();
     }
 
     function hideHomeScreen() {
@@ -278,7 +296,18 @@
     }
 
     document.getElementById("jh-boot-browser").addEventListener("click", enterApp);
-    document.getElementById("jh-nav-home").addEventListener("click", showHomeScreen);
+    document.getElementById("jh-nav-home").addEventListener("click", () => {
+      // Home 鍵除了叫出主畫面,也要把訊息/備忘錄面板收起來——不然它們的
+      // z-index 比主畫面高,玩家會看到面板卡住不動,以為 Home 鍵沒反應。
+      // 這裡直接拿掉 class,不呼叫 closeMessages()/closeNotes() 本身,是因為
+      // 那兩個函式在「從瀏覽器內容被打斷跳進來看」的情境下會連帶呼叫
+      // hideHomeScreen()(關閉後要回到原本在讀的頁面),那個副作用不適用在
+      // 這裡——玩家主動按 Home 鍵,就是要去主畫面,不是要回瀏覽器內容。
+      messagesEl.classList.remove("jh-messages--open", "jh-messages--thread-open");
+      currentThreadContactId = null;
+      notesEl.classList.remove("jh-notes--open");
+      showHomeScreen();
+    });
 
     if (localStorage.getItem(BOOT_SEEN_KEY) === "1") {
       // 不是第一次來:直接進站,略過鎖定畫面開機動畫。整層覆蓋維持隱藏、不擋點擊,
