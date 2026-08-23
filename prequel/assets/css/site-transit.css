@@ -63,14 +63,3 @@ body.site-transit {
   font-size: 14px;
 }
 .flag-btn:disabled { background: #999; }
-
-.step-done-banner {
-  background: #b3261e;
-  color: #fff;
-  text-align: center;
-  padding: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  border-radius: 6px;
-  margin: 14px 0;
-}

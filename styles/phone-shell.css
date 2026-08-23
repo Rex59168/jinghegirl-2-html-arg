@@ -177,22 +177,3 @@ html.jh-shell, body.jh-shell {
 
 /* 假瀏覽器網址列底下,原本的 site-header 不用再重複顯示語言/機構名——保留原樣即可,
    這裡不用額外調整,institutional header 本來就是內容區塊,跟著往下推就好。*/
-
-/* ── 筆記本 / 訊息 抽屜按鈕跟前作同一套視覺、同一側,兩章看起來一致:
-   兩顆都是圓角藥丸,疊在畫面右下,顏色跟前作對應(筆記本=黑、訊息=藍)。*/
-.notebook__button, .mail__button {
-  left: auto !important;
-  right: 12px !important;
-  border-radius: 999px !important;
-  padding: 10px 16px !important;
-  font-size: 14px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .3) !important;
-}
-.notebook__button {
-  bottom: 68px !important;
-  background: #1c1c1c !important;
-}
-.mail__button {
-  bottom: 12px !important;
-  background: #4a6fa5 !important;
-}

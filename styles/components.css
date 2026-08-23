@@ -242,19 +242,6 @@
   padding: 0;
 }
 
-.case-list__item {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.75em;
-  padding: 0.6em 0;
-  border-bottom: 1px solid var(--rule);
-}
-
-.case-list__item[hidden] {
-  display: none;
-}
-
 .case-list__controls {
   display: flex;
   flex-wrap: wrap;
@@ -275,15 +262,6 @@
   border-radius: var(--radius-sm);
   background: var(--paper);
   color: var(--ink);
-}
-
-.case-list__id {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-}
-
-.case-list__name {
-  flex: 1;
 }
 
 /* intro form */
@@ -505,11 +483,6 @@
   margin: 0 0 0.4em 0;
 }
 
-.file-view__up {
-  display: inline-block;
-  margin-top: 1.5em;
-}
-
 /* walk (sixth act, pre-door) */
 
 .walk__line {
@@ -608,16 +581,17 @@
 
 /* notebook drawer */
 
+/* 跟前作(prequel)同一套視覺:圓角藥丸,疊在畫面右下,筆記本=黑、訊息=藍 */
 .notebook__button {
   position: fixed;
-  left: 12px;
-  bottom: 12px;
+  right: 12px;
+  bottom: 68px;
   z-index: 9000;
-  background: var(--chrome);
+  background: #1c1c1c;
   color: #ffffff;
   border: none;
   border-radius: 999px;
-  padding: 8px 16px;
+  padding: 10px 16px;
   font-size: 0.8rem;
   font-weight: 600;
   box-shadow: var(--shadow-md);
@@ -701,11 +675,11 @@
   right: 12px;
   bottom: 12px;
   z-index: 9000;
-  background: var(--accent);
+  background: #4a6fa5;
   color: #ffffff;
   border: none;
   border-radius: 999px;
-  padding: 8px 16px;
+  padding: 10px 16px;
   font-size: 0.8rem;
   font-weight: 600;
   box-shadow: var(--shadow-md);
@@ -796,11 +770,4 @@
 .mail__empty {
   color: var(--ink-weak);
   font-size: 0.9rem;
-}
-
-/* not found */
-
-.not-found-link {
-  display: inline-block;
-  margin-top: 1em;
 }
