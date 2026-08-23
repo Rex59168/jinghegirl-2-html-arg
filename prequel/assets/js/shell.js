@@ -154,8 +154,9 @@
             <span class="jh-boot__app-badge" id="jh-boot-messages-badge" hidden></span>
             <span class="jh-boot__app-label">訊息</span>
           </button>
-          <button type="button" class="jh-boot__app jh-boot__app--notes" data-inert="1">
+          <button type="button" class="jh-boot__app jh-boot__app--notes" id="jh-boot-notes">
             <span class="jh-boot__app-icon">📝</span>
+            <span class="jh-boot__app-badge" id="jh-boot-notes-badge" hidden></span>
             <span class="jh-boot__app-label">備忘錄</span>
           </button>
           <button type="button" class="jh-boot__app jh-boot__app--browser" id="jh-boot-browser">
@@ -405,6 +406,82 @@
     });
 
     renderBadge();
+
+    // ══════════════════ 備忘錄 App(已知事項清單) ══════════════════
+    // 資料模型是純粹的事實清單(跟 iframe 裡各頁呼叫 JHNotebook.add(...) 寫進
+    // localStorage 的格式一樣),不用聯絡人/對話串那層,面板是單一列表。點項目
+    // 直接跳回原始頁面(操作 iframe.contentWindow,不是跳頂層,不然會脫離殼層)。
+    const notesEl = document.createElement("div");
+    notesEl.className = "jh-notes";
+    notesEl.id = "jh-notes";
+    notesEl.innerHTML = `
+      <div class="jh-notes__header">
+        <strong>【已知】</strong>
+        <button type="button" class="jh-notes__iconbtn" id="jh-notes-close" aria-label="關閉">✕</button>
+      </div>
+      <div class="jh-notes__body" id="jh-notes-body"></div>
+    `;
+    document.body.appendChild(notesEl);
+
+    const notesBodyEl = document.getElementById("jh-notes-body");
+    const notesBadgeEl = document.getElementById("jh-boot-notes-badge");
+
+    function notebookList() { return jhGet("notebook", []); }
+
+    function renderNotesBadge() {
+      const n = notebookList().length;
+      if (n > 0) {
+        notesBadgeEl.hidden = false;
+        notesBadgeEl.textContent = String(n);
+      } else {
+        notesBadgeEl.hidden = true;
+      }
+    }
+
+    function renderNotesBody() {
+      const list = notebookList();
+      notesBodyEl.innerHTML = "";
+      if (!list.length) {
+        const p = document.createElement("p");
+        p.className = "jh-notes__empty";
+        p.textContent = "還沒有已知事項。繼續往下看。";
+        notesBodyEl.appendChild(p);
+        return;
+      }
+      list.forEach((e) => {
+        const a = document.createElement("a");
+        a.className = "jh-notes__item";
+        a.href = e.href;
+        a.textContent = e.text;
+        a.addEventListener("click", (ev) => {
+          ev.preventDefault();
+          try { frame.contentWindow.location.href = e.href; } catch (err) {}
+          closeNotes();
+        });
+        notesBodyEl.appendChild(a);
+      });
+    }
+
+    let notesOpenedFromBrowser = false;
+    function openNotes() {
+      notesOpenedFromBrowser = !boot.classList.contains("jh-boot--visible");
+      showHomeScreen();
+      renderNotesBody();
+      notesEl.classList.add("jh-notes--open");
+    }
+    function closeNotes() {
+      notesEl.classList.remove("jh-notes--open");
+      if (notesOpenedFromBrowser) hideHomeScreen();
+    }
+
+    document.getElementById("jh-boot-notes").addEventListener("click", openNotes);
+    document.getElementById("jh-notes-close").addEventListener("click", closeNotes);
+
+    // iframe 裡任何一頁呼叫 JHNotebook.add(...) 都會透過這個跨框呼叫通知殼層
+    // 立刻更新角標數字,不用等玩家自己點開備忘錄才看到最新數字。
+    window.jhRefreshNotesBadge = renderNotesBadge;
+
+    renderNotesBadge();
   }
 
   if (document.readyState === "loading") {

@@ -92,12 +92,3 @@ button, .btn, a.btn, input[type="submit"] {
 }
 .entry-warning__continue:hover { background: #4a4a4a; }
 
-/* 通用抽屜 / 彈窗基礎 */
-.drawer-backdrop {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.45);
-  z-index: 90;
-  display: none;
-}
-.drawer-backdrop.open { display: block; }
-
