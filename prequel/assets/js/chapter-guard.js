@@ -4,6 +4,6 @@
   const need = document.body.dataset.requires;
   if (!need) return;
   if (!JH.get(need)) {
-    location.href = "index.html";
+    location.href = "home.html";
   }
 })();

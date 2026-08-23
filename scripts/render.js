@@ -563,7 +563,7 @@ export function renderArchive2019(page, locale) {
   table.appendChild(tbody);
   root.appendChild(table);
 
-  root.appendChild(link(label('closeSnapshot', locale), 'index.html'));
+  root.appendChild(link(label('closeSnapshot', locale), 'home.html'));
   return root;
 }
 
@@ -614,7 +614,7 @@ export function renderMarket(page, locale) {
   table.appendChild(tbody);
   root.appendChild(table);
 
-  root.appendChild(link(label('closeSnapshot', locale), 'index.html'));
+  root.appendChild(link(label('closeSnapshot', locale), 'home.html'));
   return root;
 }
 
@@ -635,7 +635,7 @@ export function renderLegacy(page, locale) {
     root.appendChild(linksLine);
   }
 
-  root.appendChild(link(label('closeSnapshot', locale), 'index.html'));
+  root.appendChild(link(label('closeSnapshot', locale), 'home.html'));
   return root;
 }
 

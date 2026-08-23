@@ -21,7 +21,8 @@
 
 <h2>快速跳轉</h2>
 <ul>
-  <li><a href="index.html">/index.html 首頁</a></li>
+  <li><a href="home.html">/home.html 首頁(不含殼層,直接看內容)</a></li>
+  <li><a href="index.html">/index.html 殼層(手機桌布/開機動畫)</a></li>
   <li><a href="social/lin-xi.html">/social/lin-xi.html 序章謎題</a></li>
   <li><a href="xunren/correction.html">/xunren/correction.html 序章過關</a></li>
   <li><a href="editor/album.html">/editor/album.html 第一章密碼門</a></li>
@@ -86,6 +87,10 @@ document.getElementById("clear-all").addEventListener("click", () => {
   Object.keys(localStorage)
     .filter((k) => k.startsWith(JH.PREFIX))
     .forEach((k) => localStorage.removeItem(k));
+  // 殼層的開機動畫旗標跟全螢幕旗標不走 JH 前綴(跨章節共用),這裡一併清掉,
+  // 方便測試時重看一次開機動畫。
+  localStorage.removeItem("jh2bridge:ch1_boot_seen");
+  localStorage.removeItem("jh2bridge:fullscreen_opt_in");
   dump();
 });
 </script>

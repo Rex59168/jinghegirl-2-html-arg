@@ -1,5 +1,30 @@
-/* phone-shell.css — 手機狀態列 + 底部 Home 指示條,包住整個尋人資料庫網站，
-   讓續作跟前作一樣像是在手機螢幕裡瀏覽，不只是網頁本身。由 chrome.js 動態載入。*/
+/* phone-shell.css — 續作殼層專用樣式:手機狀態列、Android三鍵導覽列、桌布主畫面、
+   假瀏覽器網址列(跟前作同一套視覺),還有殼層版面(iframe夾在狀態列跟導覽列中間)。
+   狀態列/導覽列由 scripts/shell.js 掛載(只在根目錄殼層 index.html 執行一次)；
+   假瀏覽器網址列由 scripts/chrome.js 在 iframe 裡的每一頁掛載。*/
+
+/* ── 殼層版面(index.html本身)── */
+html.jh-shell, body.jh-shell {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+.jh-app-frame {
+  /* iframe 是替換元素,position:fixed 只設 top、不明講 height 的話瀏覽器不會自動
+     撐開高度,會退回 iframe 預設的 150px,所以一定要用 calc() 明講實際高度。 */
+  position: fixed;
+  top: 28px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: calc(100vh - 72px);
+  border: none;
+  background: #fff;
+}
+
+/* ── 手機狀態列 ── */
 .jh-status-bar {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -20,7 +45,7 @@
 .jh-sb-icons { display: flex; align-items: center; gap: 5px; }
 .jh-sb-icons svg { display: block; }
 
-/* Android 三鍵導覽列(返回・主畫面・多工) */
+/* ── Android 三鍵導覽列(返回・主畫面・多工) ── */
 .jh-home-indicator {
   position: fixed;
   left: 0; right: 0; bottom: 0;
@@ -60,14 +85,114 @@
   transition: opacity 0.2s ease, transform 0.2s ease;
   white-space: nowrap;
 }
-.jh-nav-toast--visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+.jh-nav-toast--visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── 桌布主畫面(按 Home 鍵叫出來,蓋住 iframe 那一段) ── */
+.jh-boot {
+  position: fixed;
+  top: 28px;
+  bottom: 44px;
+  left: 0;
+  right: 0;
+  z-index: 1500;
+  background-image: url("img/wallpaper.svg");
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.jh-boot--visible { opacity: 1; pointer-events: auto; }
+
+.jh-boot__home { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.jh-boot__home--visible { opacity: 1; pointer-events: auto; }
+
+.jh-boot__widget { text-align: center; padding-top: 54px; }
+.jh-boot__widget-time {
+  font-size: 34px;
+  font-weight: 300;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+.jh-boot__widget-date { margin-top: 2px; font-size: 13px; opacity: 0.85; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5); }
+
+.jh-boot__grid {
+  position: absolute;
+  left: 0; right: 0;
+  bottom: 32px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px 0;
+  padding: 0 20px;
+}
+.jh-boot__app { display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: none; color: #fff; }
+.jh-boot__app-icon {
+  width: 56px; height: 56px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+.jh-boot__app-label { font-size: 11px; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6); }
+.jh-boot__app--browser .jh-boot__app-icon { background: linear-gradient(160deg, #4a90d9, #1e5fa8); }
+.jh-boot__app--photos .jh-boot__app-icon { background: linear-gradient(160deg, #f2b84b, #d9633b); }
+.jh-boot__app--messages .jh-boot__app-icon { background: linear-gradient(160deg, #59d16a, #2fa244); }
+.jh-boot__app--notes .jh-boot__app-icon { background: linear-gradient(160deg, #d9c34b, #b89323); }
+
+.jh-boot__app.jh-boot__app--shake .jh-boot__app-icon { animation: jh-boot-shake 0.4s ease; }
+@keyframes jh-boot-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
-body.jh-has-shell { padding-top: 28px; padding-bottom: 44px; }
+/* ── 假瀏覽器網址列(iframe 裡的每一頁自己掛,跟前作同一套視覺) ── */
+.jh-browser-chrome {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 40px;
+  background: #dde1e6;
+  border-bottom: 1px solid #c4c9d0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+.jh-bc-nav {
+  background: none; border: none; color: #555; font-size: 16px;
+  width: 32px; height: 32px; min-width: 32px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.jh-bc-nav:active { background: rgba(0, 0, 0, .08); }
+.jh-bc-url {
+  flex: 1; min-width: 0; background: #fff; border-radius: 14px; height: 28px;
+  display: flex; align-items: center; gap: 4px; padding: 0 10px; font-size: 12px; color: #333;
+}
+.jh-bc-url-text { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.jh-bc-lock { font-size: 10px; opacity: .7; flex-shrink: 0; }
+.jh-has-chrome { padding-top: 40px; }
 
-body.jh-has-shell .notebook__button,
-body.jh-has-shell .mail__button { bottom: calc(12px + 44px) !important; }
-body.jh-has-shell .notebook__panel,
-body.jh-has-shell .mail__panel { padding-bottom: 44px; box-sizing: border-box; }
+/* 假瀏覽器網址列底下,原本的 site-header 不用再重複顯示語言/機構名——保留原樣即可,
+   這裡不用額外調整,institutional header 本來就是內容區塊,跟著往下推就好。*/
+
+/* ── 筆記本 / 訊息 抽屜按鈕跟前作同一套視覺、同一側,兩章看起來一致:
+   兩顆都是圓角藥丸,疊在畫面右下,顏色跟前作對應(筆記本=黑、訊息=藍)。*/
+.notebook__button, .mail__button {
+  left: auto !important;
+  right: 12px !important;
+  border-radius: 999px !important;
+  padding: 10px 16px !important;
+  font-size: 14px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .3) !important;
+}
+.notebook__button {
+  bottom: 68px !important;
+  background: #1c1c1c !important;
+}
+.mail__button {
+  bottom: 12px !important;
+  background: #4a6fa5 !important;
+}

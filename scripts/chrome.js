@@ -37,46 +37,57 @@ export function mountLangSwitchers() {
   document.querySelectorAll('.lang-switcher').forEach(buildLangSwitcherInto);
 }
 
-const SIGNAL_SVG = '<svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="3" width="3" height="9" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>';
-const WIFI_SVG = '<svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.2a1.3 1.3 0 100 2.6 1.3 1.3 0 000-2.6z"/><path d="M4.2 7.4a5.4 5.4 0 017.6 0l-1.4 1.4a3.4 3.4 0 00-4.8 0L4.2 7.4z"/><path d="M1 4.2a9.6 9.6 0 0114 0L13.6 5.6a7.6 7.6 0 00-11.2 0L1 4.2z"/></svg>';
-const BATTERY_SVG = '<svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.5" y="0.5" width="20" height="11" rx="2.5" stroke="currentColor"/><rect x="2" y="2" width="17" height="8" rx="1" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg>';
-const BACK_SVG = '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M13 3 5 10l8 7z"/></svg>';
-const HOME_SVG = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/></svg>';
-const RECENTS_SVG = '<svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="15" height="15" rx="2.5"/></svg>';
+// 假瀏覽器網址列會依目前頁面顯示不同假網域,跟前作同一套視覺跟判斷方式:
+// 用「路徑裡有沒有出現已知目錄名」來判斷,不管實際部署在網域根目錄還是
+// GitHub Pages 那種帶 repo 名稱的子路徑,判斷結果都一樣正確。
+const DOMAIN_MAP = { case: 'twmissingkids.org.tw/case' };
+const FIXED_DOMAIN = { 'market.html': 'market.tw', 'archive2019.html': 'market.tw', 'legacy.html': 'xun-lin-xi.github.io' };
+// walk(終局行走序列)、admin(內部重置面板)、gone(網站已停用)這三頁不掛假網址列——
+// 跟前作的 debug 頁一樣,屬於跳出敘事之外的頁面,不需要沉浸感包裝。
+const NO_CHROME_FILES = ['walk.html', 'admin.html', 'gone.html'];
 
-function pad2(n) { return String(n).padStart(2, '0'); }
+function computeUrl() {
+  const parts = location.pathname.split('/').filter(Boolean);
+  const fileName = parts[parts.length - 1] || 'home.html';
+  const topDir = parts.length > 1 ? parts[0] : '';
 
-// 跟前作共用同一把「進全螢幕」旗標(jh2bridge:fullscreen_opt_in)——玩家在前作
-// 開機畫面點瀏覽器圖示那次是真正的使用者手勢，之後不管在前作還是續作，每頁
-// 都掛一個一次性點擊監聽，趁玩家下一次點擊時嘗試重新全螢幕(換頁會自動退出
-// 全螢幕，Fullscreen API 不能用程式在換頁後自動重進)。
+  if (topDir === 'file' || fileName === 'collection.html') {
+    return { text: 'file:///C:/Users/rec_1029/收藏/', isLocal: true, skip: false };
+  }
+  if (FIXED_DOMAIN[fileName]) {
+    return { text: FIXED_DOMAIN[fileName], isLocal: false, skip: false };
+  }
+  if (NO_CHROME_FILES.includes(fileName)) {
+    return { skip: true };
+  }
+  const slug = fileName.endsWith('.html') ? fileName.slice(0, -5) : fileName;
+  if (topDir && DOMAIN_MAP[topDir]) {
+    return { text: DOMAIN_MAP[topDir] + '/' + slug, isLocal: false, skip: false };
+  }
+  return { text: 'twmissingkids.org.tw' + (slug && slug !== 'home' ? '/' + slug : ''), isLocal: false, skip: false };
+}
+
+// 跟前作共用同一把「進全螢幕」旗標(jh2bridge:fullscreen_opt_in)——玩家在殼層
+// (根目錄 index.html)點瀏覽器圖示或主畫面是真正的使用者手勢,由殼層自己處理;
+// 這支腳本在 iframe 裡的每一頁只負責趁玩家下一次點擊,請殼層(window.top)重新
+// 嘗試一次全螢幕——例如玩家自己按 Esc 跳出,下一次點擊就會自動接回來。
 const FULLSCREEN_KEY = 'jh2bridge:fullscreen_opt_in';
-function isFullscreenActive() {
-  return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
-}
-function requestFullscreenNow() {
-  const el = document.documentElement;
-  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
-  if (!req) return;
-  try {
-    const p = req.call(el);
-    if (p && p.catch) p.catch(() => {});
-  } catch (e) {}
-}
 function armFullscreenOnFirstClick() {
-  if (localStorage.getItem(FULLSCREEN_KEY) !== '1' || isFullscreenActive()) return;
+  if (localStorage.getItem(FULLSCREEN_KEY) !== '1') return;
+  if (window.top === window) return; // 不在殼層 iframe 裡(例如直接開這一頁測試)
   document.addEventListener(
     'click',
-    () => { if (!isFullscreenActive()) requestFullscreenNow(); },
+    () => {
+      try {
+        if (typeof window.top.requestFullscreenNow === 'function') window.top.requestFullscreenNow();
+      } catch (e) {}
+    },
     { once: true }
   );
 }
 
-// 跟前作一樣：狀態列的時間是玩家裝置當下的真實時間(只有時:分)，純粹營造
-// 「你正拿著手機看」的臨場感，不代表故事裡的日期，所以不會跟續作 2026/8/26
-// 之後的時間線互相矛盾。
-function mountPhoneShell() {
-  if (document.body.classList.contains('jh-has-shell')) return;
+function mountBrowserChrome() {
+  if (document.querySelector('.jh-browser-chrome')) return;
 
   if (!document.querySelector('link[data-phone-shell]')) {
     const link = document.createElement('link');
@@ -86,51 +97,31 @@ function mountPhoneShell() {
     document.head.appendChild(link);
   }
 
-  const statusBar = document.createElement('div');
-  statusBar.className = 'jh-status-bar';
-  statusBar.innerHTML = `
-    <span class="jh-sb-time" id="jh-sb-time"></span>
-    <span class="jh-sb-icons">${SIGNAL_SVG}${WIFI_SVG}${BATTERY_SVG}</span>
+  const { text, isLocal, skip } = computeUrl();
+  if (skip) return;
+
+  const bar = document.createElement('div');
+  bar.className = 'jh-browser-chrome';
+  bar.innerHTML = `
+    <button type="button" class="jh-bc-nav" id="jh-bc-back" aria-label="上一頁">←</button>
+    <button type="button" class="jh-bc-nav" id="jh-bc-fwd" aria-label="下一頁">→</button>
+    <div class="jh-bc-url">${isLocal ? '' : '<span class="jh-bc-lock">🔒</span>'}<span class="jh-bc-url-text"></span></div>
+    <button type="button" class="jh-bc-nav" id="jh-bc-refresh" aria-label="重新整理">⟳</button>
   `;
-  document.body.insertBefore(statusBar, document.body.firstChild);
+  document.body.insertBefore(bar, document.body.firstChild);
+  bar.querySelector('.jh-bc-url-text').textContent = text;
+  document.body.classList.add('jh-has-chrome');
 
-  function tick() {
-    const now = new Date();
-    statusBar.querySelector('#jh-sb-time').textContent = now.getHours() + ':' + pad2(now.getMinutes());
-  }
-  tick();
-  setInterval(tick, 15000);
+  document.getElementById('jh-bc-back').addEventListener('click', () => history.back());
+  document.getElementById('jh-bc-fwd').addEventListener('click', () => history.forward());
+  document.getElementById('jh-bc-refresh').addEventListener('click', () => location.reload());
 
-  const homeIndicator = document.createElement('div');
-  homeIndicator.className = 'jh-home-indicator';
-  homeIndicator.innerHTML = `
-    <button type="button" class="jh-nav-btn" id="jh-nav-back" aria-label="返回">${BACK_SVG}</button>
-    <button type="button" class="jh-nav-btn" id="jh-nav-home" aria-label="主畫面">${HOME_SVG}</button>
-    <button type="button" class="jh-nav-btn" id="jh-nav-recents" aria-label="多工">${RECENTS_SVG}</button>
-  `;
-  document.body.appendChild(homeIndicator);
-
-  const toast = document.createElement('div');
-  toast.className = 'jh-nav-toast';
-  toast.textContent = '沒有其他使用中的頁面';
-  document.body.appendChild(toast);
-  let toastTimer = null;
-
-  homeIndicator.querySelector('#jh-nav-back').addEventListener('click', () => history.back());
-  homeIndicator.querySelector('#jh-nav-home').addEventListener('click', () => { location.href = 'index.html'; });
-  homeIndicator.querySelector('#jh-nav-recents').addEventListener('click', () => {
-    toast.classList.add('jh-nav-toast--visible');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('jh-nav-toast--visible'), 1400);
-  });
-
-  document.body.classList.add('jh-has-shell');
   armFullscreenOnFirstClick();
 }
 
 // For pages with the full institutional shell (header/nav/breadcrumb/footer).
 export function mount({ breadcrumb = [] } = {}) {
-  mountPhoneShell();
+  mountBrowserChrome();
   const headerNameEl = document.querySelector('.site-header__name');
   const donateEl = document.querySelector('.site-header__donate');
   const siteNavEl = document.getElementById('site-nav');
@@ -143,7 +134,7 @@ export function mount({ breadcrumb = [] } = {}) {
 
   siteNavEl.innerHTML = '';
   [
-    ['index.html', t(LABELS.home, store.get('locale'))],
+    ['home.html', t(LABELS.home, store.get('locale'))],
     ['about.html', t(LABELS.navAbout, store.get('locale'))],
     ['faq.html', t(LABELS.navFaq, store.get('locale'))],
     ['contact.html', t(LABELS.navContact, store.get('locale'))]
@@ -235,7 +226,7 @@ export function mount({ breadcrumb = [] } = {}) {
 // { skipWidgets: true } drops the notebook/mail drawers too — for gone.html, where the
 // site itself is supposed to have stopped working, not just lost its header.
 export function mountBare({ skipWidgets = false } = {}) {
-  mountPhoneShell();
+  mountBrowserChrome();
   const appEl = document.getElementById('app');
   if (appEl) appEl.hidden = false;
   mountLangSwitchers();

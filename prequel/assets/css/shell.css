@@ -1,0 +1,22 @@
+/* shell.css — 外層殼層版面:iframe 夾在頂部狀態列跟底部三鍵導覽列中間。
+   殼層本身永遠不換頁,換頁只在 iframe 裡面發生,全螢幕狀態才不會因為換頁被瀏覽器自動取消。*/
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+.jh-app-frame {
+  /* iframe 是替換元素(replaced element),position:fixed 只設 top+bottom、
+     不明講 height 的話,瀏覽器不會自動撐開高度,而是退回 iframe 預設的
+     150px——所以這裡一定要用 calc() 明講實際高度,不能只靠 top/bottom。 */
+  position: fixed;
+  top: 28px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: calc(100vh - 72px);
+  border: none;
+  background: #fff;
+}

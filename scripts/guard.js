@@ -56,7 +56,7 @@ export function enter(opts, onReady) {
     }
     if (opts.isIntro) {
       if (store.get('nickname')) {
-        location.href = 'index.html';
+        location.href = 'home.html';
         return;
       }
       onReady();
@@ -67,7 +67,7 @@ export function enter(opts, onReady) {
       return;
     }
     if (opts.requireWalkUnlocked && !flags.isWalkUnlocked()) {
-      location.href = 'index.html';
+      location.href = 'home.html';
       return;
     }
     onReady();

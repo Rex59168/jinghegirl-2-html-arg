@@ -1,33 +1,28 @@
-/* phone-boot.css — 進站當下的「手機鎖定畫面 → 主畫面」開機序列,只在 prequel/index.html
-   第一次載入時出現一次。日期固定寫死在第一章 2025 年時間線上（8/16，網站剛架好隔天），
-   不抓玩家裝置的即時日期，避免跟其他地方一樣踩到時間線矛盾。*/
+/* phone-boot.css — 手機的「鎖定畫面 → 主畫面(桌布+App圖示)」覆蓋層。第一次進站時是
+   開機動畫,之後玩家隨時按 Android 導覽列的 Home 鍵都可以叫出主畫面(桌布保持在
+   iframe 底下那一層,按 Home 只是把 iframe 蓋住、把這層蓋布掀開,不會真的換頁)。
+   只蓋住狀態列跟導覽列中間那一段(跟 iframe 佔的範圍一樣),不蓋住持續存在的狀態列/
+   導覽列本身,所以不管在鎖定畫面、主畫面還是 App 裡,頂部時間跟底部三鍵都一直看得到。
+   日期固定寫死在第一章 2025 年時間線上（8/16，網站剛架好隔天），不抓玩家裝置的
+   即時日期，避免跟其他地方一樣踩到時間線矛盾。*/
 
 .jh-boot {
   position: fixed;
-  inset: 0;
-  z-index: 10500;
+  top: 28px;
+  bottom: 44px;
+  left: 0;
+  right: 0;
+  z-index: 1500;
   background-image: url("../img/wallpaper.svg");
   background-size: cover;
   background-position: center;
   color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.6s ease;
 }
-.jh-boot--visible { opacity: 1; }
-
-.jh-boot__statusbar {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 18px;
-  font-size: 13px;
-  font-weight: 600;
-}
-.jh-boot__statusbar .jh-sb-icons { display: flex; align-items: center; gap: 5px; }
+.jh-boot--visible { opacity: 1; pointer-events: auto; }
 
 .jh-boot__lock {
   position: absolute;
@@ -55,7 +50,7 @@
 }
 .jh-boot__hint {
   position: absolute;
-  bottom: 56px;
+  bottom: 24px;
   left: 0; right: 0;
   text-align: center;
   font-size: 13px;
@@ -105,7 +100,7 @@
 .jh-boot__grid {
   position: absolute;
   left: 0; right: 0;
-  bottom: 90px;
+  bottom: 32px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 18px 0;
@@ -148,6 +143,6 @@
   75% { transform: translateX(4px); }
 }
 
-/* 主畫面裡的 Android 三鍵導覽列跟全站持續存在的那條共用 .jh-home-indicator /
-   .jh-nav-btn 樣式(定義在 browser-chrome.css,這頁本來就有載入),這裡不用
-   重複定義,開機動畫結束後也會自然接上同一條導覽列,不會有跳動感。*/
+/* 手機狀態列(.jh-status-bar)跟 Android 三鍵導覽列(.jh-home-indicator / .jh-nav-btn)
+   的樣式定義在 browser-chrome.css(這頁本來就有載入),殼層(shell.js)是持續存在的
+   獨立元素,不管在鎖定畫面、主畫面還是 App 裡都一直顯示,這裡不用重複定義。*/

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>尋人資料庫｜社團法人臺灣失蹤兒少協尋關懷基金會</title>
+<link rel="stylesheet" href="styles/tokens.css">
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/components.css">
+<link rel="stylesheet" href="styles/endgame.css">
+</head>
+<body>
+
+<div id="content-warning" class="content-warning" hidden>
+  <div class="content-warning__box">
+    <h1 class="content-warning__title"></h1>
+    <p class="content-warning__body"></p>
+    <button type="button" class="content-warning__continue"></button>
+    <div class="lang-switcher" id="lang-switcher-warning"></div>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <header class="site-header">
+    <span class="site-header__name"></span>
+    <a class="site-header__donate" href="javascript:void(0)"></a>
+  </header>
+  <nav class="site-nav" id="site-nav"></nav>
+  <nav class="breadcrumb" id="breadcrumb"></nav>
+  <main id="main"></main>
+  <div class="lang-switcher" id="lang-switcher"></div>
+  <footer class="site-footer" id="site-footer"></footer>
+</div>
+
+<script type="module">
+  import { store } from './scripts/store.js';
+  import * as guard from './scripts/guard.js';
+  import * as chrome from './scripts/chrome.js';
+  import * as flags from './scripts/flags.js';
+  import * as notebook from './scripts/notebook.js';
+  import { renderHome, homeCrumb } from './scripts/render.js';
+  import { t } from './scripts/i18n.js';
+
+  const MID_UPDATE_FACT ={ "zh-Hant": "靖河下游尋獲遺體，比對確認為 JH-2025-003 林晞。", "zh-Hans": "靖河下游寻获遗体，比对确认为 JH-2025-003 林晞。", en: "A body recovered downstream of the Jing River was confirmed as JH-2025-003, Lin Xi." };
+
+  const PAGE = {
+    heroTitle: { "zh-Hant": "尋人資料庫", "zh-Hans": "寻人数据库", en: "Missing Persons Database" },
+    homeIntro: { "zh-Hant": "本資料庫收錄本會受理之協尋案件，資料依規定定期更新。個別案件之偵辦進度請洽相關司法警察機關，本會不受理案情查詢。", "zh-Hans": "本数据库收录本会受理之协寻案件，资料依规定定期更新。个别案件之侦办进度请洽相关司法警察机关，本会不受理案情查询。", en: "This database lists search cases accepted by this foundation and is updated periodically as required. For investigation progress on a specific case, please contact the relevant law enforcement agency; this foundation does not handle case-progress inquiries." },
+    announcement: {
+      date: "2026/08/17",
+      title: { "zh-Hant": "靖河下游尋獲遺體　比對確認為 JH-2025-003", "zh-Hans": "靖河下游寻获遗体　比对确认为 JH-2025-003", en: "Body recovered downstream of the Jing River — confirmed as JH-2025-003" },
+      body: { "zh-Hant": "本會接獲通知，靖河下游尋獲之遺體經比對確認為本會協尋個案 JH-2025-003。案件狀態已更新。感謝長期協助本案的各界人士。", "zh-Hans": "本会接获通知，靖河下游寻获之遗体经比对确认为本会协寻个案 JH-2025-003。案件状态已更新。感谢长期协助本案的各界人士。", en: "This foundation has been notified that a body recovered downstream of the Jing River has been confirmed, through comparison, to be search case JH-2025-003. The case status has been updated. Thank you to everyone who has assisted with this case." }
+    },
+    quickLinks: [
+      { icon: "users", labelKey: "quickLinkVolunteer", href: "intro.html" },
+      { icon: "heart", labelKey: "quickLinkDonate", href: "donate.html" },
+      { icon: "document", labelKey: "quickLinkTrust", href: "trust.html" },
+      { icon: "phone", labelKey: "quickLinkContact", href: "contact.html" },
+      { icon: "shield", labelKey: "quickLinkFaq", href: "faq.html" },
+      { icon: "building", labelKey: "quickLinkAbout", href: "about.html" }
+    ],
+    news: [
+      { date: "2026/09/01", title: { "zh-Hant": "112 年度線上協尋登記系統維護公告", "zh-Hans": "112 年度线上协寻登记系统维护公告", en: "Notice: Annual maintenance of the online search-registration system" } },
+      { date: "2026/08/20", title: { "zh-Hant": "本會志工教育訓練課程開放報名", "zh-Hans": "本会志工教育训练课程开放报名", en: "Volunteer training course now open for registration" } },
+      { date: "2026/08/05", title: { "zh-Hant": "防詐騙提醒：本會不會主動請民眾匯款至個人帳戶", "zh-Hans": "防诈骗提醒：本会不会主动请民众汇款至个人账户", en: "Fraud alert: this foundation never asks the public to wire funds to a personal account" } },
+      { date: "2026/07/15", title: { "zh-Hant": "112 年度捐款徵信專區更新", "zh-Hans": "112 年度捐款征信专区更新", en: "112 donor disclosure section updated" } },
+      { date: "2026/06/02", title: { "zh-Hant": "本會與河東區公所續簽社區協尋合作備忘錄", "zh-Hans": "本会与河东区公所续签社区协寻合作备忘录", en: "Foundation renews community search-cooperation memorandum with Hedong District Office" } }
+    ],
+    partners: [
+      { "zh-Hant": "靖河市政府社會局", "zh-Hans": "靖河市政府社会局", en: "Jinghe City Social Affairs Bureau" },
+      { "zh-Hant": "靖河市警察局少年隊", "zh-Hans": "靖河市警察局少年队", en: "Jinghe City Police — Juvenile Division" },
+      { "zh-Hant": "靖河大學社會工作學系", "zh-Hans": "靖河大学社会工作学系", en: "Jinghe University, Dept. of Social Work" },
+      { "zh-Hant": "河東區公所", "zh-Hans": "河东区公所", en: "Hedong District Office" },
+      { "zh-Hant": "靖河市社福聯盟", "zh-Hans": "靖河市社福联盟", en: "Jinghe City Social Welfare Alliance" }
+    ],
+    cases: [
+      { id: "JH-2018-001", name: "方○○", age: 17, missing: "2018/05/22", lastSeen: { "zh-Hant": "靖河市河西區　興安街一帶", "zh-Hans": "靖河市河西区　兴安街一带", en: "Jinghe City, Hexi District — near Xing'an Street" }, status: "協尋中" },
+      { id: "JH-2022-002", name: "林昭", age: 18, missing: "2022/09/03", lastSeen: { "zh-Hant": "靖河市　青川站", "zh-Hans": "靖河市　青川站", en: "Jinghe City — Qingchuan Station" }, status: "已結案" },
+      { id: "JH-2025-003", name: "林晞", age: 17, missing: "2025/08/14", lastSeen: { "zh-Hant": "靖河市　文昌站", "zh-Hans": "靖河市　文昌站", en: "Jinghe City — Wenchang Station" }, status: "協尋中", statusAfterMidUpdate: "已尋獲" },
+      { id: "JH-2026-004", name: "陳語安", age: 16, missing: "2026/08/26", lastSeen: { "zh-Hant": "靖河市河東區", "zh-Hans": "靖河市河东区", en: "Jinghe City, Hedong District" }, status: "協尋中" },
+      { id: "JH-2012-005", name: "王思穎", age: 15, missing: "2012/03/10", lastSeen: { "zh-Hant": "靖河市　中山區", "zh-Hans": "靖河市　中山区", en: "Jinghe City, Zhongshan District" }, status: "已結案" },
+      { id: "JH-2013-006", name: "張○安", age: 8, missing: "2013/07/22", lastSeen: { "zh-Hant": "靖河市　大同區", "zh-Hans": "靖河市　大同区", en: "Jinghe City, Datong District" }, status: "已尋獲" },
+      { id: "JH-2014-007", name: "陳建宏", age: 16, missing: "2014/11/05", lastSeen: { "zh-Hant": "靖河市　河西區", "zh-Hans": "靖河市　河西区", en: "Jinghe City, Hexi District" }, status: "已結案" },
+      { id: "JH-2015-008", name: "李佳蓉", age: 14, missing: "2015/02/18", lastSeen: { "zh-Hant": "靖河市　河東區", "zh-Hans": "靖河市　河东区", en: "Jinghe City, Hedong District" }, status: "已尋獲" },
+      { id: "JH-2016-009", name: "黃○宸", age: 6, missing: "2016/09/09", lastSeen: { "zh-Hant": "靖河市　中山區", "zh-Hans": "靖河市　中山区", en: "Jinghe City, Zhongshan District" }, status: "已尋獲" },
+      { id: "JH-2017-010", name: "吳雅婷", age: 17, missing: "2017/06/30", lastSeen: { "zh-Hant": "靖河市　大同區", "zh-Hans": "靖河市　大同区", en: "Jinghe City, Datong District" }, status: "已結案" },
+      { id: "JH-2019-011", name: "蔡秉軒", age: 13, missing: "2019/04/14", lastSeen: { "zh-Hant": "靖河市　河西區", "zh-Hans": "靖河市　河西区", en: "Jinghe City, Hexi District" }, status: "已尋獲" },
+      { id: "JH-2019-012", name: "許○彤", age: 9, missing: "2019/12/01", lastSeen: { "zh-Hant": "靖河市　河東區", "zh-Hans": "靖河市　河东区", en: "Jinghe City, Hedong District" }, status: "已尋獲" },
+      { id: "JH-2020-013", name: "林○睿", age: 15, missing: "2020/08/08", lastSeen: { "zh-Hant": "靖河市　中山區", "zh-Hans": "靖河市　中山区", en: "Jinghe City, Zhongshan District" }, status: "已結案" },
+      { id: "JH-2020-014", name: "郭家豪", age: 17, missing: "2020/10/23", lastSeen: { "zh-Hant": "靖河市　河西區", "zh-Hans": "靖河市　河西区", en: "Jinghe City, Hexi District" }, status: "協尋中" },
+      { id: "JH-2021-015", name: "曾○妍", age: 12, missing: "2021/05/17", lastSeen: { "zh-Hant": "靖河市　大同區", "zh-Hans": "靖河市　大同区", en: "Jinghe City, Datong District" }, status: "已尋獲" },
+      { id: "JH-2021-016", name: "賴宗翰", age: 16, missing: "2021/09/02", lastSeen: { "zh-Hant": "靖河市　河東區", "zh-Hans": "靖河市　河东区", en: "Jinghe City, Hedong District" }, status: "已結案" },
+      { id: "JH-2023-017", name: "周○涵", age: 11, missing: "2023/01/29", lastSeen: { "zh-Hant": "靖河市　中山區", "zh-Hans": "靖河市　中山区", en: "Jinghe City, Zhongshan District" }, status: "已尋獲" },
+      { id: "JH-2023-018", name: "潘力維", age: 15, missing: "2023/07/07", lastSeen: { "zh-Hant": "靖河市　河西區", "zh-Hans": "靖河市　河西区", en: "Jinghe City, Hexi District" }, status: "已結案" },
+      { id: "JH-2024-019", name: "蕭○安", age: 13, missing: "2024/03/03", lastSeen: { "zh-Hant": "靖河市　大同區", "zh-Hans": "靖河市　大同区", en: "Jinghe City, Datong District" }, status: "已尋獲" },
+      { id: "JH-2024-020", name: "洪振宇", age: 17, missing: "2024/11/19", lastSeen: { "zh-Hant": "靖河市　河東區", "zh-Hans": "靖河市　河东区", en: "Jinghe City, Hedong District" }, status: "協尋中" }
+    ]
+  };
+
+  guard.enter({}, () => {
+    chrome.mount({ breadcrumb: [homeCrumb(store.get('locale'))] });
+
+    function render() {
+      if (flags.isMidUpdateFired()) {
+        notebook.addFact('mid-update', t(MID_UPDATE_FACT, store.get('locale')), 'home.html');
+      }
+      document.getElementById('main').replaceChildren(renderHome(PAGE, store.get('locale')));
+    }
+    render();
+    chrome.onLocaleChange(render);
+  });
+</script>
+</body>
+</html>

@@ -1,7 +1,8 @@
 /* browser-chrome.css — 假瀏覽器外框 */
 
-/* phone-shell — 手機狀態列 + 底部 Home 指示條,包住整個假瀏覽器外框，
-   讓整站看起來像是在一支手機螢幕裡瀏覽，不只是瀏覽器分頁。*/
+/* 以下這些手機狀態列/Android三鍵的樣式定義給殼層(shell.js,prequel/index.html)使用——
+   殼層在 iframe 外面,只掛一次,不會每頁重複掛。這個檔案本身(browser-chrome.js)只在
+   iframe 裡面的每一頁負責掛假瀏覽器網址列(.jh-browser-chrome),不會重複建立狀態列。*/
 .jh-status-bar {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -67,14 +68,7 @@
   transform: translateX(-50%) translateY(0);
 }
 
-body.jh-has-shell { padding-bottom: 44px; }
-body.jh-has-shell.jh-has-chrome { padding-top: 68px; }
-body.jh-has-shell:not(.jh-has-chrome) { padding-top: 28px; }
-.jh-has-chrome .jh-browser-chrome { top: 28px; }
-
-.jh-notebook-btn, .jh-hint-btn { bottom: calc(12px + 44px) !important; }
-.jh-notebook-btn { bottom: calc(68px + 44px) !important; }
-.jh-hint-panel, .jh-notebook-panel { padding-bottom: 44px; box-sizing: border-box; }
+body.jh-has-chrome { padding-top: 40px; }
 
 .jh-browser-chrome {
   position: fixed;
