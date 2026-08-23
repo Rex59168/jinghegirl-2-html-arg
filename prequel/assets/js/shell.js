@@ -141,19 +141,60 @@
     `;
     document.body.appendChild(navBar);
 
-    const toast = document.createElement("div");
-    toast.className = "jh-nav-toast";
-    toast.textContent = "沒有其他使用中的頁面";
-    document.body.appendChild(toast);
-    let toastTimer = null;
-
     document.getElementById("jh-nav-back").addEventListener("click", () => {
-      try { frame.contentWindow.history.back(); } catch (e) {}
+      // 交給 iframe 自己那頁的站內導覽紀錄處理(browser-chrome.js 掛的
+      // window.jhGoBackInSite),不要用瀏覽器原生 history.back()——玩家還沒在
+      // 站內換過頁的話,原生上一頁其實是離開整個網站,不是我們要的效果。
+      try {
+        if (typeof frame.contentWindow.jhGoBackInSite === "function") frame.contentWindow.jhGoBackInSite();
+      } catch (e) {}
     });
-    document.getElementById("jh-nav-recents").addEventListener("click", () => {
-      toast.classList.add("jh-nav-toast--visible");
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove("jh-nav-toast--visible"), 1400);
+    document.getElementById("jh-nav-recents").addEventListener("click", openRecents);
+
+    // ── 多工切換畫面:點方塊鍵不再只是「沒有其他使用中的頁面」的提示 toast,
+    // 改成跟一般 Android 一樣列出可以切換的幾個畫面卡片,點哪張就直接切過去。──
+    const recents = document.createElement("div");
+    recents.className = "jh-recents";
+    recents.id = "jh-recents";
+    recents.innerHTML = `
+      <div class="jh-recents__title">多工</div>
+      <div class="jh-recents__list">
+        <button type="button" class="jh-recents__card jh-recents__card--messages" id="jh-recents-messages">
+          <span class="jh-recents__icon">💬</span>
+          <span class="jh-recents__label">訊息</span>
+        </button>
+        <button type="button" class="jh-recents__card jh-recents__card--notes" id="jh-recents-notes">
+          <span class="jh-recents__icon">📝</span>
+          <span class="jh-recents__label">備忘錄</span>
+        </button>
+        <button type="button" class="jh-recents__card jh-recents__card--browser" id="jh-recents-browser">
+          <span class="jh-recents__icon">🧭</span>
+          <span class="jh-recents__label">網站</span>
+        </button>
+      </div>
+    `;
+    document.body.appendChild(recents);
+
+    function openRecents() {
+      recents.classList.add("jh-recents--open");
+    }
+    function closeRecents() {
+      recents.classList.remove("jh-recents--open");
+    }
+    recents.addEventListener("click", (e) => {
+      if (e.target === recents) closeRecents();
+    });
+    document.getElementById("jh-recents-messages").addEventListener("click", () => {
+      closeRecents();
+      openMessages();
+    });
+    document.getElementById("jh-recents-notes").addEventListener("click", () => {
+      closeRecents();
+      openNotes();
+    });
+    document.getElementById("jh-recents-browser").addEventListener("click", () => {
+      closeRecents();
+      enterApp();
     });
 
     // ── 鎖定畫面 / 主畫面覆蓋層(第一次是開機動畫,之後按 Home 鍵可以隨時再叫出來)──

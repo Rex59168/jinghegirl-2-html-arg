@@ -86,7 +86,63 @@ function armFullscreenOnFirstClick() {
   });
 }
 
+// 站內導覽紀錄:原本的上一頁/下一頁按鈕直接用瀏覽器原生 history.back()/forward(),
+// 但 iframe 最一開始那頁如果玩家還沒往下點過任何連結,history 裡「上一頁」其實是
+// 進站前瀏覽器停留的真實網頁——按下去就真的離開整個網站了。改成自己記一份站內
+// 專用的瀏覽紀錄(存在 sessionStorage,同一分頁內兩個章節共用同一份,反正現在
+// 已經是同一個網站),上一頁/下一頁只在這份紀錄裡面走,走到底就不做事,不會漏到
+// 站外真正的瀏覽器歷史紀錄。
+const NAV_STACK_KEY = 'jh_nav_stack';
+const NAV_CONTROLLED_KEY = 'jh_nav_controlled';
+
+function loadNavStack() {
+  try {
+    return JSON.parse(sessionStorage.getItem(NAV_STACK_KEY)) || { stack: [], pos: -1 };
+  } catch (e) {
+    return { stack: [], pos: -1 };
+  }
+}
+function saveNavStack(nav) {
+  try { sessionStorage.setItem(NAV_STACK_KEY, JSON.stringify(nav)); } catch (e) {}
+}
+function currentNavPath() {
+  return location.pathname + location.search;
+}
+function recordNavVisit() {
+  if (sessionStorage.getItem(NAV_CONTROLLED_KEY) === '1') {
+    sessionStorage.removeItem(NAV_CONTROLLED_KEY);
+    return;
+  }
+  const nav = loadNavStack();
+  const path = currentNavPath();
+  if (nav.pos < nav.stack.length - 1) nav.stack = nav.stack.slice(0, nav.pos + 1);
+  if (nav.stack[nav.stack.length - 1] !== path) nav.stack.push(path);
+  nav.pos = nav.stack.length - 1;
+  saveNavStack(nav);
+}
+function goBackInSite() {
+  const nav = loadNavStack();
+  if (nav.pos <= 0) return;
+  nav.pos -= 1;
+  saveNavStack(nav);
+  sessionStorage.setItem(NAV_CONTROLLED_KEY, '1');
+  location.href = nav.stack[nav.pos];
+}
+function goForwardInSite() {
+  const nav = loadNavStack();
+  if (nav.pos >= nav.stack.length - 1) return;
+  nav.pos += 1;
+  saveNavStack(nav);
+  sessionStorage.setItem(NAV_CONTROLLED_KEY, '1');
+  location.href = nav.stack[nav.pos];
+}
+// 掛在 window 上,給殼層(index.html 的 scripts/shell.js)的 Android 三鍵導覽列
+// 跨 frame 呼叫用。
+window.jhGoBackInSite = goBackInSite;
+window.jhGoForwardInSite = goForwardInSite;
+
 function mountBrowserChrome() {
+  recordNavVisit();
   if (document.querySelector('.jh-browser-chrome')) return;
 
   if (!document.querySelector('link[data-phone-shell]')) {
@@ -118,8 +174,8 @@ function mountBrowserChrome() {
   bar.querySelector('.jh-bc-url-text').textContent = text;
   document.body.classList.add('jh-has-chrome');
 
-  document.getElementById('jh-bc-back').addEventListener('click', () => history.back());
-  document.getElementById('jh-bc-fwd').addEventListener('click', () => history.forward());
+  document.getElementById('jh-bc-back').addEventListener('click', goBackInSite);
+  document.getElementById('jh-bc-fwd').addEventListener('click', goForwardInSite);
   document.getElementById('jh-bc-refresh').addEventListener('click', () => location.reload());
 
   armFullscreenOnFirstClick();

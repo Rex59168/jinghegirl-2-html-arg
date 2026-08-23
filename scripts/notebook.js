@@ -121,4 +121,8 @@ export function mount() {
 
   refreshText();
   renderBadge();
+
+  // 掛在 window 上,給殼層(scripts/shell.js)的多工切換畫面跨 frame 呼叫用——
+  // 這一章的備忘錄面板是掛在目前這頁 iframe 內容裡,不像訊息/瀏覽器是殼層自己管的。
+  window.jhOpenNotebook = open;
 }

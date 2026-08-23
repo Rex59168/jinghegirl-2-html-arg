@@ -59,7 +59,66 @@
     });
   }
 
+  // 站內導覽紀錄:原本的上一頁/下一頁按鈕直接用瀏覽器原生 history.back()/forward(),
+  // 但 iframe 最一開始那頁如果玩家還沒往下點過任何連結,history 裡「上一頁」其實是
+  // 進站前瀏覽器停留的真實網頁——按下去就真的離開整個網站了。改成自己記一份站內
+  // 專用的瀏覽紀錄(存在 sessionStorage,同一分頁內兩個章節共用同一份,反正現在
+  // 已經是同一個網站),上一頁/下一頁只在這份紀錄裡面走,走到底就不做事,不會漏到
+  // 站外真正的瀏覽器歷史紀錄。
+  const NAV_STACK_KEY = "jh_nav_stack";
+  const NAV_CONTROLLED_KEY = "jh_nav_controlled";
+
+  function loadNavStack() {
+    try {
+      return JSON.parse(sessionStorage.getItem(NAV_STACK_KEY)) || { stack: [], pos: -1 };
+    } catch (e) {
+      return { stack: [], pos: -1 };
+    }
+  }
+  function saveNavStack(nav) {
+    try { sessionStorage.setItem(NAV_STACK_KEY, JSON.stringify(nav)); } catch (e) {}
+  }
+  function currentNavPath() {
+    return location.pathname + location.search;
+  }
+  function recordNavVisit() {
+    // 如果這次載入是我們自己的上一頁/下一頁按鈕觸發的,紀錄在按鈕點擊當下就已經
+    // 設定好、正確指到這一頁了,不用再當成新的一步重新 push 一次。
+    if (sessionStorage.getItem(NAV_CONTROLLED_KEY) === "1") {
+      sessionStorage.removeItem(NAV_CONTROLLED_KEY);
+      return;
+    }
+    const nav = loadNavStack();
+    const path = currentNavPath();
+    // 玩家先按過上一頁、又點了新連結:後面那段回不去的分支要砍掉,
+    // 這是瀏覽器歷史紀錄的標準行為。
+    if (nav.pos < nav.stack.length - 1) nav.stack = nav.stack.slice(0, nav.pos + 1);
+    if (nav.stack[nav.stack.length - 1] !== path) nav.stack.push(path);
+    nav.pos = nav.stack.length - 1;
+    saveNavStack(nav);
+  }
+  function goBackInSite() {
+    const nav = loadNavStack();
+    if (nav.pos <= 0) return; // 已經是網站裡最早的一頁,不做任何事
+    nav.pos -= 1;
+    saveNavStack(nav);
+    sessionStorage.setItem(NAV_CONTROLLED_KEY, "1");
+    location.href = nav.stack[nav.pos];
+  }
+  function goForwardInSite() {
+    const nav = loadNavStack();
+    if (nav.pos >= nav.stack.length - 1) return;
+    nav.pos += 1;
+    saveNavStack(nav);
+    sessionStorage.setItem(NAV_CONTROLLED_KEY, "1");
+    location.href = nav.stack[nav.pos];
+  }
+  // 掛在 window 上,給殼層(shell.js)的 Android 三鍵導覽列跨 frame 呼叫用。
+  window.jhGoBackInSite = goBackInSite;
+  window.jhGoForwardInSite = goForwardInSite;
+
   function mount() {
+    recordNavVisit();
     const { text, isLocal } = computeUrl();
 
     const bar = document.createElement("div");
@@ -80,8 +139,8 @@
     bar.querySelector(".jh-bc-url-text").textContent = text;
     document.body.classList.add("jh-has-chrome");
 
-    document.getElementById("jh-bc-back").addEventListener("click", () => history.back());
-    document.getElementById("jh-bc-fwd").addEventListener("click", () => history.forward());
+    document.getElementById("jh-bc-back").addEventListener("click", goBackInSite);
+    document.getElementById("jh-bc-fwd").addEventListener("click", goForwardInSite);
     document.getElementById("jh-bc-refresh").addEventListener("click", () => location.reload());
 
     mountLangSwitcher(bar);

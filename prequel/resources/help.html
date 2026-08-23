@@ -61,6 +61,39 @@
     } catch (e) {}
   });
 })();
+
+// 這頁也刻意不掛假網址列的上一頁/下一頁按鈕,但殼層 Android 三鍵導覽列的返回鍵
+// 一樣可能在這頁被按——要補記一筆站內導覽紀錄、並提供同一套 jhGoBackInSite,
+// 不然殼層那顆返回鍵在這頁會找不到函式、完全沒反應。
+(function () {
+  var NAV_STACK_KEY = "jh_nav_stack";
+  var NAV_CONTROLLED_KEY = "jh_nav_controlled";
+  function loadNavStack() {
+    try { return JSON.parse(sessionStorage.getItem(NAV_STACK_KEY)) || { stack: [], pos: -1 }; }
+    catch (e) { return { stack: [], pos: -1 }; }
+  }
+  function saveNavStack(nav) {
+    try { sessionStorage.setItem(NAV_STACK_KEY, JSON.stringify(nav)); } catch (e) {}
+  }
+  if (sessionStorage.getItem(NAV_CONTROLLED_KEY) === "1") {
+    sessionStorage.removeItem(NAV_CONTROLLED_KEY);
+  } else {
+    var nav = loadNavStack();
+    var path = location.pathname + location.search;
+    if (nav.pos < nav.stack.length - 1) nav.stack = nav.stack.slice(0, nav.pos + 1);
+    if (nav.stack[nav.stack.length - 1] !== path) nav.stack.push(path);
+    nav.pos = nav.stack.length - 1;
+    saveNavStack(nav);
+  }
+  window.jhGoBackInSite = function () {
+    var nav = loadNavStack();
+    if (nav.pos <= 0) return;
+    nav.pos -= 1;
+    saveNavStack(nav);
+    sessionStorage.setItem(NAV_CONTROLLED_KEY, "1");
+    location.href = nav.stack[nav.pos];
+  };
+})();
 </script>
 </body>
 </html>
