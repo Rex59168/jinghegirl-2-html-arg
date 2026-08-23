@@ -1,11 +1,15 @@
 // shell.js — 續作殼層本體(只在根目錄 index.html 執行,是第二章唯一真正會被瀏覽器
 // 導航的頁面)。負責:手機狀態列、Android 三鍵導覽列、桌布主畫面(按 Home 鍵叫出來)、
-// 管理內層 iframe(實際內容都在裡面跑,換頁只發生在 iframe 內部,殼層本身永遠不重新
-// 導航,全螢幕狀態才不會被瀏覽器自動取消)。跟前作共用同一把橋接旗標的命名方式。
+// 訊息 App(案件通知信,跟前作周妤的訊息 App 同一套視覺跟位置)、管理內層 iframe
+// (實際內容都在裡面跑,換頁只發生在 iframe 內部,殼層本身永遠不重新導航,全螢幕
+// 狀態才不會被瀏覽器自動取消)。跟前作共用同一把橋接旗標的命名方式。
 //
 // 主畫面掛的時間點是 2026/08/17(靖河下游尋獲遺體公告當天)——固定寫死,不抓玩家
 // 裝置的即時日期,理由跟前作 013.txt 那次修掉的矛盾一樣:這裡如果抓即時日期,
 // 案件時間軸(2026/8/26 之後)就可能被戳破。
+import { t } from './i18n.js';
+import { MAIL_UI } from './labels.js';
+
 (() => {
   const SIGNAL_SVG = '<svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="3" width="3" height="9" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>';
   const WIFI_SVG = '<svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.2a1.3 1.3 0 100 2.6 1.3 1.3 0 000-2.6z"/><path d="M4.2 7.4a5.4 5.4 0 017.6 0l-1.4 1.4a3.4 3.4 0 00-4.8 0L4.2 7.4z"/><path d="M1 4.2a9.6 9.6 0 0114 0L13.6 5.6a7.6 7.6 0 00-11.2 0L1 4.2z"/></svg>';
@@ -16,6 +20,23 @@
 
   const HOME_DATE_LABEL = "2026年8月17日 星期一";
   const FULLSCREEN_KEY = "jh2bridge:fullscreen_opt_in";
+
+  // 跟 scripts/store.js 用同一個前綴直接讀寫 localStorage——殼層是頂層文件,跟
+  // iframe 裡的每一頁同源共用同一份 localStorage,不需要透過 store.js 的模組
+  // 實例(每個文件各自快取一份記憶體狀態,不會自動同步)也能拿到最新資料。
+  const JH_PREFIX = "jh4:";
+  function jhGet(key, fallback) {
+    try {
+      const v = localStorage.getItem(JH_PREFIX + key);
+      return v === null ? fallback : JSON.parse(v);
+    } catch (e) { return fallback; }
+  }
+  function jhSet(key, value) {
+    try { localStorage.setItem(JH_PREFIX + key, JSON.stringify(value)); } catch (e) {}
+  }
+  function currentLocale() { return jhGet("locale", "zh-Hant"); }
+  function letters() { return jhGet("letters", []); }
+  function unreadCount() { return letters().filter((l) => !l.read).length; }
 
   function pad2(n) { return String(n).padStart(2, "0"); }
   function clockNow() {
@@ -81,8 +102,9 @@
             <span class="jh-boot__app-icon">🖼️</span>
             <span class="jh-boot__app-label">相簿</span>
           </button>
-          <button type="button" class="jh-boot__app jh-boot__app--messages" data-inert="1">
+          <button type="button" class="jh-boot__app jh-boot__app--messages" id="jh-boot-messages">
             <span class="jh-boot__app-icon">💬</span>
+            <span class="jh-boot__app-badge" id="jh-boot-messages-badge" hidden></span>
             <span class="jh-boot__app-label">訊息</span>
           </button>
           <button type="button" class="jh-boot__app jh-boot__app--notes" data-inert="1">
@@ -99,8 +121,8 @@
     document.body.appendChild(boot);
 
     function tick() {
-      const t = clockNow();
-      document.querySelectorAll("#jh-sb-time, #jh-boot-home-time").forEach((el) => { el.textContent = t; });
+      const time = clockNow();
+      document.querySelectorAll("#jh-sb-time, #jh-boot-home-time").forEach((el) => { el.textContent = time; });
     }
     tick();
     setInterval(tick, 15000);
@@ -115,6 +137,11 @@
 
     const home = document.getElementById("jh-boot-home");
 
+    function showHomeScreen() {
+      boot.classList.add("jh-boot--visible");
+      home.classList.add("jh-boot__home--visible");
+    }
+
     document.getElementById("jh-boot-browser").addEventListener("click", () => {
       localStorage.setItem(FULLSCREEN_KEY, "1");
       window.requestFullscreenNow();
@@ -124,10 +151,119 @@
       // 還是會擋住底下 iframe 的點擊。
       home.classList.remove("jh-boot__home--visible");
     });
-    document.getElementById("jh-nav-home").addEventListener("click", () => {
-      boot.classList.add("jh-boot--visible");
-      home.classList.add("jh-boot__home--visible");
+    document.getElementById("jh-nav-home").addEventListener("click", showHomeScreen);
+
+    // ══════════════════ 訊息 App(案件通知信) ══════════════════
+    // 跟前作周妤的訊息 App 同一套視覺跟位置,但資料模型不同——這裡沒有多個聯絡人,
+    // 只有一份案件通知信的清單(跟原本 scripts/mail.js 的「信件」資料模型一樣),
+    // 所以面板是單一列表,不用做聯絡人清單+對話串那層。
+    const mailEl = document.createElement("div");
+    mailEl.className = "jh-mail";
+    mailEl.id = "jh-mail";
+    mailEl.innerHTML = `
+      <div class="jh-mail__header">
+        <strong id="jh-mail-title"></strong>
+        <button type="button" class="jh-mail__iconbtn" id="jh-mail-close" aria-label="關閉">✕</button>
+      </div>
+      <div class="jh-mail__body" id="jh-mail-body"></div>
+    `;
+    document.body.appendChild(mailEl);
+
+    const notif = document.createElement("div");
+    notif.className = "jh-notif";
+    notif.id = "jh-notif";
+    notif.innerHTML = `
+      <div class="jh-notif__icon">💬</div>
+      <div class="jh-notif__text">
+        <div class="jh-notif__title" id="jh-notif-title"></div>
+        <div class="jh-notif__body" id="jh-notif-body"></div>
+      </div>
+    `;
+    document.body.appendChild(notif);
+
+    const mailBodyEl = document.getElementById("jh-mail-body");
+    const mailBadgeEl = document.getElementById("jh-boot-messages-badge");
+
+    function renderBadge() {
+      const n = unreadCount();
+      if (n > 0) {
+        mailBadgeEl.hidden = false;
+        mailBadgeEl.textContent = String(n);
+      } else {
+        mailBadgeEl.hidden = true;
+      }
+    }
+
+    function renderMailBody() {
+      const list = letters();
+      mailBodyEl.innerHTML = "";
+      if (!list.length) {
+        const p = document.createElement("p");
+        p.className = "jh-mail__empty";
+        p.textContent = t(MAIL_UI.empty, currentLocale());
+        mailBodyEl.appendChild(p);
+        return;
+      }
+      list.slice().reverse().forEach((letter) => {
+        const item = document.createElement("div");
+        item.className = "jh-mail__item";
+        const subject = document.createElement("p");
+        subject.className = "jh-mail__subject";
+        subject.textContent = letter.subject;
+        const body = document.createElement("p");
+        body.className = "jh-mail__text";
+        body.textContent = letter.body;
+        item.appendChild(subject);
+        item.appendChild(body);
+        if (letter.linkHref) {
+          const a = document.createElement("a");
+          a.className = "jh-mail__link";
+          a.href = letter.linkHref;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.textContent = letter.linkLabel;
+          item.appendChild(a);
+        }
+        mailBodyEl.appendChild(item);
+      });
+    }
+
+    function openMail() {
+      document.getElementById("jh-mail-title").textContent = t(MAIL_UI.title, currentLocale());
+      renderMailBody();
+      jhSet("letters", letters().map((l) => ({ ...l, read: true })));
+      renderBadge();
+      mailEl.classList.add("jh-mail--open");
+    }
+    function closeMail() {
+      mailEl.classList.remove("jh-mail--open");
+    }
+
+    document.getElementById("jh-boot-messages").addEventListener("click", () => {
+      showHomeScreen();
+      openMail();
     });
+    document.getElementById("jh-mail-close").addEventListener("click", closeMail);
+
+    // ── 通知橫幅:iframe 裡任何一頁呼叫 mail.deliverLetter(...) 都會透過
+    // window.top.jhReceiveLetter(...) 進來這裡 ──
+    let notifTimer = null;
+    window.jhReceiveLetter = function jhReceiveLetter(letter) {
+      renderBadge();
+      document.getElementById("jh-notif-title").textContent = t(MAIL_UI.title, currentLocale());
+      document.getElementById("jh-notif-body").textContent = letter.subject;
+      notif.classList.add("jh-notif--visible");
+      clearTimeout(notifTimer);
+      notifTimer = setTimeout(() => notif.classList.remove("jh-notif--visible"), 5000);
+    };
+    notif.addEventListener("click", () => {
+      notif.classList.remove("jh-notif--visible");
+      clearTimeout(notifTimer);
+      showHomeScreen();
+      openMail();
+    });
+
+    renderBadge();
   }
 
   if (document.readyState === "loading") {

@@ -147,6 +147,143 @@ html.jh-shell, body.jh-shell {
   75% { transform: translateX(4px); }
 }
 
+/* 訊息 App 圖示上的未讀角標——疊在主畫面「訊息」App 圖示右上角,跟前作同一套視覺 */
+.jh-boot__app { position: relative; }
+.jh-boot__app-badge {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(14px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: #e0442f;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
+}
+
+/* ══════════════════ 訊息 App(案件通知信清單) ══════════════════
+   跟 .jh-boot 佔一樣的範圍(狀態列跟導覽列中間),從主畫面「訊息」圖示點進來,
+   或是點頂部通知橫幅直接跳進來。這裡沒有聯絡人清單,只有單一份通知信列表。 */
+.jh-mail {
+  position: fixed;
+  top: 28px;
+  bottom: 44px;
+  left: 0;
+  right: 0;
+  z-index: 1600;
+  background: #fff;
+  color: #222;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.jh-mail--open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.jh-mail__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+.jh-mail__iconbtn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #333;
+  padding: 4px 8px;
+}
+.jh-mail__body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px 20px;
+}
+.jh-mail__item {
+  padding: 12px 0;
+  border-bottom: 1px dashed #ddd;
+}
+.jh-mail__subject {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+.jh-mail__text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #444;
+}
+.jh-mail__link {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4a6fa5;
+}
+.jh-mail__empty {
+  color: #999;
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+}
+
+/* ── 頂部通知橫幅:iframe 裡任何一頁呼叫 mail.deliverLetter(...) 都會冒出這個,
+   不受 .jh-boot 顯示狀態限制,點一下直接跳進訊息 App。z-index 最高,是最上層。 ── */
+.jh-notif {
+  position: fixed;
+  top: 28px;
+  left: 8px;
+  right: 8px;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(28, 28, 32, 0.94);
+  color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  transform: translateY(-140%);
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+.jh-notif--visible { transform: translateY(6px); }
+.jh-notif__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: linear-gradient(160deg, #59d16a, #2fa244);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.jh-notif__text { flex: 1; min-width: 0; }
+.jh-notif__title { font-size: 13px; font-weight: 600; }
+.jh-notif__body {
+  font-size: 13px;
+  opacity: 0.9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ── 假瀏覽器網址列(iframe 裡的每一頁自己掛,跟前作同一套視覺) ── */
 .jh-browser-chrome {
   position: fixed;

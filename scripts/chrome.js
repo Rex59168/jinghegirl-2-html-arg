@@ -2,7 +2,6 @@ import { store } from './store.js';
 import { t, LOCALES } from './i18n.js';
 import { LABELS, ORG_CHROME } from './labels.js';
 import * as notebook from './notebook.js';
-import * as mail from './mail.js';
 
 const localeChangeListeners = [];
 
@@ -219,7 +218,6 @@ export function mount({ breadcrumb = [] } = {}) {
   document.getElementById('app').hidden = false;
   mountLangSwitchers();
   notebook.mount();
-  mail.mount();
 }
 
 // For pages without the institutional chrome (raw snapshots, file views, endgame, admin).
@@ -232,6 +230,5 @@ export function mountBare({ skipWidgets = false } = {}) {
   mountLangSwitchers();
   if (skipWidgets) return;
   notebook.mount();
-  mail.mount();
 }
 
