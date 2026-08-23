@@ -193,14 +193,18 @@
       boot.classList.add("jh-boot--visible");
     }
 
-    function enterApp() {
-      localStorage.setItem(FULLSCREEN_KEY, "1");
-      window.requestFullscreenNow();
+    function hideHomeScreen() {
       boot.classList.remove("jh-boot--visible");
       // 主畫面自己也有 pointer-events:auto 的覆蓋規則(讓 App 圖示點得到),
       // 光靠外層 .jh-boot--visible 淡出還不夠,要一併拿掉,不然透明的主畫面
       // 還是會擋住底下 iframe 的點擊。
       home.classList.remove("jh-boot__home--visible");
+    }
+
+    function enterApp() {
+      localStorage.setItem(FULLSCREEN_KEY, "1");
+      window.requestFullscreenNow();
+      hideHomeScreen();
     }
 
     document.getElementById("jh-boot-browser").addEventListener("click", enterApp);
@@ -347,7 +351,12 @@
       threadBodyEl.scrollTop = threadBodyEl.scrollHeight;
     }
 
+    // 記住開訊息 App 之前是不是已經在主畫面——如果是在瀏覽器裡讀故事時被通知橫幅
+    // 打斷、點進來看訊息,關閉之後應該要回到原本在讀的頁面,而不是留在主畫面
+    // 乾等,還要玩家自己想起來要點瀏覽器圖示才能回去。
+    let messagesOpenedFromBrowser = false;
     function openMessages(contactId) {
+      messagesOpenedFromBrowser = !boot.classList.contains("jh-boot--visible");
       renderContacts();
       showHomeScreen();
       messagesEl.classList.add("jh-messages--open");
@@ -355,6 +364,7 @@
     }
     function closeMessages() {
       messagesEl.classList.remove("jh-messages--open", "jh-messages--thread-open");
+      if (messagesOpenedFromBrowser) hideHomeScreen();
     }
 
     document.getElementById("jh-boot-messages").addEventListener("click", () => openMessages());
