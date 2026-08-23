@@ -29,14 +29,6 @@
     </div>
   </div>
 
-  <div class="panel" id="reveal-panel" style="display:none;">
-    <strong style="color:#b3261e;font-size:13px;">周妤:</strong>
-    <p style="font-size:13px;color:#333;">
-      這件事是她媽媽後來跟我說的。她有開分享位置,兩個小時,17:00 到 19:00。
-      她大概覺得,兩小時,見個面、喝杯咖啡,怎麼樣都夠了。
-    </p>
-  </div>
-
   <p style="text-align:center;margin-top:18px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
 
 </main>
@@ -54,7 +46,6 @@
 <script src="assets/js/idle-scroll.js"></script>
 <script>
 function complete() {
-  document.getElementById("reveal-panel").style.display = "block";
   document.getElementById("back-link").style.display = "block";
   JH.set("ch4_t5", true);
   JHNotebook.add(
@@ -62,6 +53,8 @@ function complete() {
     "她開了定位分享,但只設定 17:00–19:00,19:00 一到就自動關閉",
     "transit/location-share.html"
   );
+  JHPhone.push("ch4_t5_me", "她有開定位分享給媽,但只設定 17:00 到 19:00,時間到就自動關閉了。", null, "me");
+  JHPhone.push("ch4_t5_zy", "這件事是她媽媽後來跟我說的。她有開分享位置,兩個小時,17:00 到 19:00。她大概覺得,兩小時,見個面、喝杯咖啡,怎麼樣都夠了。");
 }
 if (JH.get("ch4_t5")) complete();
 document.getElementById("end-time").addEventListener("click", complete);

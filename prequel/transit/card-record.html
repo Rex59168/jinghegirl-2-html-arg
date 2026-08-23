@@ -28,14 +28,6 @@
     <p style="font-size:13px;color:#666;">你們約好的地點是文昌站 2 號出口。點下面清單中你覺得有問題的那一列。</p>
   </div>
 
-  <div class="panel" id="reveal-block" style="display:none;">
-    <strong style="color:#b3261e;font-size:13px;">周妤:</strong>
-    <p style="font-size:13px;color:#333;">
-      文昌站,2 號出口。她到站了,人卻沒有出現在咖啡廳。
-      悠遊卡不會騙人——它只記錄你在哪裡刷過,不會記錄你為什麼在那裡。
-    </p>
-  </div>
-
   <p style="text-align:center;margin-top:18px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
 
 </main>
@@ -74,12 +66,7 @@ RECORDS.forEach((r) => {
     });
   } else if (r.key === "mystery1" || r.key === "mystery2") {
     li.addEventListener("click", () => {
-      if (li.querySelector(".zy-note")) return;
-      const note = document.createElement("div");
-      note.className = "zy-note";
-      note.style.cssText = "font-size:12px;color:#999;padding:0 10px 10px;";
-      note.textContent = "周妤:我看到了。";
-      li.appendChild(note);
+      JHPhone.push("ch4_t2_" + r.key, "我看到了。");
     });
   }
   list.appendChild(li);
@@ -87,12 +74,10 @@ RECORDS.forEach((r) => {
 
 if (JH.get("ch4_t2")) {
   document.querySelectorAll(".record-row")[3].classList.add("flagged");
-  document.getElementById("reveal-block").style.display = "block";
   document.getElementById("back-link").style.display = "block";
 }
 
 function complete() {
-  document.getElementById("reveal-block").style.display = "block";
   document.getElementById("back-link").style.display = "block";
   JH.set("ch4_t2", true);
   JHNotebook.add(
@@ -100,6 +85,8 @@ function complete() {
     "她 17:22 進站,19:38 出站的是興安站——不是約好的文昌站",
     "transit/card-record.html"
   );
+  JHPhone.push("ch4_t2_me", "她 17:22 進站,19:38 出站的卻是興安站,不是約好的文昌站。", null, "me");
+  JHPhone.push("ch4_t2_zy", "文昌站,2 號出口。她到站了,人卻沒有出現在咖啡廳。悠遊卡不會騙人——它只記錄你在哪裡刷過,不會記錄你為什麼在那裡。");
 }
 </script>
 </body>

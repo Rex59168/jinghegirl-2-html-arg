@@ -28,14 +28,6 @@
     <p><strong>晞晞</strong> 16:44・知道啦</p>
   </section>
 
-  <section class="panel" id="reveal-panel" style="display:none;">
-    <strong style="color:#b3261e;font-size:13px;">周妤:</strong>
-    <p style="font-size:14px;">
-      她說得很含糊,但不是騙我。她只是不想被攔下來。
-      早知道我就多問一句「哪個同學」——現在想想,她連名字都沒提。
-    </p>
-  </section>
-
   <p style="text-align:center;margin-top:14px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
 </main>
 
@@ -55,7 +47,6 @@ JHPhone.push("open_zhouyuchat", "這是我跟她那天的對話紀錄。我一�
 </script>
 <script>
 function complete() {
-  document.getElementById("reveal-panel").style.display = "block";
   document.getElementById("back-link").style.display = "block";
   JH.set("ch4_t4", true);
   JHNotebook.add(
@@ -63,6 +54,8 @@ function complete() {
     "她有跟周妤說要出門,但說得很含糊:「跟同學去買東西」",
     "xunren/zhouyu-chat.html"
   );
+  JHPhone.push("ch4_t4_me", "她有跟妳說要出門,只是說得很含糊——「跟同學去買東西」。", null, "me");
+  JHPhone.push("ch4_t4_zy", "她說得很含糊,但不是騙我。她只是不想被攔下來。早知道我就多問一句「哪個同學」——現在想想,她連名字都沒提。");
 }
 
 if (JH.get("ch4_t4")) complete();

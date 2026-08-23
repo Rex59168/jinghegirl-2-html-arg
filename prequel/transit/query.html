@@ -59,11 +59,6 @@
     <p style="text-align:center;margin-top:14px;">
       <button type="button" class="flag-btn" id="flag-btn">跟路況資料比對</button>
     </p>
-    <div id="flag-result" style="display:none;font-size:13px;color:#333;margin-top:12px;padding:12px;background:#fff6f5;border-left:3px solid #b3261e;">
-      <strong style="color:#b3261e;">周妤:</strong>
-      這則訊息我看過不知道幾次了。「明天好像會塞車」——聽起來就是很普通的一句抱歉,普通到我當初轉貼給大家看的時候,根本沒人多想。
-      可是查了路況才發現,那個時段根本沒塞車。他是提前一整天,就先想好要這樣說了。
-    </div>
   </div>
 
   <p style="text-align:center;margin-top:18px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
@@ -83,13 +78,11 @@
 <script src="assets/js/idle-scroll.js"></script>
 <script>
 if (JH.get("ch4_t1")) {
-  document.getElementById("flag-result").style.display = "block";
   document.getElementById("back-link").style.display = "block";
   document.getElementById("flag-btn").disabled = true;
 }
 
 document.getElementById("flag-btn").addEventListener("click", () => {
-  document.getElementById("flag-result").style.display = "block";
   document.getElementById("back-link").style.display = "block";
   document.getElementById("flag-btn").disabled = true;
   JH.set("ch4_t1", true);
@@ -98,6 +91,8 @@ document.getElementById("flag-btn").addEventListener("click", () => {
     "他改時間的藉口(塞車)是提前一天傳的,路況其實正常",
     "transit/query.html"
   );
+  JHPhone.push("ch4_t1_me", "他改時間的藉口——說明天會塞車,但那個時段路況根本正常。", null, "me");
+  JHPhone.push("ch4_t1_zy", "這則訊息我看過不知道幾次了。「明天好像會塞車」——聽起來就是很普通的一句抱歉,普通到我當初轉貼給大家看的時候,根本沒人多想。可是查了路況才發現,那個時段根本沒塞車。他是提前一整天,就先想好要這樣說了。");
 });
 </script>
 </body>

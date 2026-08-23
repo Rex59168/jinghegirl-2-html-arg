@@ -105,15 +105,6 @@ body.site-market {
 }
 .site-market .pager button:disabled { opacity: .4; }
 
-.site-market .lead-panel {
-  background: #fdeee0;
-  border-left: 4px solid #d9661d;
-  padding: 12px 14px;
-  font-size: 13px;
-  margin-bottom: 14px;
-}
-.site-market .lead-panel a { color: #a5410e; font-weight: 600; }
-
 .site-market .confirm-btn {
   margin-top: 10px;
   background: #c94b1e;

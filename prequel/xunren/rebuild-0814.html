@@ -24,7 +24,6 @@
   </section>
 
   <section class="panel" id="all-done-panel" style="display:none;opacity:0;transition:opacity 1s;">
-    <p style="white-space:pre-wrap;font-size:14px;line-height:1.9;" id="zy-reflection"></p>
     <p style="text-align:center;margin-top:10px;"><a href="chat/thread-review.html">再讀一次那份對話 →</a></p>
   </section>
 </main>
@@ -86,11 +85,11 @@ const REFLECTION = `這五件事我全部核對過了。
 function showAllDone() {
   const panel = document.getElementById("all-done-panel");
   panel.style.display = "block";
-  document.getElementById("zy-reflection").textContent = REFLECTION;
   JH.set("ch4_done", true);
   requestAnimationFrame(() => {
     panel.style.opacity = "1";
   });
+  JHPhone.push("ch4_reflection_zy", REFLECTION.replace(/\n+/g, " "));
   JHPhone.push("nudge_ch5", "五件事都查完了,我們再讀一次那份對話。", "chat/thread-review.html");
 }
 

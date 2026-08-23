@@ -44,15 +44,7 @@
 
   <div class="card" style="text-align:center;">
     <p style="font-size:13px;color:#666;">你已經看完他的貼文了。三年份,日常得不能再日常。</p>
-    <button type="button" class="btn" id="confirm-ok" style="background:#333;color:#fff;border:none;padding:10px 20px;border-radius:8px;">確認:這個帳號看起來沒問題</button>
-  </div>
-
-  <div class="card" id="reveal-block" style="display:none;">
-    <strong style="color:#b3261e;font-size:13px;">周妤:</strong>
-    <p style="font-size:13px;color:#333;">
-      我那時候也點進去看過。三年的貼文、共同好友,看起來就是個普通的收藏圈同好。
-      如果是我先看到,我大概也會跟她說「應該沒問題吧」。
-    </p>
+    <button type="button" class="btn" id="confirm-ok" style="background:#333;color:#fff;border:none;padding:10px 20px;border-radius:8px;">回訊息給周妤:這個帳號看起來沒問題</button>
   </div>
 
   <p style="text-align:center;margin-top:14px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
@@ -103,13 +95,11 @@ document.getElementById("report-btn").addEventListener("click", () => {
 });
 
 if (JH.get("ch4_t3")) {
-  document.getElementById("reveal-block").style.display = "block";
   document.getElementById("back-link").style.display = "block";
   document.getElementById("confirm-ok").disabled = true;
 }
 
 document.getElementById("confirm-ok").addEventListener("click", () => {
-  document.getElementById("reveal-block").style.display = "block";
   document.getElementById("back-link").style.display = "block";
   document.getElementById("confirm-ok").disabled = true;
   JH.set("ch4_t3", true);
@@ -118,6 +108,8 @@ document.getElementById("confirm-ok").addEventListener("click", () => {
     "她查過他的帳號:三年歷史、生活照、共同好友——看起來沒問題",
     "social/rec1029.html"
   );
+  JHPhone.push("ch4_t3_me", "這個帳號看起來沒問題,三年貼文、共同好友都對得上。", null, "me");
+  JHPhone.push("ch4_t3_zy", "我那時候也點進去看過。三年的貼文、共同好友,看起來就是個普通的收藏圈同好。如果是我先看到,我大概也會跟她說「應該沒問題吧」。");
 });
 </script>
 </body>
