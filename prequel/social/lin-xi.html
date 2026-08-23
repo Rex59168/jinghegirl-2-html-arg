@@ -20,17 +20,25 @@
 <div class="story-rail" id="story-rail">
   <button class="story-item" data-story="1">
     <span class="story-ring">照片</span>
-    <span class="ts">15:02</span>
+    <span class="ts">07:52</span>
   </button>
   <button class="story-item" data-story="2">
     <span class="story-ring">照片</span>
-    <span class="ts">15:40</span>
+    <span class="ts">15:02</span>
   </button>
   <button class="story-item" data-story="3">
     <span class="story-ring">照片</span>
-    <span class="ts">16:50</span>
+    <span class="ts">15:40</span>
   </button>
   <button class="story-item" data-story="4">
+    <span class="story-ring">照片</span>
+    <span class="ts">16:50</span>
+  </button>
+  <button class="story-item" data-story="5">
+    <span class="story-ring">照片</span>
+    <span class="ts">18:05</span>
+  </button>
+  <button class="story-item" data-story="6">
     <span class="story-ring">照片</span>
     <span class="ts">19:41</span>
   </button>
@@ -50,6 +58,26 @@
   <div class="card">
     <p>模擬考結束了,終於可以睡覺</p>
     <p class="meta">8/6・21 個讚</p>
+  </div>
+
+  <div class="card">
+    <p>颱風終於走了,悶在家三天快發霉</p>
+    <p class="meta">8/3・38 個讚</p>
+  </div>
+
+  <div class="card">
+    <p>新買的耳機到了,音質真的差滿多,早該換</p>
+    <p class="meta">7/28・47 個讚</p>
+  </div>
+
+  <div class="card">
+    <p>補習班下課餓死,晚餐決定吃鹽酥雞</p>
+    <p class="meta">7/20・55 個讚</p>
+  </div>
+
+  <div class="card">
+    <p>暑輔第一天,教室冷氣壞掉,想哭</p>
+    <p class="meta">7/8・29 個讚</p>
   </div>
 
   <p style="text-align:center;margin:24px 0;">
@@ -79,20 +107,22 @@
 <script src="assets/js/ambient.js"></script>
 <script>
 const STORIES = {
-  1: { ts: "15:02", caption: "〔教室窗外〕", text: "終於放學。" },
-  2: { ts: "15:40", caption: "〔手搖飲料〕", text: "今天犒賞自己一杯。" },
-  3: { ts: "16:50", caption: "〔捷運出口・略模糊〕", text: "河西這邊路好多,第一次自己來。" },
-  4: { ts: "19:41", caption: "〔畫面昏暗〕", text: "到了。" },
+  1: { ts: "07:52", caption: "〔上學路上〕", text: "又快遲到了。" },
+  2: { ts: "15:02", caption: "〔教室窗外〕", text: "終於放學。" },
+  3: { ts: "15:40", caption: "〔手搖飲料〕", text: "今天犒賞自己一杯。" },
+  4: { ts: "16:50", caption: "〔捷運出口・略模糊〕", text: "河西這邊路好多,第一次自己來。" },
+  5: { ts: "18:05", caption: "〔巷口・略暗〕", text: "還要再走一段。" },
+  6: { ts: "19:41", caption: "〔畫面昏暗〕", text: "到了。" },
 };
 
-// 恐怖層:失蹤後的日子重訪,偶爾會多出第 5 則,時間戳在失蹤之後。
+// 恐怖層:失蹤後的日子重訪,偶爾會多出第 7 則,時間戳在失蹤之後。
 // 不存進 localStorage,純看這次載入運氣——重新整理不保證還在。
 if (JH.get("ch3_done") && Math.random() < 0.5) {
-  STORIES[5] = { ts: "凌晨 03:14", caption: "〔畫面全黑〕", text: "" };
+  STORIES[7] = { ts: "凌晨 03:14", caption: "〔畫面全黑〕", text: "" };
   const rail = document.getElementById("story-rail");
   const btn = document.createElement("button");
   btn.className = "story-item";
-  btn.dataset.story = "5";
+  btn.dataset.story = "7";
   btn.innerHTML = `<span class="story-ring">照片</span><span class="ts">8/16</span>`;
   rail.appendChild(btn);
 }
@@ -120,10 +150,10 @@ function openStory(id) {
   `;
   viewer.classList.add("open");
 
-  if (id === "4") {
+  if (id === "6") {
     JHNotebook.add(
       "ch0_story4_seen",
-      "她的限時動態第 4 則,時間戳是 19:41",
+      "她的限時動態最後一則,時間戳是 19:41",
       "social/lin-xi.html"
     );
   }

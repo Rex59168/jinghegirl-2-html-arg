@@ -60,6 +60,10 @@
         { from: "them", text: "晚餐想吃什麼,還是不回家吃?" },
         { from: "me", text: "在同學家,晚點自己解決" },
         { from: "them", text: "早點回來,不要太晚" },
+        { from: "them", text: "對了,妳阿姨明天要來,記得整理一下房間" },
+        { from: "me", text: "好啦好啦" },
+        { from: "them", text: "冰箱裡有切好的水果,回來記得吃" },
+        { from: "me", text: "謝謝媽" },
       ],
     },
     {
@@ -67,6 +71,10 @@
       messages: [
         { from: "them", text: "機車該保養了,這禮拜找時間牽去" },
         { from: "me", text: "好我知道了" },
+        { from: "them", text: "順便看一下前輪煞車有沒有聲音" },
+        { from: "me", text: "有一點點,我再注意" },
+        { from: "them", text: "這個月生活費已經轉了,自己看一下" },
+        { from: "me", text: "收到" },
       ],
     },
     {
@@ -75,6 +83,10 @@
         { from: "them", text: "姐妳新出的角色抽到了嗎" },
         { from: "me", text: "沒抽,最近沒空" },
         { from: "them", text: "？？？妳不是很愛玩" },
+        { from: "me", text: "最近有點累,晚點再說" },
+        { from: "them", text: "好喔,那我先幫妳把材料存著" },
+        { from: "them", text: "對了叔叔說中秋要一起烤肉,妳會回來嗎" },
+        { from: "me", text: "應該會,到時候再說" },
       ],
     },
     {
@@ -83,6 +95,10 @@
         { from: "them", text: "禮拜六唱歌妳要不要來" },
         { from: "me", text: "看狀況,最近比較忙" },
         { from: "them", text: "好喔那我先訂位,妳決定要跟我說" },
+        { from: "them", text: "欸妳今天怎麼都沒回訊息" },
+        { from: "me", text: "抱歉在忙,晚點解釋" },
+        { from: "them", text: "沒事啦,妳沒事就好,有空再聊" },
+        { from: "me", text: "謝謝妳" },
       ],
     },
   ];
