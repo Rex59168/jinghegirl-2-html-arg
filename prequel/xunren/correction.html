@@ -42,12 +42,7 @@
 
   <div id="success-view" class="panel" style="display:none;">
     <h2>已收到,謝謝你</h2>
-    <p id="zy-msg1">……妳說得對,我剛剛又去看了一次,真的是 19:41。我已經把公告改了。</p>
-    <p id="zy-msg2" style="display:none;">
-      對了——我把她雲端相簿的密碼傳給你了:<strong>linxi0417</strong><br>
-      我一直沒敢自己點進去看,你能不能幫我看看裡面有沒有什麼?
-    </p>
-    <p id="zy-link" style="display:none;"><a class="btn" href="editor/album.html">前往她的雲端相簿 →</a></p>
+    <p>我們已經收到你提供的更正資訊,協尋公告會盡快更新。</p>
   </div>
 
   <p style="text-align:center;margin-top:20px;">
@@ -66,7 +61,7 @@
 <script src="assets/js/hint.js"></script>
 <script src="assets/js/ambient.js"></script>
 <script>
-const ANSWER_HASH = "d5f915e54b6d7737c3d9a036dfe547944879b65b3b72e0e6a44f21ba62dac1ef"; // sha256("19:41")
+const ANSWER_HASH = "d5f915e54b6d7737c3d9a036dfe547944879b65b3b72e0e6a44f21ba62dac1ef";
 
 document.getElementById("correction-form").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -94,9 +89,14 @@ document.getElementById("correction-form").addEventListener("submit", async (e) 
 
   document.getElementById("form-view").style.display = "none";
   document.getElementById("success-view").style.display = "block";
-  setTimeout(() => (document.getElementById("zy-msg2").style.display = "block"), 900);
-  setTimeout(() => (document.getElementById("zy-link").style.display = "block"), 1600);
-  setTimeout(() => JHPhone.push("nudge_ch1", "密碼傳給你了,先去看看她的相簿。", "editor/album.html"), 2200);
+  JHPhone.push("ch0_zy_msg1", "……妳說得對,我剛剛又去看了一次,真的是 19:41。我已經把公告改了。");
+  setTimeout(() => {
+    JHPhone.push(
+      "ch0_zy_msg2",
+      "對了——我把她雲端相簿的密碼傳給你了:linxi0417。我一直沒敢自己點進去看,你能不能幫我看看裡面有沒有什麼?",
+      "editor/album.html"
+    );
+  }, 900);
 });
 </script>
 </body>

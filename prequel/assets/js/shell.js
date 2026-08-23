@@ -328,7 +328,9 @@
       return el;
     }
 
+    let currentThreadContactId = null;
     function openThread(contactId) {
+      currentThreadContactId = contactId;
       threadBodyEl.innerHTML = "";
       if (contactId === ZY_ID) {
         threadNameEl.textContent = ZY_NAME;
@@ -366,6 +368,7 @@
     }
     function closeMessages() {
       messagesEl.classList.remove("jh-messages--open", "jh-messages--thread-open");
+      currentThreadContactId = null;
       if (messagesOpenedFromBrowser) hideHomeScreen();
     }
 
@@ -373,6 +376,7 @@
     document.getElementById("jh-messages-close").addEventListener("click", closeMessages);
     document.getElementById("jh-messages-back").addEventListener("click", () => {
       messagesEl.classList.remove("jh-messages--thread-open");
+      currentThreadContactId = null;
     });
 
     // ── 通知橫幅:iframe 裡任何一頁呼叫 window.top.jhReceiveMessage(...) 都會進來這裡。
@@ -385,6 +389,18 @@
       const entry = { id, text, href, from: from === "me" ? "me" : "them" };
       log.push(entry);
       jhSet("phone_log", log);
+
+      // 玩家正開著跟周妤的對話串的話,新訊息直接接到後面顯示、標成已讀,不用等
+      // 重新打開才看得到,也不用為了自己正在看的對話跳通知橫幅打斷自己。
+      const threadIsOpenOnZY = currentThreadContactId === ZY_ID && messagesEl.classList.contains("jh-messages--open");
+      if (threadIsOpenOnZY) {
+        jhSet("phone_read_ids", [...readIds(), id]);
+        renderBadge();
+        renderContacts();
+        threadBodyEl.appendChild(bubble(entry.text, entry.from, entry.href));
+        threadBodyEl.scrollTop = threadBodyEl.scrollHeight;
+        return;
+      }
 
       if (entry.from === "me") {
         jhSet("phone_read_ids", [...readIds(), id]);

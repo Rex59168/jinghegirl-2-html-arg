@@ -147,6 +147,7 @@ function openFile(name) {
       JH.set("ch6_done", true);
       document.getElementById("closing").style.display = "block";
       document.getElementById("closing").scrollIntoView({ behavior: "smooth" });
+      JHPhone.push("ch6_zy_reflection", "我不知道該說什麼。");
       setTimeout(() => JHPhone.push("nudge_news", "我……傳一則新聞給你,你自己看。", "news/report.html"), 1800);
     }
   }
