@@ -3,7 +3,7 @@
 .jh-notebook-btn {
   position: fixed;
   right: 12px;
-  bottom: 68px;
+  bottom: 12px;
   z-index: 80;
   background: #1c1c1c;
   color: #fff;
@@ -60,71 +60,15 @@
   .jh-notebook-panel.open { transform: translateX(0); }
 }
 
-/* 周妤的手機 */
-.jh-hint-btn {
-  position: fixed;
-  right: 12px;
-  bottom: 12px;
-  z-index: 80;
-  background: #4a6fa5;
-  color: #fff;
-  border: none;
-  border-radius: 999px;
-  width: 50px;
-  height: 50px;
-  font-size: 22px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+/* 卡關提示——就地在頁面下方展開,不再是浮動視窗(周妤傳訊息的功能搬到殼層的
+   訊息 App 去了,這裡純粹是解謎輔助,跟劇情對話是兩件事)*/
+.jh-stuck-hint {
+  max-width: 640px;
+  margin: 24px auto 0;
+  padding: 0 16px;
 }
-.jh-hint-btn.jh-hint-nudge {
-  animation: jh-pulse 1.4s ease-in-out 2;
-}
-@keyframes jh-pulse {
-  0%, 100% { box-shadow: 0 2px 8px rgba(74,111,165,.4); }
-  50% { box-shadow: 0 2px 16px rgba(74,111,165,.9); }
-}
-.jh-phone-badge {
-  position: absolute;
-  top: -4px; right: -4px;
-  background: #e0442f;
-  color: #fff;
-  border-radius: 999px;
-  min-width: 18px;
-  height: 18px;
-  font-size: 11px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 4px;
-  box-shadow: 0 0 0 2px #fff;
-}
-
-.jh-hint-panel {
-  position: fixed;
-  right: 12px; bottom: 68px;
-  width: min(320px, calc(100vw - 24px));
-  max-height: 60vh;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0,0,0,.25);
-  z-index: 92;
-  display: none;
-  flex-direction: column;
-  overflow: hidden;
-}
-.jh-hint-panel.open { display: flex; }
-.jh-hint-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 14px;
-  background: #4a6fa5;
-  color: #fff;
-}
-.jh-hint-close { background: none; border: none; color: #fff; font-size: 16px; }
-.jh-hint-msgs { padding: 10px 14px; overflow-y: auto; flex: 1; }
-.jh-hint-msg {
+.jh-stuck-hint__list { margin-bottom: 10px; }
+.jh-stuck-hint__msg {
   background: #f1f3f6;
   border-radius: 10px;
   padding: 8px 12px;
@@ -133,19 +77,12 @@
   line-height: 1.5;
   color: #222;
 }
-a.jh-hint-msg {
-  background: #e7edf7;
-  color: #2a4d8f;
-  font-weight: 600;
-  cursor: pointer;
-}
-a.jh-hint-msg::after { content: " →"; }
-.jh-hint-ask {
-  border: none;
-  border-top: 1px solid #eee;
+.jh-stuck-hint__btn {
+  border: 1px solid #ddd;
   background: #fafafa;
-  padding: 12px;
-  font-size: 14px;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 13px;
   color: #4a6fa5;
 }
-.jh-hint-ask:disabled { color: #aaa; }
+.jh-stuck-hint__btn:disabled { color: #aaa; }

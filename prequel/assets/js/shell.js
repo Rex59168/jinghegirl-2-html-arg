@@ -1,7 +1,8 @@
 // shell.js — 殼層本體(只在 prequel/index.html 執行,是整個第一章唯一真正會被瀏覽器
 // 導航的頁面)。負責:手機狀態列、Android 三鍵導覽列、鎖定畫面→主畫面開機動畫、
-// 管理內層 iframe(實際內容都在裡面跑,換頁只發生在 iframe 內部,殼層本身永遠不重新
-// 導航,全螢幕狀態才不會被瀏覽器自動取消)。
+// 訊息 App(周妤傳來的所有訊息 + 幾個充場面的聯絡人)、頂部通知橫幅、管理內層
+// iframe(實際內容都在裡面跑,換頁只發生在 iframe 內部,殼層本身永遠不重新導航,
+// 全螢幕狀態才不會被瀏覽器自動取消)。
 //
 // 畫面上顯示的日期固定寫死 2025/08/16(六)——網站架好隔天,故事剛開始的時間點,
 // 不是抓玩家裝置當下的日期,避免跟其他地方一樣踩到時間線矛盾。
@@ -16,6 +17,19 @@
   const BOOT_DATE_LABEL = "2025年8月16日 星期六";
   const FULLSCREEN_KEY = "jh2bridge:fullscreen_opt_in";
   const BOOT_SEEN_KEY = "jh2bridge:ch1_boot_seen";
+
+  // 直接用跟 state.js 一樣的前綴讀寫 localStorage——殼層是頂層文件,跟 iframe
+  // 裡的每一頁同源共用同一份 localStorage,不需要透過 JH 物件也能存取。
+  const JH_PREFIX = "jh1f_";
+  function jhGet(key, fallback) {
+    try {
+      const v = localStorage.getItem(JH_PREFIX + key);
+      return v === null ? fallback : JSON.parse(v);
+    } catch (e) { return fallback; }
+  }
+  function jhSet(key, value) {
+    try { localStorage.setItem(JH_PREFIX + key, JSON.stringify(value)); } catch (e) {}
+  }
 
   function pad2(n) { return String(n).padStart(2, "0"); }
   function clockNow() {
@@ -34,6 +48,50 @@
       if (p && p.catch) p.catch(() => {});
     } catch (e) {}
   };
+
+  // ── 充場面的聯絡人:隨便放幾個,固定內容,不需要存進 localStorage ──
+  const FILLER_CONTACTS = [
+    {
+      id: "mom", name: "媽", color: "#e0895c",
+      messages: [
+        { from: "them", text: "晚餐想吃什麼,還是不回家吃?" },
+        { from: "me", text: "在同學家,晚點自己解決" },
+        { from: "them", text: "早點回來,不要太晚" },
+      ],
+    },
+    {
+      id: "dad", name: "爸", color: "#5c7ce0",
+      messages: [
+        { from: "them", text: "機車該保養了,這禮拜找時間牽去" },
+        { from: "me", text: "好我知道了" },
+      ],
+    },
+    {
+      id: "cousin", name: "阿翔(表弟)", color: "#5cc27a",
+      messages: [
+        { from: "them", text: "姐妳新出的角色抽到了嗎" },
+        { from: "me", text: "沒抽,最近沒空" },
+        { from: "them", text: "？？？妳不是很愛玩" },
+      ],
+    },
+    {
+      id: "friend", name: "映涵", color: "#c25ca0",
+      messages: [
+        { from: "them", text: "禮拜六唱歌你要不要來" },
+        { from: "me", text: "看狀況,最近比較忙" },
+        { from: "them", text: "好喔那我先訂位,妳決定要跟我說" },
+      ],
+    },
+  ];
+  const ZY_ID = "zhouyu";
+  const ZY_NAME = "周妤";
+
+  function phoneLog() { return jhGet("phone_log", []); }
+  function readIds() { return jhGet("phone_read_ids", []); }
+  function unreadCount() {
+    const read = readIds();
+    return phoneLog().filter((m) => !read.includes(m.id)).length;
+  }
 
   function mount() {
     const frame = document.getElementById("jh-app-frame");
@@ -91,8 +149,9 @@
             <span class="jh-boot__app-icon">🖼️</span>
             <span class="jh-boot__app-label">相簿</span>
           </button>
-          <button type="button" class="jh-boot__app jh-boot__app--messages" data-inert="1">
+          <button type="button" class="jh-boot__app jh-boot__app--messages" id="jh-boot-messages">
             <span class="jh-boot__app-icon">💬</span>
+            <span class="jh-boot__app-badge" id="jh-boot-messages-badge" hidden></span>
             <span class="jh-boot__app-label">訊息</span>
           </button>
           <button type="button" class="jh-boot__app jh-boot__app--notes" data-inert="1">
@@ -162,6 +221,169 @@
         { once: true }
       );
     }
+
+    // ══════════════════ 訊息 App ══════════════════
+    const messagesEl = document.createElement("div");
+    messagesEl.className = "jh-messages";
+    messagesEl.id = "jh-messages";
+    messagesEl.innerHTML = `
+      <div class="jh-messages__list">
+        <div class="jh-messages__header">
+          <strong>訊息</strong>
+          <button type="button" class="jh-messages__iconbtn" id="jh-messages-close" aria-label="關閉">✕</button>
+        </div>
+        <div class="jh-messages__contacts" id="jh-messages-contacts"></div>
+      </div>
+      <div class="jh-messages__thread" id="jh-messages-thread">
+        <div class="jh-messages__thread-header">
+          <button type="button" class="jh-messages__iconbtn" id="jh-messages-back" aria-label="返回">←</button>
+          <strong id="jh-messages-thread-name"></strong>
+        </div>
+        <div class="jh-messages__thread-body" id="jh-messages-thread-body"></div>
+      </div>
+    `;
+    document.body.appendChild(messagesEl);
+
+    const notif = document.createElement("div");
+    notif.className = "jh-notif";
+    notif.id = "jh-notif";
+    notif.innerHTML = `
+      <div class="jh-notif__icon">💬</div>
+      <div class="jh-notif__text">
+        <div class="jh-notif__title">${ZY_NAME}</div>
+        <div class="jh-notif__body" id="jh-notif-body"></div>
+      </div>
+    `;
+    document.body.appendChild(notif);
+
+    const contactsEl = document.getElementById("jh-messages-contacts");
+    const threadNameEl = document.getElementById("jh-messages-thread-name");
+    const threadBodyEl = document.getElementById("jh-messages-thread-body");
+    const badgeEl = document.getElementById("jh-boot-messages-badge");
+
+    function renderBadge() {
+      const n = unreadCount();
+      if (n > 0) {
+        badgeEl.hidden = false;
+        badgeEl.textContent = String(n);
+      } else {
+        badgeEl.hidden = true;
+      }
+    }
+
+    function contactPreview(contactId) {
+      if (contactId === ZY_ID) {
+        const log = phoneLog();
+        const last = log[log.length - 1];
+        return last ? last.text : "（還沒有訊息）";
+      }
+      const c = FILLER_CONTACTS.find((x) => x.id === contactId);
+      const last = c.messages[c.messages.length - 1];
+      return last ? last.text : "";
+    }
+
+    function renderContacts() {
+      contactsEl.innerHTML = "";
+      const unread = unreadCount();
+      const rows = [
+        { id: ZY_ID, name: ZY_NAME, color: "#4a6fa5", unread },
+        ...FILLER_CONTACTS.map((c) => ({ id: c.id, name: c.name, color: c.color, unread: 0 })),
+      ];
+      rows.forEach((r) => {
+        const row = document.createElement("button");
+        row.type = "button";
+        row.className = "jh-messages__contact";
+        row.innerHTML = `
+          <span class="jh-messages__avatar" style="background:${r.color}">${r.name.slice(0, 1)}</span>
+          <span class="jh-messages__contact-info">
+            <span class="jh-messages__contact-name">${r.name}</span>
+            <span class="jh-messages__contact-preview"></span>
+          </span>
+          ${r.unread > 0 ? `<span class="jh-messages__contact-badge">${r.unread}</span>` : ""}
+        `;
+        row.querySelector(".jh-messages__contact-preview").textContent = contactPreview(r.id);
+        row.addEventListener("click", () => openThread(r.id));
+        contactsEl.appendChild(row);
+      });
+    }
+
+    function bubble(text, from, href) {
+      const el = document.createElement(href ? "a" : "div");
+      el.className = "jh-messages__bubble jh-messages__bubble--" + from + (href ? " jh-messages__bubble--link" : "");
+      el.textContent = text;
+      if (href) {
+        el.href = href;
+        el.addEventListener("click", (e) => {
+          e.preventDefault();
+          try { frame.contentWindow.location.href = href; } catch (err) {}
+          closeMessages();
+        });
+      }
+      return el;
+    }
+
+    function openThread(contactId) {
+      threadBodyEl.innerHTML = "";
+      if (contactId === ZY_ID) {
+        threadNameEl.textContent = ZY_NAME;
+        const log = phoneLog();
+        if (!log.length) {
+          const p = document.createElement("p");
+          p.className = "jh-messages__empty";
+          p.textContent = "還沒有新訊息。";
+          threadBodyEl.appendChild(p);
+        } else {
+          log.forEach((m) => threadBodyEl.appendChild(bubble(m.text, "them", m.href)));
+        }
+        jhSet("phone_read_ids", log.map((m) => m.id));
+        renderBadge();
+        renderContacts();
+      } else {
+        const c = FILLER_CONTACTS.find((x) => x.id === contactId);
+        threadNameEl.textContent = c.name;
+        c.messages.forEach((m) => threadBodyEl.appendChild(bubble(m.text, m.from)));
+      }
+      messagesEl.classList.add("jh-messages--thread-open");
+      threadBodyEl.scrollTop = threadBodyEl.scrollHeight;
+    }
+
+    function openMessages(contactId) {
+      renderContacts();
+      showHomeScreen();
+      messagesEl.classList.add("jh-messages--open");
+      if (contactId) openThread(contactId);
+    }
+    function closeMessages() {
+      messagesEl.classList.remove("jh-messages--open", "jh-messages--thread-open");
+    }
+
+    document.getElementById("jh-boot-messages").addEventListener("click", () => openMessages());
+    document.getElementById("jh-messages-close").addEventListener("click", closeMessages);
+    document.getElementById("jh-messages-back").addEventListener("click", () => {
+      messagesEl.classList.remove("jh-messages--thread-open");
+    });
+
+    // ── 通知橫幅:iframe 裡任何一頁呼叫 window.top.jhReceiveMessage(...) 都會進來這裡 ──
+    let notifTimer = null;
+    window.jhReceiveMessage = function jhReceiveMessage(id, text, href) {
+      const log = phoneLog();
+      if (log.some((m) => m.id === id)) return;
+      log.push({ id, text, href });
+      jhSet("phone_log", log);
+      renderBadge();
+
+      document.getElementById("jh-notif-body").textContent = text;
+      notif.classList.add("jh-notif--visible");
+      clearTimeout(notifTimer);
+      notifTimer = setTimeout(() => notif.classList.remove("jh-notif--visible"), 5000);
+    };
+    notif.addEventListener("click", () => {
+      notif.classList.remove("jh-notif--visible");
+      clearTimeout(notifTimer);
+      openMessages(ZY_ID);
+    });
+
+    renderBadge();
   }
 
   if (document.readyState === "loading") {

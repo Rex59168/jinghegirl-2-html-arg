@@ -146,3 +146,226 @@
 /* 手機狀態列(.jh-status-bar)跟 Android 三鍵導覽列(.jh-home-indicator / .jh-nav-btn)
    的樣式定義在 browser-chrome.css(這頁本來就有載入),殼層(shell.js)是持續存在的
    獨立元素,不管在鎖定畫面、主畫面還是 App 裡都一直顯示,這裡不用重複定義。*/
+
+/* 訊息 App 圖示上的未讀角標——疊在主畫面「訊息」App 圖示右上角 */
+.jh-boot__app { position: relative; }
+.jh-boot__app-badge {
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(14px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: #e0442f;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.25);
+}
+
+/* ══════════════════ 訊息 App(聯絡人清單 + 對話串) ══════════════════
+   跟 .jh-boot 佔一樣的範圍(狀態列跟導覽列中間),從主畫面「訊息」圖示點進來,
+   或是點頂部通知橫幅直接跳進周妤的對話串。聯絡人清單跟對話串是左右兩層,
+   用 transform 滑動切換,不是真的換頁。*/
+.jh-messages {
+  position: fixed;
+  top: 28px;
+  bottom: 44px;
+  left: 0;
+  right: 0;
+  z-index: 1600;
+  background: #fff;
+  color: #222;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.jh-messages--open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.jh-messages__list,
+.jh-messages__thread {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+.jh-messages__thread {
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+.jh-messages--thread-open .jh-messages__thread {
+  transform: translateX(0);
+}
+
+.jh-messages__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+.jh-messages__iconbtn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #333;
+  padding: 4px 8px;
+}
+
+.jh-messages__contacts {
+  flex: 1;
+  overflow-y: auto;
+}
+.jh-messages__contact {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f2f2f2;
+  text-align: left;
+}
+.jh-messages__avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.jh-messages__contact-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.jh-messages__contact-name { font-size: 15px; color: #222; }
+.jh-messages__contact-preview {
+  font-size: 13px;
+  color: #888;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.jh-messages__contact-badge {
+  background: #e0442f;
+  color: #fff;
+  border-radius: 999px;
+  min-width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+
+.jh-messages__thread-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.jh-messages__thread-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.jh-messages__bubble {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.jh-messages__bubble--them {
+  align-self: flex-start;
+  background: #f1f1f3;
+  color: #222;
+  border-bottom-left-radius: 4px;
+}
+.jh-messages__bubble--me {
+  align-self: flex-end;
+  background: #4a90d9;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.jh-messages__bubble--link {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.jh-messages__empty {
+  color: #999;
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+}
+
+/* ── 頂部通知橫幅:iframe 裡任何一頁呼叫 JHPhone.push(...) 都會冒出這個,
+   不受 .jh-boot 的顯示狀態限制——不管玩家當下在瀏覽哪一頁都看得到,點一下
+   直接跳進周妤的對話串。z-index 比訊息 App、主畫面都高,是最上層。 ── */
+.jh-notif {
+  position: fixed;
+  top: 28px;
+  left: 8px;
+  right: 8px;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(28, 28, 32, 0.94);
+  color: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  transform: translateY(-140%);
+  transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+}
+.jh-notif--visible { transform: translateY(6px); }
+.jh-notif__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: linear-gradient(160deg, #59d16a, #2fa244);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.jh-notif__text { flex: 1; min-width: 0; }
+.jh-notif__title { font-size: 13px; font-weight: 600; }
+.jh-notif__body {
+  font-size: 13px;
+  opacity: 0.9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

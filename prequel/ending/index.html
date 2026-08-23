@@ -51,6 +51,7 @@
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/browser-chrome.js"></script>
 <script src="assets/js/notebook.js"></script>
+<script src="assets/js/hint.js"></script>
 <script src="assets/js/idle-scroll.js"></script>
 <script src="assets/js/stats.js"></script>
 <script>
@@ -102,9 +103,11 @@ const ZY_FINAL_NEWS = `…我不知道還能做什麼。這個網站我本來是
 晞晞呢?我不敢往下想。這個網站我會留著。
 如果你看到這裡了,謝謝你陪我走完這一段。`;
 
-document.getElementById("zy-final").textContent = JH.get("news_done")
-  ? ZY_FINAL_NEWS
-  : ZY_FINAL_DEFAULT;
+const zyFinalText = JH.get("news_done") ? ZY_FINAL_NEWS : ZY_FINAL_DEFAULT;
+document.getElementById("zy-final").textContent = zyFinalText;
+if (typeof JHPhone !== "undefined") {
+  JHPhone.push("ending_final", zyFinalText.replace(/\n+/g, " "));
+}
 
 const SKIP_CAPTION_BY_LANG = {
   "zh-Hant": "一年後。",
