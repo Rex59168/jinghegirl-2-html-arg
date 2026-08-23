@@ -279,7 +279,8 @@
       if (contactId === ZY_ID) {
         const log = phoneLog();
         const last = log[log.length - 1];
-        return last ? last.text : "（還沒有訊息）";
+        if (!last) return "（還沒有訊息）";
+        return (last.from === "me" ? "你:" : "") + last.text;
       }
       const c = FILLER_CONTACTS.find((x) => x.id === contactId);
       const last = c.messages[c.messages.length - 1];
@@ -337,7 +338,7 @@
           p.textContent = "還沒有新訊息。";
           threadBodyEl.appendChild(p);
         } else {
-          log.forEach((m) => threadBodyEl.appendChild(bubble(m.text, "them", m.href)));
+          log.forEach((m) => threadBodyEl.appendChild(bubble(m.text, m.from || "them", m.href)));
         }
         jhSet("phone_read_ids", log.map((m) => m.id));
         renderBadge();
@@ -373,15 +374,25 @@
       messagesEl.classList.remove("jh-messages--thread-open");
     });
 
-    // ── 通知橫幅:iframe 裡任何一頁呼叫 window.top.jhReceiveMessage(...) 都會進來這裡 ──
+    // ── 通知橫幅:iframe 裡任何一頁呼叫 window.top.jhReceiveMessage(...) 都會進來這裡。
+    // from 預設是"them"(周妤傳來的,會跳通知橫幅);玩家自己回覆的"me"訊息不用
+    // 跳通知打斷自己,直接視為已讀就好。 ──
     let notifTimer = null;
-    window.jhReceiveMessage = function jhReceiveMessage(id, text, href) {
+    window.jhReceiveMessage = function jhReceiveMessage(id, text, href, from) {
       const log = phoneLog();
       if (log.some((m) => m.id === id)) return;
-      log.push({ id, text, href });
+      const entry = { id, text, href, from: from === "me" ? "me" : "them" };
+      log.push(entry);
       jhSet("phone_log", log);
-      renderBadge();
 
+      if (entry.from === "me") {
+        jhSet("phone_read_ids", [...readIds(), id]);
+        renderBadge();
+        renderContacts();
+        return;
+      }
+
+      renderBadge();
       document.getElementById("jh-notif-body").textContent = text;
       notif.classList.add("jh-notif--visible");
       clearTimeout(notifTimer);

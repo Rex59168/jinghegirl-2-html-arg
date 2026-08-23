@@ -1,4 +1,4 @@
-/* widgets.css — 筆記本 + 周妤提示小窗,全站共用,不套站點主題色 */
+/* widgets.css — 筆記本,全站共用,不套站點主題色 */
 
 .jh-notebook-btn {
   position: fixed;
@@ -59,30 +59,3 @@
   }
   .jh-notebook-panel.open { transform: translateX(0); }
 }
-
-/* 卡關提示——就地在頁面下方展開,不再是浮動視窗(周妤傳訊息的功能搬到殼層的
-   訊息 App 去了,這裡純粹是解謎輔助,跟劇情對話是兩件事)*/
-.jh-stuck-hint {
-  max-width: 640px;
-  margin: 24px auto 0;
-  padding: 0 16px;
-}
-.jh-stuck-hint__list { margin-bottom: 10px; }
-.jh-stuck-hint__msg {
-  background: #f1f3f6;
-  border-radius: 10px;
-  padding: 8px 12px;
-  margin: 0 0 8px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: #222;
-}
-.jh-stuck-hint__btn {
-  border: 1px solid #ddd;
-  background: #fafafa;
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-size: 13px;
-  color: #4a6fa5;
-}
-.jh-stuck-hint__btn:disabled { color: #aaa; }

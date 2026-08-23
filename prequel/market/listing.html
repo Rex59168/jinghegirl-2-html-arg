@@ -91,13 +91,6 @@
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/browser-chrome.js"></script>
 <script src="assets/js/notebook.js"></script>
-<script>
-window.JH_HINTS = [
-  "妳有把握編號只到 #18_ 嗎?試著用上面的篩選器縮小範圍。",
-  "先選好專輯、場次、有無簽名、簽名成員這四層,應該只剩十來筆了,再自己找開頭是 18 的編號。",
-  "剩下的三筆裡,只有 #188 對得上——去她姐姐的舊帳號確認看看。",
-];
-</script>
 <script src="assets/js/hint.js"></script>
 <script src="assets/js/ambient.js"></script>
 <script>
@@ -185,7 +178,7 @@ function renderRow(r) {
         ${r.sellerAccountCreated ? `<div class="field"><dt>帳號建立</dt><dd>${r.sellerAccountCreated}</dd></div>` : ""}
         ${isTarget ? `<div class="field"><dt>上次上線</dt><dd>${1 + Math.floor(Math.random() * 12)} 分鐘前</dd></div>` : ""}
       </dl>
-      ${isTarget ? '<button type="button" class="confirm-btn" id="confirm-188">就是這份 —— 標記為找到了</button><p id="confirm-note" style="margin-top:8px;color:#7a4a20;"></p>' : ""}
+      ${isTarget ? '<button type="button" class="confirm-btn" id="confirm-188">回訊息給周妤:就是這份</button><p id="confirm-note" style="margin-top:8px;color:#7a4a20;"></p>' : ""}
     </div>
   `;
 
@@ -202,6 +195,7 @@ function renderRow(r) {
       document.getElementById("confirm-note").innerHTML =
         '兩年,沒有降價,沒有下架,沒有回覆任何人。<br>直到 2025 年 7 月,他回了第一則訊息。<br><br>' +
         '<a href="chat/thread.html">查看完整對話記錄 →</a>';
+      JHPhone.push("confirm188_me", "周妤,就是這份——#188。", null, "me");
       JHPhone.push("nudge_ch3", "確認是 #188 了,我把完整對話記錄傳給你。", "chat/thread.html");
     });
   }
