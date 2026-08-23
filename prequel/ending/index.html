@@ -31,20 +31,8 @@
   </section>
 </main>
 
-<style>
-.typewriter-cursor {
-  display: inline-block;
-  margin-left: 2px;
-  animation: jh-blink 0.9s step-start infinite;
-}
-@keyframes jh-blink {
-  50% { opacity: 0; }
-}
-</style>
-
 <div id="blackout" style="position:fixed;inset:0;background:#000;z-index:300;display:none;color:#eee;">
   <div id="blackout-caption" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-size:17px;color:#999;opacity:0;transition:opacity 0.8s;"></div>
-  <div id="blackout-lines" style="position:absolute;top:0;left:0;right:0;bottom:240px;max-width:480px;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-size:17px;line-height:2.4;padding:0 24px;"></div>
   <div id="blackout-letter" style="display:none;position:absolute;bottom:24px;left:0;right:0;text-align:center;padding:0 20px;opacity:0;transition:opacity 1s;">
     <div style="max-width:420px;margin:0 auto 20px;background:#141414;border:1px solid #333;border-radius:8px;padding:18px 20px;text-align:left;font-size:13px;line-height:1.8;color:#bbb;">
       <p id="letter-title" style="margin:0 0 8px;color:#eee;font-size:14px;"></p>
@@ -56,14 +44,6 @@
     <a href="ending/checkself.html" style="color:#777;font-size:13px;">你留下了什麼 →</a>
 
     <p id="stats-line" style="display:none;font-size:12px;color:#666;margin-top:18px;"></p>
-
-    <div style="margin-top:22px;">
-      <button type="button" id="gen-card-btn" style="background:#333;color:#fff;border:1px solid #555;padding:10px 20px;border-radius:8px;font-size:14px;">下載通關截圖</button>
-      <div id="share-card-preview" style="display:none;margin-top:16px;">
-        <canvas id="share-canvas" style="width:100%;max-width:280px;border-radius:8px;"></canvas>
-        <p style="font-size:11px;color:#666;margin-top:8px;">沒有自動下載的話,長按上面的圖片存檔</p>
-      </div>
-    </div>
 
     <div style="margin-top:28px;">
       <button type="button" id="reset-btn" style="background:none;color:#888;border:1px solid #444;padding:8px 16px;border-radius:8px;font-size:12px;">重置所有進度</button>
@@ -80,24 +60,22 @@
 <script src="assets/js/browser-chrome.js"></script>
 <script src="assets/js/notebook.js"></script>
 <script src="assets/js/idle-scroll.js"></script>
-<script src="assets/js/share-card.js"></script>
 <script src="assets/js/stats.js"></script>
 <script>
 const nickname = JH.get("nickname") || "（未知）";
 const howKnown = JH.get("how_known") || "（未知）";
-const today = new Date();
-const dateStr = `${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,"0")}/${String(today.getDate()).padStart(2,"0")}`;
 
-// 013.txt 的建檔日期:第一次看到時顯示今天,之後重訪一律顯示同一個提前一天的日期
-// ——暗示這個檔案在你填表單之前,其實就已經在那裡了
+// 013.txt 的建檔日期:固定落在第一章的 2025 年時間線內（news_done 之後沒幾天），
+// 不再抓玩家造訪當下的系統日期——這裡如果抓即時日期，會跟終幕「一年後」
+// 銜接的續作案件（2026/8/26）互相矛盾。第一次看到時顯示 2025/09/03，
+// 之後重訪一律顯示提前一天的 2025/09/02——暗示這個檔案在你填表單之前,
+// 其實就已經在那裡了。
+const FILE013_FIRST_SEEN = "2025/09/03";
+const FILE013_BACKDATED = "2025/09/02";
 let file013Date = JH.get("file013_date");
 if (!file013Date) {
-  file013Date = dateStr;
-  const backdated = new Date(today.getTime() - 24 * 60 * 60 * 1000);
-  JH.set(
-    "file013_date",
-    `${backdated.getFullYear()}/${String(backdated.getMonth() + 1).padStart(2, "0")}/${String(backdated.getDate()).padStart(2, "0")}`
-  );
+  file013Date = FILE013_FIRST_SEEN;
+  JH.set("file013_date", FILE013_BACKDATED);
 }
 
 // file013 混合了固定標籤和玩家自己填的自由文字(暱稱、how_known),
@@ -136,45 +114,6 @@ document.getElementById("zy-final").textContent = JH.get("news_done")
   ? ZY_FINAL_NEWS
   : ZY_FINAL_DEFAULT;
 
-// 逐字打字動畫每敲一個字都會重建文字節點,i18n.js 的 MutationObserver 只看得到
-// 打到一半的片段字串,永遠比對不上字典裡的完整句子,所以這裡直接依語言選整份陣列。
-const LINES_BY_LANG = {
-  "zh-Hant": [
-    "你花了兩個小時，",
-    "就從一個女生的貼文裡拼出她讀哪間學校、幾點放學、家裡剩幾個人。",
-    "",
-    "他也是這樣做的。",
-    "",
-    "他花了兩年。",
-    "",
-    "你以為網路上的陌生人不了解你。",
-  ],
-  "zh-Hans": [
-    "你花了两个小时，",
-    "就从一个女生的贴文里拼出她读哪间学校、几点放学、家里剩几个人。",
-    "",
-    "他也是这样做的。",
-    "",
-    "他花了两年。",
-    "",
-    "你以为网路上的陌生人不了解你。",
-  ],
-  en: [
-    "It took you two hours",
-    "to piece together, from one girl's posts, what school she goes to, when she gets out, how many people are left at home.",
-    "",
-    "He did the same thing.",
-    "",
-    "He just took two years.",
-    "",
-    "You thought a stranger online didn't know you.",
-  ],
-};
-function currentLines() {
-  const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
-  return LINES_BY_LANG[lang] || LINES_BY_LANG["zh-Hant"];
-}
-
 const SKIP_CAPTION_BY_LANG = {
   "zh-Hant": "一年後。",
   "zh-Hans": "一年后。",
@@ -202,7 +141,7 @@ const LETTER_BY_LANG = {
 let endingStarted = false;
 
 document.getElementById("continue-btn").addEventListener("click", () => {
-  if (endingStarted) return; // 防止手機誤觸雙擊,造成兩輪逐字動畫同時疊在一起
+  if (endingStarted) return; // 防止手機誤觸雙擊,造成兩輪轉場動畫同時疊在一起
   endingStarted = true;
 
   const btn = document.getElementById("continue-btn");
@@ -214,8 +153,6 @@ document.getElementById("continue-btn").addEventListener("click", () => {
   const bo = document.getElementById("blackout");
   bo.style.display = "block";
   document.body.style.overflow = "hidden";
-  const linesEl = document.getElementById("blackout-lines");
-  linesEl.innerHTML = "";
 
   const captionEl = document.getElementById("blackout-caption");
   const lang0 = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
@@ -225,23 +162,19 @@ document.getElementById("continue-btn").addEventListener("click", () => {
   setTimeout(() => { captionEl.style.opacity = "0"; }, 1800);
 
   setTimeout(() => {
-    typeLines(linesEl, 0, () => {
-      setTimeout(() => {
-        const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
-        const L = LETTER_BY_LANG[lang] || LETTER_BY_LANG["zh-Hant"];
-        document.getElementById("letter-title").textContent = L.title;
-        document.getElementById("letter-body").textContent = L.body;
-        document.getElementById("letter-link").textContent = L.link;
-        const letterEl = document.getElementById("blackout-letter");
-        letterEl.style.display = "block";
-        requestAnimationFrame(() => { letterEl.style.opacity = "1"; });
+    const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
+    const L = LETTER_BY_LANG[lang] || LETTER_BY_LANG["zh-Hant"];
+    document.getElementById("letter-title").textContent = L.title;
+    document.getElementById("letter-body").textContent = L.body;
+    document.getElementById("letter-link").textContent = L.link;
+    const letterEl = document.getElementById("blackout-letter");
+    letterEl.style.display = "block";
+    requestAnimationFrame(() => { letterEl.style.opacity = "1"; });
 
-        setTimeout(() => {
-          document.getElementById("blackout-footer").style.display = "block";
-        }, 3000);
-      }, 800);
-    });
-  }, 3600);
+    setTimeout(() => {
+      document.getElementById("blackout-footer").style.display = "block";
+    }, 3000);
+  }, 3400);
 });
 
 document.getElementById("letter-link").addEventListener("click", () => {
@@ -258,56 +191,6 @@ function renderLetter() {
   document.getElementById("letter-link").textContent = L.link;
 }
 document.addEventListener("jh-lang-changed", renderLetter);
-
-function typeLines(container, index, onDone) {
-  const lines = currentLines();
-  if (index >= lines.length) {
-    onDone();
-    return;
-  }
-  const text = lines[index];
-  const p = document.createElement("p");
-  p.style.margin = "0 0 6px";
-  p.style.minHeight = "1.4em";
-  container.appendChild(p);
-
-  if (text === "") {
-    setTimeout(() => typeLines(container, index + 1, onDone), 500);
-    return;
-  }
-
-  const cursor = document.createElement("span");
-  cursor.className = "typewriter-cursor";
-  cursor.textContent = "▌";
-
-  let charIndex = 0;
-  function typeChar() {
-    if (charIndex >= text.length) {
-      cursor.remove();
-      setTimeout(() => typeLines(container, index + 1, onDone), 700);
-      return;
-    }
-    charIndex++;
-    p.textContent = text.slice(0, charIndex);
-    p.appendChild(cursor);
-    setTimeout(typeChar, 55);
-  }
-  typeChar();
-}
-
-document.getElementById("gen-card-btn").addEventListener("click", () => {
-  const elapsedMs = Math.max(1000, JH.activeMs());
-
-  const canvas = document.getElementById("share-canvas");
-  JHShareCard.draw(canvas, {
-    elapsedMs,
-    nickname,
-    siteHost: window.location.host,
-  });
-
-  document.getElementById("share-card-preview").style.display = "block";
-  JHShareCard.download(canvas, "013.png");
-});
 
 document.getElementById("reset-btn").addEventListener("click", () => {
   const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
