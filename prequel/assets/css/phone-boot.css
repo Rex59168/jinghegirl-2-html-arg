@@ -48,6 +48,12 @@
   opacity: 0.9;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
+.jh-boot__weather {
+  margin-top: 6px;
+  font-size: 14px;
+  opacity: 0.85;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+}
 .jh-boot__hint {
   position: absolute;
   bottom: 24px;
@@ -94,6 +100,12 @@
   margin-top: 2px;
   font-size: 13px;
   opacity: 0.85;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+}
+.jh-boot__widget-weather {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.8;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 

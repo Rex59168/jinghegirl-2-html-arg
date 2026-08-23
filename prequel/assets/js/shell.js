@@ -15,6 +15,9 @@
   const RECENTS_SVG = '<svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="15" height="15" rx="2.5"/></svg>';
 
   const BOOT_DATE_LABEL = "2025年8月16日 星期六";
+  // 手機鎖定畫面/主畫面照真實手機的習慣多顯示天氣跟所在地——玩家跟晞晞、周妤
+  // 一樣是靖河市在地的女高中生,固定寫死跟日期一樣,不用抓玩家裝置的即時天氣。
+  const WEATHER_LABEL = "☀️ 31°C・靖河市";
   const FULLSCREEN_KEY = "jh2bridge:fullscreen_opt_in";
   const BOOT_SEEN_KEY = "jh2bridge:ch1_boot_seen";
 
@@ -77,7 +80,7 @@
     {
       id: "friend", name: "映涵", color: "#c25ca0",
       messages: [
-        { from: "them", text: "禮拜六唱歌你要不要來" },
+        { from: "them", text: "禮拜六唱歌妳要不要來" },
         { from: "me", text: "看狀況,最近比較忙" },
         { from: "them", text: "好喔那我先訂位,妳決定要跟我說" },
       ],
@@ -137,12 +140,14 @@
       <div class="jh-boot__lock" id="jh-boot-lock">
         <div class="jh-boot__time" id="jh-boot-lock-time"></div>
         <div class="jh-boot__date">${BOOT_DATE_LABEL}</div>
+        <div class="jh-boot__weather">${WEATHER_LABEL}</div>
         <div class="jh-boot__hint">輕觸螢幕解鎖</div>
       </div>
       <div class="jh-boot__home" id="jh-boot-home">
         <div class="jh-boot__widget">
           <div class="jh-boot__widget-time" id="jh-boot-home-time"></div>
           <div class="jh-boot__widget-date">${BOOT_DATE_LABEL}</div>
+          <div class="jh-boot__widget-weather">${WEATHER_LABEL}</div>
         </div>
         <div class="jh-boot__grid">
           <button type="button" class="jh-boot__app jh-boot__app--photos" data-inert="1">
@@ -291,8 +296,11 @@
     function renderContacts() {
       contactsEl.innerHTML = "";
       const unread = unreadCount();
+      // 周妤在玩家傳出更正時間、她第一次回訊息之前不會出現在聯絡人清單裡——
+      // 開頭手機裡本來就有的家人朋友不受影響,周妤要等真的傳來第一則訊息才會
+      // 「加進」通訊錄,跟真實手機認識新朋友的順序一樣。
       const rows = [
-        { id: ZY_ID, name: ZY_NAME, color: "#4a6fa5", unread },
+        ...(phoneLog().length > 0 ? [{ id: ZY_ID, name: ZY_NAME, color: "#4a6fa5", unread }] : []),
         ...FILLER_CONTACTS.map((c) => ({ id: c.id, name: c.name, color: c.color, unread: 0 })),
       ];
       rows.forEach((r) => {
