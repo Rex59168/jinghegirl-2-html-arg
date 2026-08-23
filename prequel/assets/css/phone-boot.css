@@ -148,15 +148,6 @@
   75% { transform: translateX(4px); }
 }
 
-.jh-boot__home-indicator {
-  position: absolute;
-  left: 0; right: 0; bottom: 10px;
-  display: flex;
-  justify-content: center;
-}
-.jh-boot__home-indicator span {
-  width: 120px;
-  height: 4px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.85);
-}
+/* 主畫面裡的 Android 三鍵導覽列跟全站持續存在的那條共用 .jh-home-indicator /
+   .jh-nav-btn 樣式(定義在 browser-chrome.css,這頁本來就有載入),這裡不用
+   重複定義,開機動畫結束後也會自然接上同一條導覽列,不會有跳動感。*/

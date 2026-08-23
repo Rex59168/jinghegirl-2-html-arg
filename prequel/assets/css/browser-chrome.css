@@ -22,31 +22,59 @@
 .jh-sb-icons { display: flex; align-items: center; gap: 5px; }
 .jh-sb-icons svg { display: block; }
 
+/* Android 三鍵導覽列(返回・主畫面・多工) */
 .jh-home-indicator {
   position: fixed;
   left: 0; right: 0; bottom: 0;
-  height: 22px;
+  height: 44px;
   background: #000;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   z-index: 2000;
 }
-.jh-home-indicator__pill {
-  width: 120px;
-  height: 4px;
-  border-radius: 3px;
-  background: rgba(255, 255, 255, 0.75);
+.jh-nav-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  width: 64px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.jh-nav-btn svg { display: block; }
+.jh-nav-btn:active { opacity: 0.5; }
+
+.jh-nav-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 58px;
+  transform: translateX(-50%) translateY(6px);
+  background: rgba(40, 40, 40, 0.92);
+  color: #fff;
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  z-index: 2001;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+.jh-nav-toast--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
-body.jh-has-shell { padding-bottom: 22px; }
+body.jh-has-shell { padding-bottom: 44px; }
 body.jh-has-shell.jh-has-chrome { padding-top: 68px; }
 body.jh-has-shell:not(.jh-has-chrome) { padding-top: 28px; }
 .jh-has-chrome .jh-browser-chrome { top: 28px; }
 
-.jh-notebook-btn, .jh-hint-btn { bottom: calc(12px + 22px) !important; }
-.jh-notebook-btn { bottom: calc(68px + 22px) !important; }
-.jh-hint-panel, .jh-notebook-panel { padding-bottom: 22px; box-sizing: border-box; }
+.jh-notebook-btn, .jh-hint-btn { bottom: calc(12px + 44px) !important; }
+.jh-notebook-btn { bottom: calc(68px + 44px) !important; }
+.jh-hint-panel, .jh-notebook-panel { padding-bottom: 44px; box-sizing: border-box; }
 
 .jh-browser-chrome {
   position: fixed;

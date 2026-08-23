@@ -39,8 +39,37 @@
   const SIGNAL_SVG = '<svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="3" width="3" height="9" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>';
   const WIFI_SVG = '<svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.2a1.3 1.3 0 100 2.6 1.3 1.3 0 000-2.6z"/><path d="M4.2 7.4a5.4 5.4 0 017.6 0l-1.4 1.4a3.4 3.4 0 00-4.8 0L4.2 7.4z"/><path d="M1 4.2a9.6 9.6 0 0114 0L13.6 5.6a7.6 7.6 0 00-11.2 0L1 4.2z"/></svg>';
   const BATTERY_SVG = '<svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.5" y="0.5" width="20" height="11" rx="2.5" stroke="currentColor"/><rect x="2" y="2" width="17" height="8" rx="1" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg>';
+  const BACK_SVG = '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M13 3 5 10l8 7z"/></svg>';
+  const HOME_SVG = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/></svg>';
+  const RECENTS_SVG = '<svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="15" height="15" rx="2.5"/></svg>';
 
   function pad2(n) { return String(n).padStart(2, "0"); }
+
+  // 是否要在每個新頁面第一次點擊時嘗試重新全螢幕——玩家在開機畫面點瀏覽器圖示
+  // 那次是真正的使用者手勢,可以直接進全螢幕;但這是多頁網站,每次換頁瀏覽器
+  // 都會自動退出全螢幕(Fullscreen API 的限制),沒辦法用程式在換頁後自動重進,
+  // 只能等玩家點下一個手勢時再嘗試一次,所以做法是每頁都掛一個一次性的點擊監聽。
+  const FULLSCREEN_KEY = "jh2bridge:fullscreen_opt_in";
+  function isFullscreenActive() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+  }
+  function requestFullscreenNow() {
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+    if (!req) return;
+    try {
+      const p = req.call(el);
+      if (p && p.catch) p.catch(() => {});
+    } catch (e) {}
+  }
+  function armFullscreenOnFirstClick() {
+    if (localStorage.getItem(FULLSCREEN_KEY) !== "1" || isFullscreenActive()) return;
+    document.addEventListener(
+      "click",
+      () => { if (!isFullscreenActive()) requestFullscreenNow(); },
+      { once: true }
+    );
+  }
 
   // 手機狀態列上的時間直接顯示玩家當下裝置的真實時間(只有時:分,不含日期),
   // 純粹營造「你正拿著手機看」的臨場感,不涉及第一章 2025 年的故事時間線,
@@ -65,8 +94,28 @@
   function mountHomeIndicator() {
     const el = document.createElement("div");
     el.className = "jh-home-indicator";
-    el.innerHTML = '<span class="jh-home-indicator__pill"></span>';
+    el.innerHTML = `
+      <button type="button" class="jh-nav-btn" id="jh-nav-back" aria-label="返回">${BACK_SVG}</button>
+      <button type="button" class="jh-nav-btn" id="jh-nav-home" aria-label="主畫面">${HOME_SVG}</button>
+      <button type="button" class="jh-nav-btn" id="jh-nav-recents" aria-label="多工">${RECENTS_SVG}</button>
+    `;
     document.body.appendChild(el);
+
+    const toast = document.createElement("div");
+    toast.className = "jh-nav-toast";
+    toast.textContent = "沒有其他使用中的頁面";
+    document.body.appendChild(toast);
+    let toastTimer = null;
+
+    el.querySelector("#jh-nav-back").addEventListener("click", () => history.back());
+    el.querySelector("#jh-nav-home").addEventListener("click", () => { location.href = "index.html"; });
+    el.querySelector("#jh-nav-recents").addEventListener("click", () => {
+      toast.classList.add("jh-nav-toast--visible");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("jh-nav-toast--visible"), 1400);
+    });
+
+    armFullscreenOnFirstClick();
   }
 
   function mount() {
