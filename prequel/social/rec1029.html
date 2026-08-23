@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>@rec_1029</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-social.css">
+</head>
+<body class="site-social" data-requires="ch3_done">
+
+<header class="social-head">
+  <div class="avatar"></div>
+  <div class="handle">rec_1029<small>唱片交流・靖河</small></div>
+  <button type="button" id="report-btn" style="margin-left:auto;background:none;border:1px solid #ccc;border-radius:6px;padding:8px 12px;font-size:12px;">檢舉</button>
+</header>
+
+<main class="container">
+  <div class="card">
+    <p style="font-size:13px;color:#888;">帳號建立於 2022/09・貼文 340 則・追蹤者 612</p>
+    <p>黑膠 / 藍光 / 演唱會週邊交流。誠信交易,學生也歡迎聊。</p>
+  </div>
+
+  <div class="card"><p>入手一批日版黑膠,整理中</p><p class="meta">3 天前・18 個讚</p></div>
+  <div class="card"><p>今天去的那間二手店老闆人很好,推薦</p><p class="meta">1 週前・24 個讚</p></div>
+  <div class="card"><p>NOCTIS 新專輯首賣排隊實錄,排了 4 小時值得</p><p class="meta">2 週前・61 個讚</p></div>
+  <div class="card"><p>幫朋友問,有人有多的演唱會應援燈嗎</p><p class="meta">3 週前・9 個讚</p></div>
+  <div class="card">
+    <p>收藏櫃整理到一半,發現好幾張忘記自己有</p>
+    <p class="meta">1 個月前・33 個讚</p>
+    <div id="old-comments" style="margin-top:8px;padding-top:8px;border-top:1px solid #eee;font-size:12px;color:#555;"></div>
+  </div>
+
+  <div class="card">
+    <p style="font-weight:600;">共同好友</p>
+    <p>
+      <button type="button" class="mutual-friend-btn" data-name="@vinylkid_92" style="background:none;border:none;color:#1a73e8;font-size:14px;padding:0;cursor:pointer;">@vinylkid_92</button>・<button type="button" class="mutual-friend-btn" data-name="@night_archive07" style="background:none;border:none;color:#1a73e8;font-size:14px;padding:0;cursor:pointer;">@night_archive07</button>
+    </p>
+    <p id="mutual-friend-note" style="display:none;font-size:12px;color:#999;margin-top:4px;"></p>
+  </div>
+
+  <div class="card" style="text-align:center;">
+    <p style="font-size:13px;color:#666;">你已經看完他的貼文了。三年份,日常得不能再日常。</p>
+    <button type="button" class="btn" id="confirm-ok" style="background:#333;color:#fff;border:none;padding:10px 20px;border-radius:8px;">確認:這個帳號看起來沒問題</button>
+  </div>
+
+  <div class="card" id="reveal-block" style="display:none;">
+    <strong style="color:#b3261e;font-size:13px;">周妤:</strong>
+    <p style="font-size:13px;color:#333;">
+      我那時候也點進去看過。三年的貼文、共同好友,看起來就是個普通的收藏圈同好。
+      如果是我先看到,我大概也會跟她說「應該沒問題吧」。
+    </p>
+  </div>
+
+  <p style="text-align:center;margin-top:14px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
+</main>
+
+<div id="report-toast" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:100;">
+  感謝您的檢舉。我們會在 3–5 個工作天內完成審核。
+</div>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script src="assets/js/idle-scroll.js"></script>
+<script>
+// 恐怖層:玩家在序章填的暱稱,偶爾會出現在一則一個月前的舊留言裡。
+// 不存進 localStorage,重新整理不保證還在。
+(function () {
+  const nickname = JH.get("nickname");
+  const container = document.getElementById("old-comments");
+  const lines = ["@old_vinyl88:羨慕"];
+  if (nickname && Math.random() < 0.5) lines.push(`${nickname}:想看實拍`);
+  lines.push("@static_reel:哪張啊求分享");
+  lines.forEach((line, i) => {
+    if (i > 0) container.appendChild(document.createElement("br"));
+    container.appendChild(document.createTextNode(line));
+  });
+})();
+
+document.querySelectorAll(".mutual-friend-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const note = document.getElementById("mutual-friend-note");
+    note.textContent = btn.dataset.name + " 的帳號已設為不公開,看不到內容。";
+    note.style.display = "block";
+  });
+});
+
+document.getElementById("report-btn").addEventListener("click", () => {
+  const toast = document.getElementById("report-toast");
+  toast.style.display = "block";
+  setTimeout(() => (toast.style.display = "none"), 2400);
+});
+
+if (JH.get("ch4_t3")) {
+  document.getElementById("reveal-block").style.display = "block";
+  document.getElementById("back-link").style.display = "block";
+  document.getElementById("confirm-ok").disabled = true;
+}
+
+document.getElementById("confirm-ok").addEventListener("click", () => {
+  document.getElementById("reveal-block").style.display = "block";
+  document.getElementById("back-link").style.display = "block";
+  document.getElementById("confirm-ok").disabled = true;
+  JH.set("ch4_t3", true);
+  JHNotebook.add(
+    "ch4_t3",
+    "她查過他的帳號:三年歷史、生活照、共同好友——看起來沒問題",
+    "social/rec1029.html"
+  );
+});
+</script>
+</body>
+</html>

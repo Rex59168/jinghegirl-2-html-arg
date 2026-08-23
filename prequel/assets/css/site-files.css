@@ -1,0 +1,64 @@
+/* site-files.css — 檔案總管,裸露、無裝飾、系統預設字型 */
+body.site-files {
+  background: #fff;
+  color: #000;
+  font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+}
+.site-files header.files-head {
+  padding: 10px 14px;
+  border-bottom: 1px solid #ccc;
+  font-size: 14px;
+  color: #333;
+}
+.site-files table.filelist {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.site-files table.filelist th {
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+  padding: 8px 6px;
+  font-weight: 600;
+  color: #555;
+}
+.site-files table.filelist td {
+  padding: 10px 6px;
+  border-bottom: 1px solid #eee;
+  vertical-align: top;
+}
+.site-files table.filelist tr.readable td.fname {
+  color: #0645ad;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.site-files table.filelist tr.readable td.fname::before { content: "★ "; }
+.site-files table.filelist td.status { color: #888; }
+
+.file-detail {
+  border: 1px solid #ccc;
+  margin: 14px;
+  padding: 14px;
+  font-size: 13px;
+  display: none;
+}
+.file-detail.open { display: block; }
+.file-detail dl { margin: 0; }
+.file-detail dt { color: #555; float: left; width: 90px; clear: left; }
+.file-detail dd { margin: 0 0 6px 100px; }
+.file-detail .eerie {
+  color: #999;
+  font-size: 12px;
+  margin-top: 10px;
+  border-top: 1px dashed #ddd;
+  padding-top: 8px;
+}
+
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: #fff;
+  z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  color: #555;
+  font-size: 14px;
+}

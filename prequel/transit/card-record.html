@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>悠遊卡・當日刷卡紀錄</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-transit.css">
+</head>
+<body class="site-transit" data-requires="ch3_done">
+
+<header class="transit-head">
+  <h1>悠遊卡紀錄查詢</h1>
+  <div class="sub">2025/08/14・單日明細</div>
+</header>
+
+<main class="container">
+
+  <div class="panel">
+    <h2>刷卡明細</h2>
+    <ul class="record-list" id="record-list"></ul>
+  </div>
+
+  <div class="panel">
+    <p style="font-size:13px;color:#666;">你們約好的地點是文昌站 2 號出口。點下面清單中你覺得有問題的那一列。</p>
+  </div>
+
+  <div class="panel" id="reveal-block" style="display:none;">
+    <strong style="color:#b3261e;font-size:13px;">周妤:</strong>
+    <p style="font-size:13px;color:#333;">
+      文昌站,2 號出口。她到站了,人卻沒有出現在咖啡廳。
+      悠遊卡不會騙人——它只記錄你在哪裡刷過,不會記錄你為什麼在那裡。
+    </p>
+  </div>
+
+  <p style="text-align:center;margin-top:18px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
+
+</main>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script>
+window.JH_HINTS = [
+  "你們約好的地方是文昌站。仔細看清單裡最後一筆出站紀錄。",
+  "有一筆出站紀錄的站名跟約好的不一樣。",
+  "19:38 出站的是興安站,不是文昌站。點那一列。",
+];
+</script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script src="assets/js/idle-scroll.js"></script>
+<script>
+const RECORDS = [
+  { time: "17:22", type: "進站", station: "青川", key: "in1" },
+  { time: "18:12", type: "進站", station: "文昌", key: "mystery1" },
+  { time: "18:14", type: "出站", station: "文昌", key: "mystery2" },
+  { time: "19:38", type: "出站", station: "興安", key: "answer" },
+];
+
+const list = document.getElementById("record-list");
+RECORDS.forEach((r) => {
+  const li = document.createElement("li");
+  li.className = "record-row";
+  li.innerHTML = `
+    <span>${r.time} ${r.type} <span class="station">${r.station}</span></span>
+    <div class="flag-note">跟約好的文昌站不一樣。</div>
+  `;
+  if (r.key === "answer") {
+    li.addEventListener("click", () => {
+      li.classList.add("flagged");
+      complete();
+    });
+  } else if (r.key === "mystery1" || r.key === "mystery2") {
+    li.addEventListener("click", () => {
+      if (li.querySelector(".zy-note")) return;
+      const note = document.createElement("div");
+      note.className = "zy-note";
+      note.style.cssText = "font-size:12px;color:#999;padding:0 10px 10px;";
+      note.textContent = "周妤:我看到了。";
+      li.appendChild(note);
+    });
+  }
+  list.appendChild(li);
+});
+
+if (JH.get("ch4_t2")) {
+  document.querySelectorAll(".record-row")[3].classList.add("flagged");
+  document.getElementById("reveal-block").style.display = "block";
+  document.getElementById("back-link").style.display = "block";
+}
+
+function complete() {
+  document.getElementById("reveal-block").style.display = "block";
+  document.getElementById("back-link").style.display = "block";
+  JH.set("ch4_t2", true);
+  JHNotebook.add(
+    "ch4_t2",
+    "她 17:22 進站,19:38 出站的是興安站——不是約好的文昌站",
+    "transit/card-record.html"
+  );
+}
+</script>
+</body>
+</html>

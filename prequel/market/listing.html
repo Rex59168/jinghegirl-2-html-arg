@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>二手交易・唱片收藏分類</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-market.css">
+</head>
+<body class="site-market" data-requires="ch1_done">
+
+<header class="market-head">
+  <h1>唱片・週邊 交易區</h1>
+  <div class="sub">追蹤清單・NOCTIS 相關</div>
+</header>
+
+<main class="container">
+
+  <div class="lead-panel" style="border-left-color:#7a4a20;">
+    「好,我們來確認她到底在找哪一張。」——周妤
+  </div>
+
+  <div class="lead-panel">
+    你想起周妤提過:林昭 2019 年抽中限定盤的時候,好像有在自己帳號上曬過開箱。
+    <a href="social/lin-zhao-2019.html">→ 去她姐姐的舊帳號看看</a>
+  </div>
+
+  <div class="lead-panel">
+    周妤說晞晞的手機瀏覽器裡,有一個叫「找碟」的書籤資料夾,存了快兩年的搜尋紀錄。
+    <a href="market/bookmarks.html">→ 看看她都存了什麼</a>
+  </div>
+
+  <details class="filter-box" open>
+    <summary>篩選條件</summary>
+    <div class="filter-grid">
+      <div>
+        <label for="f-album">專輯</label>
+        <select id="f-album">
+          <option value="">全部專輯</option>
+        </select>
+      </div>
+      <div>
+        <label for="f-venue">場次 / 版本</label>
+        <select id="f-venue">
+          <option value="">全部場次</option>
+          <option value="靖河站限定">靖河站限定</option>
+          <option value="首爾站限定">首爾站限定</option>
+          <option value="東京站限定">東京站限定</option>
+          <option value="高雄站限定">高雄站限定</option>
+          <option value="曼谷站限定">曼谷站限定</option>
+          <option value="一般版">一般版</option>
+        </select>
+      </div>
+      <div>
+        <label for="f-sig">有無簽名</label>
+        <select id="f-sig">
+          <option value="">不限</option>
+          <option value="yes">有簽名</option>
+          <option value="no">無簽名</option>
+        </select>
+      </div>
+      <div>
+        <label for="f-signer">簽名成員</label>
+        <select id="f-signer">
+          <option value="">不限成員</option>
+          <option value="JUN">JUN(雋)</option>
+          <option value="LUNE">LUNE(露恩)</option>
+          <option value="NOX">NOX(諾克斯)</option>
+          <option value="VESPER">VESPER(維斯)</option>
+          <option value="SOL">SOL(索爾)</option>
+          <option value="KAI">KAI(凱)</option>
+          <option value="RIEN">RIEN(里恩)</option>
+        </select>
+      </div>
+    </div>
+    <button type="button" class="reset-btn" id="reset-filters">清除篩選</button>
+  </details>
+
+  <p class="result-count" id="result-count"></p>
+  <div id="list"></div>
+  <div class="pager" id="pager"></div>
+
+  <p style="color:#fffaf5;font-size:12px;margin-top:60px;user-select:text;">他也看得到你在找什麼。</p>
+
+</main>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script>
+window.JH_HINTS = [
+  "妳有把握編號只到 #18_ 嗎?試著用上面的篩選器縮小範圍。",
+  "先選好專輯、場次、有無簽名、簽名成員這四層,應該只剩十來筆了,再自己找開頭是 18 的編號。",
+  "剩下的三筆裡,只有 #188 對得上——去她姐姐的舊帳號確認看看。",
+];
+</script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script>
+const PAGE_SIZE = 20;
+let DATA = [];
+let page = 1;
+
+fetch("market/data.json")
+  .then((r) => r.json())
+  .then((data) => {
+    DATA = data;
+    const albums = ["LONG NIGHT", ...new Set(data.filter((r) => r.album !== "LONG NIGHT").map((r) => r.album))];
+    const albumSel = document.getElementById("f-album");
+    albums.forEach((a) => {
+      const opt = document.createElement("option");
+      opt.value = a; opt.textContent = a;
+      albumSel.appendChild(opt);
+    });
+    render();
+  });
+
+function currentFilters() {
+  return {
+    album: document.getElementById("f-album").value,
+    venue: document.getElementById("f-venue").value,
+    sig: document.getElementById("f-sig").value,
+    signer: document.getElementById("f-signer").value,
+  };
+}
+
+function filtered() {
+  const f = currentFilters();
+  return DATA.filter((r) => {
+    if (f.album && r.album !== f.album) return false;
+    if (f.venue && r.venue !== f.venue) return false;
+    if (f.sig === "yes" && !r.hasSignature) return false;
+    if (f.sig === "no" && r.hasSignature) return false;
+    if (f.signer && r.signer !== f.signer) return false;
+    return true;
+  });
+}
+
+function render() {
+  const rows = filtered();
+  const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  if (page > totalPages) page = totalPages;
+  const start = (page - 1) * PAGE_SIZE;
+  const pageRows = rows.slice(start, start + PAGE_SIZE);
+
+  document.getElementById("result-count").textContent = `共 ${rows.length} 筆結果`;
+
+  const listEl = document.getElementById("list");
+  listEl.innerHTML = "";
+  pageRows.forEach((r) => listEl.appendChild(renderRow(r)));
+
+  const pager = document.getElementById("pager");
+  pager.innerHTML = `
+    <button type="button" id="prev-page" ${page <= 1 ? "disabled" : ""}>← 上一頁</button>
+    <span>第 ${page} / ${totalPages} 頁</span>
+    <button type="button" id="next-page" ${page >= totalPages ? "disabled" : ""}>下一頁 →</button>
+  `;
+  document.getElementById("prev-page").addEventListener("click", () => { page--; render(); window.scrollTo(0,0); });
+  document.getElementById("next-page").addEventListener("click", () => { page++; render(); window.scrollTo(0,0); });
+}
+
+function renderRow(r) {
+  const row = document.createElement("div");
+  row.className = "listing-row";
+  const isTarget = r.serial === "#188";
+
+  row.innerHTML = `
+    <div class="listing-summary">
+      <span class="title">${r.title}${r.serial ? ' <span class="serial">' + r.serial + "</span>" : ""}</span>
+      <span class="price">${r.price}</span>
+    </div>
+    <div class="listing-detail">
+      <dl>
+        <div class="field"><dt>賣家</dt><dd>${r.seller}</dd></div>
+        <div class="field"><dt>上架日</dt><dd>${r.listedDate}</dd></div>
+        <div class="field"><dt>最後更新</dt><dd>${r.updatedDate}</dd></div>
+        <div class="field"><dt>留言</dt><dd>${r.comments} 則${r.sellerReplies !== undefined ? "・賣家回覆 " + r.sellerReplies + " 則" : ""}</dd></div>
+        ${r.sellerAccountCreated ? `<div class="field"><dt>帳號建立</dt><dd>${r.sellerAccountCreated}</dd></div>` : ""}
+        ${isTarget ? `<div class="field"><dt>上次上線</dt><dd>${1 + Math.floor(Math.random() * 12)} 分鐘前</dd></div>` : ""}
+      </dl>
+      ${isTarget ? '<button type="button" class="confirm-btn" id="confirm-188">就是這份 —— 標記為找到了</button><p id="confirm-note" style="margin-top:8px;color:#7a4a20;"></p>' : ""}
+    </div>
+  `;
+
+  row.querySelector(".listing-summary").addEventListener("click", () => {
+    row.classList.toggle("open");
+  });
+
+  if (isTarget) {
+    row.querySelector("#confirm-188").addEventListener("click", (e) => {
+      e.stopPropagation();
+      JH.set("ch2_done", true);
+      JHNotebook.add("ch2_number", "光碟編號確認是 #188", "market/listing.html");
+      JHNotebook.add("ch2_date", "#188 於 2023/11/06 上架,兩年沒動過,留言 47 則賣家一則都沒回", "market/listing.html");
+      document.getElementById("confirm-note").innerHTML =
+        '兩年,沒有降價,沒有下架,沒有回覆任何人。<br>直到 2025 年 7 月,他回了第一則訊息。<br><br>' +
+        '<a href="chat/thread.html">查看完整對話記錄 →</a>';
+      JHPhone.push("nudge_ch3", "確認是 #188 了,我把完整對話記錄傳給你。", "chat/thread.html");
+    });
+  }
+
+  return row;
+}
+
+["f-album", "f-venue", "f-sig", "f-signer"].forEach((id) => {
+  document.getElementById(id).addEventListener("change", () => { page = 1; render(); });
+});
+document.getElementById("reset-filters").addEventListener("click", () => {
+  ["f-album", "f-venue", "f-sig", "f-signer"].forEach((id) => (document.getElementById(id).value = ""));
+  page = 1;
+  render();
+});
+</script>
+</body>
+</html>

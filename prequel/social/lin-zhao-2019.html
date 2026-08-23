@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>@linzhao_archive</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-social.css">
+</head>
+<body class="site-social" data-requires="ch1_done">
+
+<header class="social-head">
+  <div class="avatar"></div>
+  <div class="handle">linzhao_archive<small>已停用帳號・存檔可見</small></div>
+</header>
+
+<main class="container">
+  <div class="card" style="border-color:#ddd;background:#f8f8f8;">
+    <p class="meta" id="archive-notice">這個帳號的主人 2022 年 9 月失蹤,至今未尋獲。以下是她生前公開的貼文存檔。</p>
+  </div>
+
+  <div class="card">
+    <p>抽中了抽中了抽中了!!!!!!</p>
+    <p>靖河站限定藍光,而且是雋的簽名版本啊啊啊啊 這輩子運氣都用完了吧</p>
+    <p>編號 <strong>#188</strong>,我要裱框(不是)</p>
+    <p class="meta">2019/11/23・<span id="like-count">214</span> 個讚</p>
+  </div>
+
+  <div class="card">
+    <p>晚點拍開箱給大家看,先讓我尖叫五分鐘</p>
+    <p class="meta">2019/11/23・89 個讚</p>
+  </div>
+
+  <div class="card">
+    <p>拍好了 光碟殼有點刮傷但簽名超清楚 值了</p>
+    <p class="meta">2019/11/24・156 個讚</p>
+  </div>
+
+  <p style="text-align:center;margin:24px 0;">
+    <a href="market/listing.html">← 回二手交易區,確認編號</a>
+  </p>
+</main>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script>
+JHNotebook.add(
+  "ch2_lin_zhao_188",
+  "林昭 2019 年開箱貼文:她抽中的是靖河站限定 #188,JUN 簽名",
+  "social/lin-zhao-2019.html"
+);
+
+if (JH.get("news_done")) {
+  document.getElementById("archive-notice").textContent =
+    "這個帳號的主人 2022 年 9 月失蹤,遺骸已於今年 8 月尋獲確認。以下是她生前公開的貼文存檔。";
+}
+
+// 恐怖層:確認遺骸身分之後重訪,這則貼文的按讚數偶爾會跟記憶中的不一樣
+// 不存進 localStorage,純看這次載入運氣
+if (JH.get("news_done") && Math.random() < 0.5) {
+  const delta = Math.random() < 0.5 ? -1 : 1;
+  document.getElementById("like-count").textContent = 214 + delta * (1 + Math.floor(Math.random() * 2));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+/* site-chat.css — 聊天記錄介面 */
+body.site-chat {
+  background: #ece5dd;
+  color: #111;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif;
+}
+.site-chat header.chat-head {
+  background: #3a3a3c;
+  color: #fff;
+  padding: 14px 16px;
+  position: sticky; top: 40px; z-index: 10;
+}
+.site-chat header.chat-head h1 { margin: 0; font-size: 16px; }
+.site-chat header.chat-head .sub { font-size: 12px; opacity: .8; }
+
+.chat-thread { padding: 14px 12px 4px; }
+.chat-msg {
+  max-width: 78%;
+  margin-bottom: 10px;
+  padding: 9px 12px;
+  border-radius: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  position: relative;
+}
+.chat-msg.him {
+  background: #fff;
+  border-bottom-left-radius: 3px;
+  margin-right: auto;
+}
+.chat-msg.her {
+  background: #dcf8c6;
+  border-bottom-right-radius: 3px;
+  margin-left: auto;
+}
+.chat-msg .time {
+  display: block;
+  font-size: 10px;
+  color: #888;
+  margin-top: 4px;
+  text-align: right;
+}
+.chat-msg .edited-badge {
+  font-size: 10px;
+  color: #999;
+  margin-right: 4px;
+}
+
+.reorder-box {
+  background: #fff8e1;
+  border: 1px dashed #d9a441;
+  border-radius: 10px;
+  margin: 14px 12px;
+  padding: 12px;
+}
+.reorder-box h3 { margin: 0 0 6px; font-size: 14px; color: #8a5a12; }
+.reorder-box p.instr { font-size: 12px; color: #8a5a12; margin: 0 0 10px; }
+
+.reorder-seq {
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px;
+  margin-bottom: 10px;
+  min-height: 44px;
+}
+.slot {
+  min-height: 40px;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  margin: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 12px;
+}
+.slot.active { border-color: #d9a441; color: #8a5a12; background: #fff8e1; }
+
+.placed-msg {
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin: 4px 0;
+  font-size: 13px;
+  cursor: pointer;
+}
+.placed-msg.him { background: #f1f1f1; }
+.placed-msg.her { background: #dcf8c6; margin-left: 20%; }
+.placed-msg .remove-hint { font-size: 10px; color: #999; display: block; }
+
+.reorder-pool {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.pool-item {
+  text-align: left;
+  background: #fff;
+  border: 1px solid #e0c98a;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  min-height: 44px;
+}
+.pool-item.selected {
+  border-color: #d9661d;
+  box-shadow: 0 0 0 2px rgba(217,102,29,.2);
+}
+
+.chat-note {
+  background: #222;
+  color: #eee;
+  margin: 14px 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.chat-continue-btn {
+  display: block;
+  margin: 14px auto;
+  background: #2b4d7e;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* 第五章:標註工具 */
+.chat-msg.taggable { cursor: pointer; }
+.chat-msg .tag-chip {
+  display: inline-block;
+  font-size: 10px;
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 999px;
+  margin-bottom: 4px;
+}
+
+.tag-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px;
+  position: sticky;
+  top: 86px;
+  background: #ece5dd;
+  z-index: 9;
+}
+.tag-legend .legend-chip {
+  font-size: 11px;
+  color: #fff;
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+
+.tag-sheet-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.4);
+  z-index: 190;
+  display: none;
+}
+.tag-sheet-backdrop.open { display: block; }
+.tag-sheet {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: #fff;
+  border-radius: 14px 14px 0 0;
+  z-index: 191;
+  padding: 16px;
+  transform: translateY(100%);
+  transition: transform .2s ease;
+}
+.tag-sheet.open { transform: translateY(0); }
+.tag-sheet .quote {
+  font-size: 13px;
+  color: #555;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+.tag-sheet button.tag-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  min-height: 44px;
+}
+.tag-sheet button.tag-clear {
+  display: block;
+  width: 100%;
+  background: #eee;
+  color: #444;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.tag-check-bar {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 9;
+}
+.tag-check-bar button {
+  background: #b3261e;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.reveal-block {
+  background: #222;
+  color: #eee;
+  margin: 14px 12px;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+/* 電腦寬螢幕:整條對話收成置中欄,避免訊息泡泡被拉成整排 */
+@media (min-width: 900px) {
+  .site-chat header.chat-head,
+  .site-chat > p,
+  .site-chat .chat-thread,
+  .site-chat .reorder-box,
+  .site-chat .chat-note,
+  .site-chat .tag-legend,
+  .site-chat .tag-check-bar,
+  .site-chat .reveal-block {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .site-chat .chat-msg { max-width: 60%; }
+}

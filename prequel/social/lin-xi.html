@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>@linxi_0417</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-social.css">
+</head>
+<body class="site-social">
+
+<header class="social-head">
+  <div class="avatar"></div>
+  <div class="handle">linxi_0417<small>17歲・靖河高中二年級</small></div>
+</header>
+
+<div class="story-rail" id="story-rail">
+  <button class="story-item" data-story="1">
+    <span class="story-ring">照片</span>
+    <span class="ts">15:02</span>
+  </button>
+  <button class="story-item" data-story="2">
+    <span class="story-ring">照片</span>
+    <span class="ts">15:40</span>
+  </button>
+  <button class="story-item" data-story="3">
+    <span class="story-ring">照片</span>
+    <span class="ts">16:50</span>
+  </button>
+  <button class="story-item" data-story="4">
+    <span class="story-ring">照片</span>
+    <span class="ts">19:41</span>
+  </button>
+</div>
+
+<main class="container">
+  <div class="card">
+    <p><strong>公告置頂</strong></p>
+    <p class="meta">帳號目前由親友暫時保管,留言功能已關閉。</p>
+  </div>
+
+  <div class="card">
+    <p>雋今天生日快樂🖤 姐要是還在一定會轉發一百次</p>
+    <p class="meta">8/10・63 個讚</p>
+  </div>
+
+  <div class="card">
+    <p>模擬考結束了,終於可以睡覺</p>
+    <p class="meta">8/6・21 個讚</p>
+  </div>
+
+  <p style="text-align:center;margin:24px 0;">
+    <a href="index.html">← 回協尋站</a>
+    <a href="xunren/correction.html">發現時間對不上?幫忙更正 →</a>
+  </p>
+</main>
+
+<div class="story-viewer" id="story-viewer">
+  <div class="sv-progress" id="sv-progress"></div>
+  <div class="sv-top">
+    <div class="handle">linxi_0417</div>
+    <button class="sv-close" id="sv-close" aria-label="關閉">✕</button>
+  </div>
+  <div class="sv-body" id="sv-body"></div>
+</div>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script>
+const STORIES = {
+  1: { ts: "15:02", caption: "〔教室窗外〕", text: "終於放學。" },
+  2: { ts: "15:40", caption: "〔手搖飲料〕", text: "今天犒賞自己一杯。" },
+  3: { ts: "16:50", caption: "〔捷運出口・略模糊〕", text: "河西這邊路好多,第一次自己來。" },
+  4: { ts: "19:41", caption: "〔畫面昏暗〕", text: "到了。" },
+};
+
+// 恐怖層:失蹤後的日子重訪,偶爾會多出第 5 則,時間戳在失蹤之後。
+// 不存進 localStorage,純看這次載入運氣——重新整理不保證還在。
+if (JH.get("ch3_done") && Math.random() < 0.5) {
+  STORIES[5] = { ts: "凌晨 03:14", caption: "〔畫面全黑〕", text: "" };
+  const rail = document.getElementById("story-rail");
+  const btn = document.createElement("button");
+  btn.className = "story-item";
+  btn.dataset.story = "5";
+  btn.innerHTML = `<span class="story-ring">照片</span><span class="ts">8/16</span>`;
+  rail.appendChild(btn);
+}
+
+const viewer = document.getElementById("story-viewer");
+const body = document.getElementById("sv-body");
+const progress = document.getElementById("sv-progress");
+
+document.querySelectorAll(".story-item").forEach((btn) => {
+  btn.addEventListener("click", () => openStory(btn.dataset.story));
+});
+document.getElementById("sv-close").addEventListener("click", () => viewer.classList.remove("open"));
+
+function openStory(id) {
+  const s = STORIES[id];
+  progress.innerHTML = Object.keys(STORIES)
+    .map((k) => `<span class="${k === id ? "active" : ""}"></span>`)
+    .join("");
+  body.innerHTML = `
+    <div>
+      <div style="font-size:40px;opacity:.4;margin-bottom:16px;">${s.caption}</div>
+      <div>${s.text}</div>
+      <div class="sv-caption">今天 ${s.ts}</div>
+    </div>
+  `;
+  viewer.classList.add("open");
+
+  if (id === "4") {
+    JHNotebook.add(
+      "ch0_story4_seen",
+      "她的限時動態第 4 則,時間戳是 19:41",
+      "social/lin-xi.html"
+    );
+  }
+}
+</script>
+</body>
+</html>

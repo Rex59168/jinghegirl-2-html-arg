@@ -1,0 +1,79 @@
+/* site-xunren.css — 學生自架協尋站,2010 年代模板感 */
+body.site-xunren {
+  background: #dfe6ee;
+  color: #222;
+  font-family: "PMingLiU", "細明體", Georgia, serif;
+}
+.site-xunren .container { max-width: 620px; }
+.site-xunren header.xunren-head {
+  background: #2b4d7e;
+  color: #fff;
+  text-align: center;
+  padding: 18px 12px 14px;
+  border-bottom: 4px solid #14263f;
+}
+.site-xunren header.xunren-head h1 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+.site-xunren header.xunren-head .sub {
+  font-size: 13px;
+  opacity: .85;
+}
+.site-xunren .panel {
+  background: #fff;
+  border: 1px solid #a9bdd6;
+  margin: 14px 0;
+  padding: 14px;
+}
+.site-xunren .panel h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: #2b4d7e;
+  border-bottom: 2px solid #dfe6ee;
+  padding-bottom: 6px;
+}
+.site-xunren a { color: #1a4faf; text-decoration: underline; }
+.site-xunren a:visited { color: #6a3d9e; }
+.site-xunren .notice-box {
+  background: #fff8db;
+  border: 1px dashed #c9a227;
+  padding: 10px 12px;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+.site-xunren dl.facts { margin: 0; }
+.site-xunren dl.facts dt { font-weight: bold; color: #444; margin-top: 8px; }
+.site-xunren dl.facts dd { margin: 0 0 4px; }
+.site-xunren footer.xunren-foot {
+  text-align: center;
+  font-size: 12px;
+  color: #667;
+  padding: 20px 12px 40px;
+}
+.site-xunren .btn,
+.site-xunren button[type="submit"] {
+  background: #2b4d7e;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.site-xunren .btn:hover,
+.site-xunren button[type="submit"]:hover { background: #1f3a5f; }
+.site-xunren label { display: block; font-size: 14px; margin: 10px 0 4px; color: #333; }
+.site-xunren input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #a9bdd6;
+  font-size: 16px;
+}
+.site-xunren .update-item {
+  border-left: 3px solid #2b4d7e;
+  padding: 4px 0 4px 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.site-xunren .update-item .date { color: #888; font-size: 12px; display: block; }

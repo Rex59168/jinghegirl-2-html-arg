@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>靖河捷運・時刻查詢</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-transit.css">
+</head>
+<body class="site-transit" data-requires="ch3_done">
+
+<header class="transit-head">
+  <h1>靖河捷運</h1>
+  <div class="sub">時刻查詢・河西線</div>
+</header>
+
+<main class="container">
+
+  <div class="panel">
+    <h2>路線圖</h2>
+    <div class="route-scroll">
+      <svg class="route-svg" width="620" height="80" viewBox="0 0 620 80">
+        <line x1="40" y1="40" x2="580" y2="40" stroke="#0f5132" stroke-width="4"/>
+        <g font-size="11" text-anchor="middle" fill="#1a1a1a">
+          <circle cx="40" cy="40" r="7" fill="#0f5132"/><text x="40" y="64">青川</text>
+          <circle cx="180" cy="40" r="7" fill="#0f5132"/><text x="180" y="64">興安</text>
+          <circle cx="320" cy="40" r="7" fill="#0f5132"/><text x="320" y="64">文昌</text>
+          <circle cx="460" cy="40" r="7" fill="#0f5132"/><text x="460" y="64">河景</text>
+          <circle cx="580" cy="40" r="7" fill="#0f5132"/><text x="580" y="64">終點</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>末班車時刻(河西線・往終點方向)</h2>
+    <ul class="station-list">
+      <li><span>文昌站</span><span>末班 23:47</span></li>
+      <li><span>興安站</span><span>末班 23:52</span></li>
+      <li><span>轉乘河東線・末班</span><span>23:20</span></li>
+    </ul>
+    <p style="font-size:13px;color:#666;">17:30 前後班距約 4-6 分鐘,班次正常。</p>
+  </div>
+
+  <div class="panel">
+    <h2>當日路況回顧・8/13</h2>
+    <p style="font-size:13px;color:#666;">河西往河東方向,17:00–18:00:順暢,無壅塞回報。</p>
+  </div>
+
+  <div class="panel">
+    <h2>他傳的這則訊息</h2>
+    <div style="background:#f7f7f7;border-radius:8px;padding:12px;font-size:14px;position:relative;" id="msg-row">
+      「抱歉,明天好像會塞車,我們約晚一點好不好,17:30 可以嗎?」
+      <div style="font-size:12px;color:#999;margin-top:6px;">8/13 17:20</div>
+    </div>
+    <p style="text-align:center;margin-top:14px;">
+      <button type="button" class="flag-btn" id="flag-btn">跟路況資料比對</button>
+    </p>
+    <div id="flag-result" style="display:none;font-size:13px;color:#333;margin-top:12px;padding:12px;background:#fff6f5;border-left:3px solid #b3261e;">
+      <strong style="color:#b3261e;">周妤:</strong>
+      這則訊息我看過不知道幾次了。「明天好像會塞車」——聽起來就是很普通的一句抱歉,普通到我當初轉貼給大家看的時候,根本沒人多想。
+      可是查了路況才發現,那個時段根本沒塞車。他是提前一整天,就先想好要這樣說了。
+    </div>
+  </div>
+
+  <p style="text-align:center;margin-top:18px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
+
+</main>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script>
+window.JH_HINTS = [
+  "妳有沒有比對過,他改時間的那則訊息是什麼時候傳的?",
+  "查一下那個時段的路況,再看看訊息是提前多久傳的。",
+  "路況其實正常,而且訊息是前一天傳的。點下面的按鈕標記這則訊息。",
+];
+</script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script src="assets/js/idle-scroll.js"></script>
+<script>
+if (JH.get("ch4_t1")) {
+  document.getElementById("flag-result").style.display = "block";
+  document.getElementById("back-link").style.display = "block";
+  document.getElementById("flag-btn").disabled = true;
+}
+
+document.getElementById("flag-btn").addEventListener("click", () => {
+  document.getElementById("flag-result").style.display = "block";
+  document.getElementById("back-link").style.display = "block";
+  document.getElementById("flag-btn").disabled = true;
+  JH.set("ch4_t1", true);
+  JHNotebook.add(
+    "ch4_t1",
+    "他改時間的藉口(塞車)是提前一天傳的,路況其實正常",
+    "transit/query.html"
+  );
+});
+</script>
+</body>
+</html>

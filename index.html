@@ -42,7 +42,8 @@
   import { renderHome, homeCrumb } from './scripts/render.js';
   import { t } from './scripts/i18n.js';
 
-  const MID_UPDATE_FACT = { "zh-Hant": "靖河下游尋獲遺體，比對確認為 JH-2025-003 林晞。", "zh-Hans": "靖河下游寻获遗体，比对确认为 JH-2025-003 林晞。", en: "A body recovered downstream of the Jing River was confirmed as JH-2025-003, Lin Xi." };
+  function bootReal() {
+  const MID_UPDATE_FACT ={ "zh-Hant": "靖河下游尋獲遺體，比對確認為 JH-2025-003 林晞。", "zh-Hans": "靖河下游寻获遗体，比对确认为 JH-2025-003 林晞。", en: "A body recovered downstream of the Jing River was confirmed as JH-2025-003, Lin Xi." };
 
   const PAGE = {
     heroTitle: { "zh-Hant": "尋人資料庫", "zh-Hans": "寻人数据库", en: "Missing Persons Database" },
@@ -110,6 +111,13 @@
     render();
     chrome.onLocaleChange(render);
   });
+  }
+
+  if (localStorage.getItem('jh2bridge:prequel_done')) {
+    bootReal();
+  } else {
+    location.replace('./prequel/index.html');
+  }
 </script>
 </body>
 </html>

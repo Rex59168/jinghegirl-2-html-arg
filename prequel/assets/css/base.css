@@ -1,0 +1,124 @@
+/* base.css — 全站共用重置與 mobile-first 規則 */
+
+:root {
+  --touch-min: 44px;
+  --radius: 4px;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+
+button, input, select, textarea {
+  font: inherit;
+  font-size: 16px; /* 防止 iOS Safari 自動放大 */
+}
+
+a { touch-action: manipulation; }
+
+button, .btn, a.btn, input[type="submit"] {
+  min-height: var(--touch-min);
+  min-width: var(--touch-min);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.container {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (min-width: 900px) {
+  .container { max-width: 760px; }
+  body.has-notebook .container { max-width: 1080px; }
+}
+
+/* 進站一次性警語彈窗:只出現一次,按下繼續後永遠不再顯示 */
+.entry-warning {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.82);
+  padding: 20px;
+}
+.entry-warning__box {
+  max-width: 420px;
+  width: 100%;
+  background: #1c1c1c;
+  color: #ddd;
+  border: 1px solid #3a3a3a;
+  border-radius: var(--radius);
+  padding: 24px 20px;
+  text-align: center;
+}
+.entry-warning__title {
+  margin: 0 0 12px;
+  font-size: 17px;
+  color: #eee;
+}
+.entry-warning__body {
+  margin: 0 0 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #bbb;
+}
+.entry-warning__continue {
+  background: #3a3a3a;
+  color: #eee;
+  border: none;
+  border-radius: var(--radius);
+  padding: 10px 24px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.entry-warning__continue:hover { background: #4a4a4a; }
+
+/* 恐怖層 #5：幾乎看不見的暗文，反白才讀得到 */
+.hidden-text {
+  color: #0d0d0d;
+  background: transparent;
+  user-select: text;
+}
+
+/* 通用抽屜 / 彈窗基礎 */
+.drawer-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 90;
+  display: none;
+}
+.drawer-backdrop.open { display: block; }
+
+.sr-timestamp {
+  font-variant-numeric: tabular-nums;
+  opacity: .6;
+  font-size: 13px;
+}
+
+.skip-link:focus {
+  position: fixed; top: 8px; left: 8px;
+  background: #fff; color: #000;
+  padding: 8px 12px; z-index: 999;
+}

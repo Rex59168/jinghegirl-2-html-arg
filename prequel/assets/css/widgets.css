@@ -1,0 +1,151 @@
+/* widgets.css — 筆記本 + 周妤提示小窗,全站共用,不套站點主題色 */
+
+.jh-notebook-btn {
+  position: fixed;
+  right: 12px;
+  bottom: 68px;
+  z-index: 80;
+  background: #1c1c1c;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.jh-nb-badge {
+  background: #e0442f;
+  border-radius: 999px;
+  padding: 0 6px;
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+.jh-notebook-panel {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  max-height: 70vh;
+  background: #fff;
+  border-radius: 12px 12px 0 0;
+  z-index: 91;
+  transform: translateY(100%);
+  transition: transform .2s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.jh-notebook-panel.open { transform: translateY(0); }
+.jh-nb-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+.jh-nb-close { background: none; border: none; font-size: 18px; }
+#jh-notebook-body { padding: 8px 16px 20px; overflow-y: auto; }
+.jh-nb-list { list-style: none; padding: 0; margin: 0; }
+.jh-nb-list li { padding: 10px 0; border-bottom: 1px dashed #ddd; }
+.jh-nb-list a { color: #222; text-decoration: none; }
+.jh-nb-list a:before { content: "・ "; }
+.jh-nb-empty { color: #888; }
+
+@media (min-width: 900px) {
+  .jh-notebook-panel {
+    left: auto; right: 0; top: 0; bottom: 0;
+    width: 340px;
+    max-height: none;
+    transform: translateX(100%);
+    border-radius: 0;
+    border-left: 1px solid #ddd;
+  }
+  .jh-notebook-panel.open { transform: translateX(0); }
+}
+
+/* 周妤的手機 */
+.jh-hint-btn {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 80;
+  background: #4a6fa5;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  width: 50px;
+  height: 50px;
+  font-size: 22px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.jh-hint-btn.jh-hint-nudge {
+  animation: jh-pulse 1.4s ease-in-out 2;
+}
+@keyframes jh-pulse {
+  0%, 100% { box-shadow: 0 2px 8px rgba(74,111,165,.4); }
+  50% { box-shadow: 0 2px 16px rgba(74,111,165,.9); }
+}
+.jh-phone-badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  background: #e0442f;
+  color: #fff;
+  border-radius: 999px;
+  min-width: 18px;
+  height: 18px;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.jh-hint-panel {
+  position: fixed;
+  right: 12px; bottom: 68px;
+  width: min(320px, calc(100vw - 24px));
+  max-height: 60vh;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0,0,0,.25);
+  z-index: 92;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.jh-hint-panel.open { display: flex; }
+.jh-hint-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px;
+  background: #4a6fa5;
+  color: #fff;
+}
+.jh-hint-close { background: none; border: none; color: #fff; font-size: 16px; }
+.jh-hint-msgs { padding: 10px 14px; overflow-y: auto; flex: 1; }
+.jh-hint-msg {
+  background: #f1f3f6;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #222;
+}
+a.jh-hint-msg {
+  background: #e7edf7;
+  color: #2a4d8f;
+  font-weight: 600;
+  cursor: pointer;
+}
+a.jh-hint-msg::after { content: " →"; }
+.jh-hint-ask {
+  border: none;
+  border-top: 1px solid #eee;
+  background: #fafafa;
+  padding: 12px;
+  font-size: 14px;
+  color: #4a6fa5;
+}
+.jh-hint-ask:disabled { color: #aaa; }

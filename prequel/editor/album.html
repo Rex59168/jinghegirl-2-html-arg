@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>雲端相簿</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-editor.css">
+</head>
+<body class="site-editor" data-requires="ch0_done">
+
+<header class="editor-head">
+  <span>雲端相簿</span>
+  <span class="fname">lin_xi 的相簿</span>
+</header>
+
+<main class="container">
+  <div id="gate-view" class="password-gate">
+    <p>此相簿已加密</p>
+    <input type="password" id="pw" placeholder="輸入密碼" autocomplete="off">
+    <p class="err" id="pw-err"></p>
+    <button type="button" class="unlock" id="pw-submit">解鎖</button>
+  </div>
+
+  <div id="album-view" style="display:none;">
+    <div class="panel">
+      <h2>相簿・18 張照片</h2>
+      <p style="font-size:13px;color:#8b8f96;">依拍攝時間排序,由新到舊</p>
+    </div>
+    <div class="panel" style="display:flex;flex-wrap:wrap;gap:10px;">
+      <button type="button" class="thumb" data-name="IMG_0455">IMG_0455</button>
+      <button type="button" class="thumb" data-name="IMG_0448">IMG_0448</button>
+      <a class="thumb" href="editor/img0431.html" style="text-decoration:none;">IMG_0431 ★</a>
+      <button type="button" class="thumb" data-name="IMG_0420">IMG_0420</button>
+      <button type="button" class="thumb" data-name="IMG_0410">IMG_0410</button>
+    </div>
+    <p id="thumb-note" style="font-size:13px;color:#8b8f96;min-height:20px;"></p>
+  </div>
+</main>
+
+<style>
+  .thumb {
+    display: block;
+    background: #232527;
+    border: 1px solid #3a3d42;
+    color: #d8dadd;
+    padding: 14px 10px;
+    font-size: 12px;
+    min-width: 90px;
+    text-align: center;
+  }
+</style>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script>
+const PW_HASH = "7878dd754a520e04b2dc798790247b2e159ea0896db7a034fb8e72edb3784433"; // sha256("linxi0417")
+
+function showAlbum() {
+  document.getElementById("gate-view").style.display = "none";
+  document.getElementById("album-view").style.display = "block";
+}
+
+if (JH.get("album_unlocked")) showAlbum();
+
+document.getElementById("pw-submit").addEventListener("click", async () => {
+  const pw = document.getElementById("pw").value;
+  const ok = await JH.checkAnswer(pw, PW_HASH);
+  if (!ok) {
+    document.getElementById("pw-err").textContent = "密碼不對,再確認一次周妤傳給你的訊息。";
+    return;
+  }
+  JH.set("album_unlocked", true);
+  showAlbum();
+});
+
+document.querySelectorAll(".thumb[data-name]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.getElementById("thumb-note").textContent =
+      "── " + btn.dataset.name + ":沒有異常,普通生活照。";
+  });
+});
+</script>
+</body>
+</html>

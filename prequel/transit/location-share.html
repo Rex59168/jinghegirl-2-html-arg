@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>定位分享・設定紀錄</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-transit.css">
+</head>
+<body class="site-transit" data-requires="ch3_done">
+
+<header class="transit-head">
+  <h1>定位分享</h1>
+  <div class="sub">設定紀錄・還原畫面</div>
+</header>
+
+<main class="container">
+
+  <div class="panel" style="background:#f7f7f7;">
+    <h2>與「媽」分享位置</h2>
+    <div style="background:#fff;border:1px solid #ddd;border-radius:10px;padding:16px;">
+      <p style="font-size:14px;margin:0 0 10px;">分享對象:媽</p>
+      <p style="font-size:14px;margin:0 0 10px;">分享時長:<strong id="duration">2 小時</strong></p>
+      <p style="font-size:14px;margin:0 0 10px;">開始時間:17:00</p>
+      <p style="font-size:14px;margin:0;">結束時間:<span id="end-time" style="cursor:pointer;border-bottom:2px dotted #b3261e;">19:00(自動關閉)</span></p>
+    </div>
+  </div>
+
+  <div class="panel" id="reveal-panel" style="display:none;">
+    <strong style="color:#b3261e;font-size:13px;">周妤:</strong>
+    <p style="font-size:13px;color:#333;">
+      這件事是她媽媽後來跟我說的。她有開分享位置,兩個小時,17:00 到 19:00。
+      她大概覺得,兩小時,見個面、喝杯咖啡,怎麼樣都夠了。
+    </p>
+  </div>
+
+  <p style="text-align:center;margin-top:18px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
+
+</main>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script>
+window.JH_HINTS = [
+  "她有開定位分享給媽媽。看一下分享的時長設定。",
+  "分享只開了 2 小時,不是全天。",
+  "點結束時間那一行,看看幾點自動關閉的。",
+];
+</script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script src="assets/js/idle-scroll.js"></script>
+<script>
+function complete() {
+  document.getElementById("reveal-panel").style.display = "block";
+  document.getElementById("back-link").style.display = "block";
+  JH.set("ch4_t5", true);
+  JHNotebook.add(
+    "ch4_t5",
+    "她開了定位分享,但只設定 17:00–19:00,19:00 一到就自動關閉",
+    "transit/location-share.html"
+  );
+}
+if (JH.get("ch4_t5")) complete();
+document.getElementById("end-time").addEventListener("click", complete);
+</script>
+</body>
+</html>

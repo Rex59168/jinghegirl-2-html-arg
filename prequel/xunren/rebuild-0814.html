@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>重建 8/14 | 協尋林晞</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-xunren.css">
+</head>
+<body class="site-xunren" data-requires="ch3_done">
+
+<header class="xunren-head">
+  <h1>重建 8/14</h1>
+  <div class="sub">周妤整理</div>
+</header>
+
+<main class="container">
+  <div class="notice-box">
+    好,我們現在要弄清楚一件事——她那天到底幾點還活著。
+    我把我這邊有的資料都整理出來了,你一個一個看,看完跟我說。
+  </div>
+
+  <section class="panel">
+    <h2>五件事</h2>
+    <ul id="task-list" style="list-style:none;padding:0;margin:0;"></ul>
+  </section>
+
+  <section class="panel" id="all-done-panel" style="display:none;opacity:0;transition:opacity 1s;">
+    <p style="white-space:pre-wrap;font-size:14px;line-height:1.9;" id="zy-reflection"></p>
+    <p style="text-align:center;margin-top:10px;"><a href="chat/thread-review.html">再讀一次那份對話 →</a></p>
+  </section>
+</main>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script src="assets/js/idle-scroll.js"></script>
+<script>
+const TASKS = [
+  { key: "ch4_t1", label: "約定時間有沒有問題", href: "transit/query.html", done: "他改時間的藉口(塞車)是提前一天傳的,路況其實正常" },
+  { key: "ch4_t2", label: "她進出捷運的紀錄", href: "transit/card-record.html", done: "17:22 進站青川,19:38 卻是從興安站出站——不是約好的文昌站" },
+  { key: "ch4_t3", label: "他的帳號可信嗎", href: "social/rec1029.html", done: "帳號三年歷史、共同好友,看起來沒問題" },
+  { key: "ch4_t4", label: "她跟我說了什麼", href: "xunren/zhouyu-chat.html", done: "她有跟我說要出門,但說得很含糊" },
+  { key: "ch4_t5", label: "定位分享有沒有開", href: "transit/location-share.html", done: "她開了定位分享,只設定兩小時,19:00 自動關閉" },
+];
+
+function renderList() {
+  const ul = document.getElementById("task-list");
+  ul.innerHTML = "";
+  TASKS.forEach((t) => {
+    const done = JH.get(t.key);
+    const li = document.createElement("li");
+    li.style.cssText = "padding:10px 0;border-bottom:1px solid #dfe6ee;";
+    li.innerHTML = `
+      <a href="${t.href}" style="font-size:15px;">
+        ${done ? "☑" : "☐"} ${t.label}
+      </a>
+      ${done ? `<div style="color:#555;font-size:13px;margin-top:2px;">${t.done}</div>` : ""}
+    `;
+    ul.appendChild(li);
+  });
+
+  if (TASKS.every((t) => JH.get(t.key))) {
+    showAllDone();
+  }
+}
+
+const REFLECTION = `這五件事我全部核對過了。
+
+她約在白天。她約在有其他人在的地方。她真的去查過那個帳號,看起來也真的沒問題。她有跟我說,雖然說得含糊。她甚至開了定位分享給她媽,只是設了兩個小時。
+
+我們從小聽到大的那些反詐騙宣導,她全部都做到了。
+
+她全部都做對了,人還是不見了。
+
+我不知道還能怎麼提醒下一個人。`;
+
+function showAllDone() {
+  const panel = document.getElementById("all-done-panel");
+  panel.style.display = "block";
+  document.getElementById("zy-reflection").textContent = REFLECTION;
+  JH.set("ch4_done", true);
+  requestAnimationFrame(() => {
+    panel.style.opacity = "1";
+  });
+  JHPhone.push("nudge_ch5", "五件事都查完了,我們再讀一次那份對話。", "chat/thread-review.html");
+}
+
+renderList();
+</script>
+</body>
+</html>

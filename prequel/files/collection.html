@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>/收藏</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-files.css">
+</head>
+<body class="site-files" data-requires="ch5_done">
+<!-- 007 -->
+<div class="loading-overlay" id="loading">解壓縮中…</div>
+
+<div id="survey-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:250;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:10px;padding:20px;max-width:340px;width:100%;font-size:14px;">
+    <p style="font-weight:600;margin:0 0 4px;">協助調查問卷</p>
+    <p style="color:#555;margin:0 0 16px;">你曾在網路上提過自己的學校嗎?</p>
+    <div style="display:flex;gap:10px;">
+      <button type="button" class="survey-btn" style="flex:1;padding:10px;border:1px solid #ccc;background:#f5f5f5;border-radius:6px;">是</button>
+      <button type="button" class="survey-btn" style="flex:1;padding:10px;border:1px solid #ccc;background:#f5f5f5;border-radius:6px;">否</button>
+    </div>
+  </div>
+</div>
+
+<header class="files-head">/收藏 ── 12 個項目</header>
+
+<main class="container" style="padding-top:10px;">
+  <p style="font-size:13px;color:#666;">「這是我從他那邊——不知道該怎麼形容——拿到的東西。」——周妤</p>
+  <div style="overflow-x:auto;">
+  <table class="filelist">
+    <thead><tr><th>檔名</th><th>狀態</th><th>大小</th><th>建檔日期</th></tr></thead>
+    <tbody id="file-rows"></tbody>
+  </table>
+  </div>
+
+  <div class="file-detail" id="detail-007">
+    <strong>007.txt</strong>
+    <dl>
+      <dt>暱稱</dt><dd>—</dd>
+      <dt>就讀</dt><dd>—</dd>
+      <dt>放學時間</dt><dd>—</dd>
+      <dt>同住成員</dt><dd>—</dd>
+      <dt>在意的東西</dt><dd>雋</dd>
+      <dt>可施力點</dt><dd>—</dd>
+      <dt>建檔日期</dt><dd>2022/02/19</dd>
+    </dl>
+    <div class="eerie">最後更新:2024/03/11</div>
+  </div>
+
+  <div class="file-detail" id="detail-012">
+    <strong>012.txt</strong>
+    <dl>
+      <dt>暱稱</dt><dd>晞</dd>
+      <dt>就讀</dt><dd>靖河高中 二年級</dd>
+      <dt>放學時間</dt><dd>約 15:30</dd>
+      <dt>同住成員</dt><dd>爸、媽(姐姐已失蹤)</dd>
+      <dt>在意的東西</dt><dd>一張光碟</dd>
+      <dt>可施力點</dt><dd>#188</dd>
+      <dt>建檔日期</dt><dd>2023/11/06</dd>
+    </dl>
+  </div>
+
+  <div id="closing" style="display:none;padding:14px;font-size:14px;line-height:1.9;">
+    他不是遇到她。<br>
+    他掛了一張她這輩子唯一無法拒絕的餌,掛了兩年,等她自己走過來。
+    <p style="text-align:center;margin-top:20px;"><a href="news/report.html" id="ending-link">周妤傳來一則新聞連結 →</a></p>
+  </div>
+
+  <p style="color:#fff;font-size:12px;margin-top:60px;user-select:text;">013 不是最後一個號碼。</p>
+</main>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script src="assets/js/idle-scroll.js"></script>
+<script>
+const FILES = [
+  { name: "001.txt", readable: false, size: "4 KB", date: "2016/05/22" },
+  { name: "002.txt", readable: false, size: "4 KB", date: "2017/07/09" },
+  { name: "003.txt", readable: false, size: "5 KB", date: "2018/06/30" },
+  { name: "004.txt", readable: false, size: "4 KB", date: "2019/04/15" },
+  { name: "005.txt", readable: false, size: "6 KB", date: "2020/01/28" },
+  { name: "006.txt", readable: false, size: "5 KB", date: "2021/03/12" },
+  { name: "007.txt", readable: true, size: "9 KB", date: "2022/02/19" },
+  { name: "008.txt", readable: false, size: "4 KB", date: "2022/08/04" },
+  { name: "009.txt", readable: false, size: "5 KB", date: "2023/01/17" },
+  { name: "010.txt", readable: false, size: "4 KB", date: "2023/05/29" },
+  { name: "011.txt", readable: false, size: "5 KB", date: "2023/09/02" },
+  { name: "012.txt", readable: true, size: "11 KB", date: "2023/11/06" },
+];
+
+setTimeout(() => {
+  document.getElementById("loading").style.display = "none";
+}, 2000);
+
+// 恐怖層:假的協助調查問卷,填完沒有任何反應——它不是真的在問你
+if (JH.get("ch5_done") && !JH.get("survey_seen")) {
+  setTimeout(() => {
+    const overlay = document.getElementById("survey-overlay");
+    overlay.style.display = "flex";
+    overlay.querySelectorAll(".survey-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        JH.set("survey_seen", true);
+        overlay.style.display = "none";
+      });
+    });
+  }, 2200);
+}
+
+const tbody = document.getElementById("file-rows");
+FILES.forEach((f) => {
+  const tr = document.createElement("tr");
+  if (f.readable) tr.className = "readable";
+  tr.innerHTML = `
+    <td class="fname">${f.name}</td>
+    <td class="status">${f.readable ? "可讀" : "〔無法讀取〕"}</td>
+    <td>${f.size}</td>
+    <td>${f.date}</td>
+  `;
+  if (f.readable) {
+    tr.addEventListener("click", () => openFile(f.name));
+  }
+  tbody.appendChild(tr);
+});
+
+function openFile(name) {
+  if (name === "007.txt") {
+    document.getElementById("detail-007").classList.add("open");
+    JHNotebook.add("ch6_007", "林昭的檔案(007.txt)最後更新:2024/03/11——她 2022 年就失蹤了", "files/collection.html");
+  }
+  if (name === "012.txt") {
+    document.getElementById("detail-012").classList.add("open");
+    JHNotebook.add("ch6_012", "林晞的檔案(012.txt)建檔日期:2023/11/06", "files/collection.html");
+    if (!JH.get("ch6_done")) {
+      JH.set("ch6_done", true);
+      document.getElementById("closing").style.display = "block";
+      document.getElementById("closing").scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => JHPhone.push("nudge_news", "我……傳一則新聞給你,你自己看。", "news/report.html"), 1800);
+    }
+  }
+}
+
+if (JH.get("ch6_done")) {
+  document.getElementById("detail-007").classList.add("open");
+  document.getElementById("detail-012").classList.add("open");
+  document.getElementById("closing").style.display = "block";
+}
+</script>

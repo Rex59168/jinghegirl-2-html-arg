@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>書籤管理員・找碟</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-files.css">
+</head>
+<body class="site-files" data-requires="ch1_done">
+
+<header class="files-head">書籤管理員 ── 資料夾:找碟(37)</header>
+
+<main class="container" style="padding-top:10px;">
+  <p style="font-size:13px;color:#888;padding:0 4px;">周妤把她手機備份出來的瀏覽器書籤匯出檔轉寄給你了。</p>
+  <div style="overflow-x:auto;">
+  <table class="filelist">
+    <thead><tr><th>書籤</th><th>網址</th><th>加入日期</th></tr></thead>
+    <tbody id="bm-rows"></tbody>
+  </table>
+  </div>
+</main>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script src="assets/js/idle-scroll.js"></script>
+<script>
+// 少數幾筆是真的有意義的線索,其餘都是找碟兩年累積下來的噪音
+const KEY_BOOKMARKS = [
+  { title: "二手交易區・唱片週邊", url: "market.tw/records", date: "2023/11/08", href: "market/listing.html" },
+  { title: "姐姐的舊帳號(存檔)", url: "archive.social/linzhao", date: "2024/01/20", href: "social/lin-zhao-2019.html" },
+  { title: "本市女學生失蹤逾月 警方擴大協尋", url: "jinghedaily.tw/2022/1004", date: "2022/10/06", href: "news/2022-report.html" },
+];
+
+const NOISE_TITLES = [
+  "NOCTIS 官方後援會",
+  "【心得】LONG NIGHT 巡演回顧",
+  "二手黑膠交流社團",
+  "靖河跳蚤市場公告版",
+  "【問】誰有靖河站限定藍光",
+  "NOCTIS 簽名真偽鑑定懶人包",
+  "【交換】用兩張黑膠換一張藍光",
+  "靖河二手店地圖總整理",
+  "雋生日應援企劃連署",
+  "【開箱】終於等到補貨",
+  "NOCTIS 2019 巡演全場次總表",
+  "二手拍賣自介範本",
+  "如何分辨黑膠翻版",
+  "靖河跳蚤市場擺攤心得",
+  "NOCTIS 週邊代購揪團",
+  "【心得】收藏十年的整理術",
+  "唱片行倒閉出清資訊彙整",
+  "二手藍光片保存方法",
+  "NOCTIS 應援色對照表",
+  "靖河站限定款式流出清單",
+  "【問卦】巡演限定盤真的很難找嗎",
+  "跳蚤市場擺攤申請表單",
+  "NOCTIS 全專輯歌詞本",
+  "二手交易糾紛處理懶人包",
+  "【心得】五年追星回顧",
+  "靖河站週邊商圈導覽",
+  "唱片修復保養教學",
+  "NOCTIS 巡演周邊全紀錄",
+  "二手黑膠估價工具",
+  "跳蚤市場攤位地圖",
+  "NOCTIS 十週年回顧特輯",
+  "限定盤收藏者交流版",
+  "唱片行結業拍賣清單",
+  "二手平台賣家評價查詢",
+];
+
+function pad2(n) { return String(n).padStart(2, "0"); }
+
+const rows = [];
+KEY_BOOKMARKS.forEach((b) => rows.push(b));
+NOISE_TITLES.forEach((title, i) => {
+  const month = 1 + ((i * 3) % 24);
+  const year = 2023 + Math.floor((i * 3) / 24);
+  const day = 1 + ((i * 7) % 27);
+  rows.push({
+    title,
+    url: "noctis-fan.tw/thread/" + (10000 + i * 37),
+    date: `${year}/${pad2(month % 12 || 12)}/${pad2(day)}`,
+  });
+});
+
+// 依日期排序,模擬真實書籤累積的樣子
+rows.sort((a, b) => a.date.localeCompare(b.date));
+
+const tbody = document.getElementById("bm-rows");
+rows.forEach((b) => {
+  const tr = document.createElement("tr");
+  if (b.href) tr.className = "readable";
+  tr.innerHTML = `
+    <td class="fname">${b.title}</td>
+    <td class="status">${b.url}</td>
+    <td>${b.date}</td>
+  `;
+  if (b.href) {
+    tr.addEventListener("click", () => { window.location.href = b.href; });
+  } else {
+    tr.addEventListener("click", () => {
+      tr.querySelector(".status").textContent = "無法連線・此頁面已不存在";
+    });
+  }
+  tbody.appendChild(tr);
+});
+
+JHNotebook.add(
+  "ch2_bookmarks",
+  "她的瀏覽器書籤資料夾叫「找碟」,37 個書籤,兩年份的搜尋痕跡",
+  "market/bookmarks.html"
+);
+</script>
+</body>
+</html>

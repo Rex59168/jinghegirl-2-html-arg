@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>IMG_0431 ── 編輯紀錄</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-editor.css">
+</head>
+<body class="site-editor" data-requires="album_unlocked">
+<!-- C1 -->
+<header class="editor-head">
+  <span>雲端相簿・編輯紀錄</span>
+  <span class="fname">IMG_0431</span>
+</header>
+
+<main class="container">
+
+  <section class="panel">
+    <h2>版本紀錄</h2>
+    <div class="version-tree">IMG_0431 ── 版本紀錄
+├─ v1_原始
+├─ v2  圖層 2｜修補筆刷 ×11(區域:臉部)
+│      圖層 3｜物件移除(區域:右下 8%)
+├─ v3  圖層 5｜物件移除(區域:左上 14%)
+│      圖層 6｜已隱藏 <button type="button" class="layer-btn" id="layer6-btn">← 點得開</button>
+└─ final_真的最後.jpg</div>
+  </section>
+
+  <section class="panel">
+    <h2>比對:哪一格從頭到尾沒被修過?</h2>
+    <p style="font-size:14px;">點下面九宮格中的任一格,檢查該區域。標「已修改」的格子是依上面的紀錄比對出來的。</p>
+    <div class="grid3" id="grid3">
+      <button type="button" class="cell touched" data-cell="A1">A1</button>
+      <button type="button" class="cell" data-cell="A2">A2</button>
+      <button type="button" class="cell" data-cell="A3">A3</button>
+      <button type="button" class="cell" data-cell="B1">B1</button>
+      <button type="button" class="cell touched" data-cell="B2">B2</button>
+      <button type="button" class="cell" data-cell="B3">B3</button>
+      <button type="button" class="cell" data-cell="C1">C1</button>
+      <button type="button" class="cell" data-cell="C2">C2</button>
+      <button type="button" class="cell touched" data-cell="C3">C3</button>
+    </div>
+  </section>
+
+  <section class="panel" id="next-panel" style="display:none;">
+    <h2>下一步</h2>
+    <p id="next-text"></p>
+    <p><a class="btn" href="market/listing.html" style="display:inline-block;background:#2c5b3f;color:#d8ffd8;padding:10px 18px;text-decoration:none;">去二手交易區查編號 →</a></p>
+  </section>
+
+</main>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner" id="lightbox-inner"></div>
+</div>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script>
+window.JH_HINTS = [
+  "妳有仔細看過三個版本的差別嗎?",
+  "有一格從頭到尾沒被修過。找出那一格。",
+  "是 C1,桌角那張紙。",
+];
+</script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script>
+const lightbox = document.getElementById("lightbox");
+const lbInner = document.getElementById("lightbox-inner");
+
+function openLightbox(html) {
+  lbInner.innerHTML = html + '<div><button type="button" class="close" id="lb-close">關閉</button></div>';
+  lightbox.classList.add("open");
+  document.getElementById("lb-close").addEventListener("click", () => lightbox.classList.remove("open"));
+}
+
+document.getElementById("layer6-btn").addEventListener("click", () => {
+  openLightbox(`
+    <p style="color:#8b8f96;font-size:12px;">圖層 6・已隱藏・草稿(未發布)</p>
+    <p>找到了!!找了快兩年終於找到了……先不要跟媽說 🤫</p>
+  `);
+  JHNotebook.add(
+    "ch1_layer6",
+    "她刪掉一則草稿:找到了,先不要跟媽說(但沒寫是什麼)",
+    "editor/img0431.html"
+  );
+});
+
+document.querySelectorAll(".cell").forEach((cell) => {
+  cell.addEventListener("click", () => {
+    const id = cell.dataset.cell;
+    if (id === "C1") {
+      openLightbox(`
+        <p style="color:#8b8f96;font-size:12px;">區域 C1・桌角</p>
+        <p>放大後,是一張對折的列印紙邊緣。攤開一半可以讀到——</p>
+        <p style="font-size:20px;letter-spacing:2px;">編號 #18_</p>
+        <p style="font-size:12px;color:#8b8f96;">最後一位被裁掉了,看不到。</p>
+      `);
+      JH.set("ch1_done", true);
+      JHNotebook.add(
+        "ch1_code",
+        "她在找一張光碟,編號只讀到 #18_(末位被裁掉)",
+        "editor/img0431.html"
+      );
+      JHPhone.push("nudge_ch2", "編號只到 #18_,去二手平台查查看。", "market/listing.html");
+      document.getElementById("next-panel").style.display = "block";
+      document.getElementById("next-text").textContent =
+        "編號末位看不到。要知道完整編號,得去別的地方查證了。";
+    } else if (cell.classList.contains("touched")) {
+      openLightbox(`<p>這一格依編輯紀錄比對,已被修過。</p>`);
+    } else {
+      openLightbox(`<p>看起來只是桌面,沒有異常。</p>`);
+    }
+  });
+});
+</script>
+</body>
+</html>

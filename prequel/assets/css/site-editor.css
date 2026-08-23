@@ -1,0 +1,123 @@
+/* site-editor.css — 仿修圖 App 編輯紀錄,深色 UI、等寬字 */
+body.site-editor {
+  background: #17181a;
+  color: #d8dadd;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+.site-editor header.editor-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid #2c2e31;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.site-editor header.editor-head .fname { color: #9fd88a; }
+
+.site-editor .panel {
+  background: #1e2023;
+  border: 1px solid #2c2e31;
+  border-radius: 6px;
+  margin: 14px 0;
+  padding: 14px;
+}
+.site-editor .panel h2 {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: #8b8f96;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.site-editor .version-tree {
+  font-size: 13px;
+  line-height: 1.9;
+  white-space: pre;
+  overflow-x: auto;
+}
+.site-editor .version-tree .layer-btn {
+  background: none;
+  border: none;
+  color: #d8dadd;
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline dotted #555;
+}
+.site-editor .version-tree .layer-btn:hover { color: #9fd88a; }
+
+.site-editor .grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: #2c2e31;
+  border: 2px solid #2c2e31;
+  aspect-ratio: 1;
+  max-width: 420px;
+  margin: 14px auto;
+}
+.site-editor .cell {
+  background: #232527;
+  color: #6b6f76;
+  border: none;
+  font-size: 12px;
+  min-height: 60px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.site-editor .cell.touched {
+  background: #2a2320;
+  color: #c98b4b;
+}
+.site-editor .cell.touched::after {
+  content: "已修改";
+  position: absolute; bottom: 4px; left: 0; right: 0;
+  font-size: 9px; color: #c98b4b;
+}
+.site-editor .cell:active { background: #33363a; }
+
+.site-editor .lightbox {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.85);
+  z-index: 150;
+  display: none;
+  align-items: center; justify-content: center;
+  padding: 20px;
+}
+.site-editor .lightbox.open { display: flex; }
+.site-editor .lightbox-inner {
+  background: #1e2023;
+  border: 1px solid #3a3d42;
+  border-radius: 6px;
+  padding: 18px;
+  max-width: 420px;
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.site-editor .lightbox-inner button.close {
+  background: none; border: 1px solid #444; color: #ccc;
+  padding: 8px 14px; margin-top: 12px;
+}
+
+.site-editor .password-gate {
+  max-width: 360px;
+  margin: 60px auto;
+  text-align: center;
+}
+.site-editor input[type="password"] {
+  width: 100%;
+  background: #101113;
+  border: 1px solid #3a3d42;
+  color: #d8dadd;
+  padding: 12px;
+  font-size: 16px;
+  margin: 12px 0;
+  text-align: center;
+}
+.site-editor button.unlock {
+  background: #2c5b3f;
+  color: #d8ffd8;
+  border: none;
+  padding: 10px 20px;
+  font-size: 15px;
+}
+.site-editor .err { color: #d9756b; font-size: 13px; min-height: 18px; }

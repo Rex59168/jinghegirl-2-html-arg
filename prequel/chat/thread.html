@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>對話記錄・@rec_1029</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-chat.css">
+</head>
+<body class="site-chat" data-requires="ch2_done">
+<!-- 8-12 -->
+<header class="chat-head">
+  <h1>@rec_1029</h1>
+  <div class="sub">完整對話記錄・匯出檔</div>
+</header>
+
+<p style="font-size:13px;color:#666;text-align:center;padding:12px 16px 0;">「這是我拿到的完整對話記錄,你自己看。」——周妤</p>
+
+<div class="chat-thread" id="before-thread"></div>
+
+<div class="reorder-box" id="reorder-box">
+  <h3>有幾則訊息顯示為亂序</h3>
+  <p class="instr">部分訊息被撤回或編輯過。點下面的訊息,再點要插入的位置,把它們還原成正確的時間順序。</p>
+  <div class="reorder-seq" id="reorder-seq"></div>
+  <div class="reorder-pool" id="reorder-pool"></div>
+</div>
+
+<div class="chat-thread" id="after-thread" style="display:none;"></div>
+
+<div class="chat-note" id="chat-note" style="display:none;">
+  你有沒有發現——他每次回覆的間隔,幾乎都精準落在 8 到 12 分鐘之間。一個半月來,從無例外。
+  <br><br>
+  <button type="button" class="chat-continue-btn" id="continue-btn">重建 8/14 那一天 →</button>
+</div>
+
+<p style="color:#ece5dd;font-size:12px;text-align:center;margin-top:40px;user-select:text;">已讀不代表安全。</p>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script>
+window.JH_HINTS = [
+  "有幾則訊息被撤回或編輯過,順序被打亂了。試著依對話脈絡想像正常人會怎麼回。",
+  "先確定開頭(禮拜四可以嗎)和結尾(那就這樣說定了),中間依序是:約時間→約地點→問出口→說是哪一種店。",
+  "正確順序是:禮拜四可以嗎 → 大概4點左右 → 約在文昌站 → 哪個出口 → 2號出口連鎖咖啡廳 → 那就這樣說定了。",
+];
+</script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script>
+let DATA = null;
+let placedOrder = []; // array of message objects in placed order
+let pool = [];
+let selectedId = null;
+
+fetch("assets/data/chat-thread.json")
+  .then((r) => r.json())
+  .then((data) => {
+    DATA = data;
+    renderBefore();
+    pool = shuffle(data.reorder.slice());
+    renderReorder();
+  });
+
+function shuffle(arr) {
+  // 固定順序,確保不是原順序
+  const order = [3, 5, 0, 4, 1, 2];
+  return order.map((i) => arr[i]);
+}
+
+// 恐怖層:跑完終幕後重訪對話記錄,這一則的時間戳偶爾會跟記憶中的分鐘數不一樣
+// 不存進 localStorage,純看這次載入運氣
+function shiftTime(timeStr, deltaMin) {
+  const [d, hm] = timeStr.split(" ");
+  let [h, mnt] = hm.split(":").map(Number);
+  mnt += deltaMin;
+  if (mnt < 0) { mnt += 60; h -= 1; }
+  if (mnt > 59) { mnt -= 60; h += 1; }
+  return `${d} ${String(h).padStart(2, "0")}:${String(mnt).padStart(2, "0")}`;
+}
+
+function bubble(m) {
+  const div = document.createElement("div");
+  div.className = "chat-msg " + m.who;
+  let displayTime = m.time;
+  if (m.id === "m10" && JH.get("ending_seen") && Math.random() < 0.5) {
+    displayTime = shiftTime(m.time, Math.random() < 0.5 ? -1 : 1);
+  }
+  div.innerHTML = `${m.edited ? '<span class="edited-badge">已編輯</span>' : ""}${escapeHtml(m.text)}<span class="time">${displayTime}</span>`;
+  return div;
+}
+function escapeHtml(s) {
+  return s.replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+}
+
+function renderBefore() {
+  const el = document.getElementById("before-thread");
+  DATA.before.forEach((m) => el.appendChild(bubble(m)));
+}
+
+function renderReorder() {
+  const seqEl = document.getElementById("reorder-seq");
+  seqEl.innerHTML = "";
+
+  function makeSlot(index) {
+    const slot = document.createElement("div");
+    slot.className = "slot" + (selectedId ? " active" : "");
+    slot.textContent = selectedId ? "點這裡插入" : "─";
+    slot.addEventListener("click", () => {
+      if (!selectedId) return;
+      const item = pool.find((p) => p.id === selectedId);
+      if (!item) return;
+      placedOrder.splice(index, 0, item);
+      pool = pool.filter((p) => p.id !== selectedId);
+      selectedId = null;
+      renderReorder();
+      checkComplete();
+    });
+    return slot;
+  }
+
+  seqEl.appendChild(makeSlot(0));
+  placedOrder.forEach((m, i) => {
+    const row = document.createElement("div");
+    row.className = "placed-msg " + m.who;
+    row.innerHTML = `${m.edited ? '<span class="edited-badge">已編輯</span>' : ""}${escapeHtml(m.text)}<span class="remove-hint">${m.time}・點一下拿回來重排</span>`;
+    row.addEventListener("click", () => {
+      pool.push(m);
+      placedOrder.splice(i, 1);
+      renderReorder();
+    });
+    seqEl.appendChild(row);
+    seqEl.appendChild(makeSlot(i + 1));
+  });
+
+  const poolEl = document.getElementById("reorder-pool");
+  poolEl.innerHTML = "";
+  pool.forEach((m) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "pool-item" + (selectedId === m.id ? " selected" : "");
+    btn.textContent = (m.edited ? "〔已編輯〕" : "") + m.text;
+    btn.addEventListener("click", () => {
+      selectedId = selectedId === m.id ? null : m.id;
+      renderReorder();
+    });
+    poolEl.appendChild(btn);
+  });
+}
+
+function checkComplete() {
+  if (placedOrder.length !== DATA.reorder.length) return;
+  const correctIds = DATA.reorder.map((m) => m.id).join(",");
+  const placedIds = placedOrder.map((m) => m.id).join(",");
+  if (correctIds === placedIds) {
+    solveReorder();
+  }
+}
+
+function solveReorder() {
+  document.getElementById("reorder-box").style.display = "none";
+
+  const afterEl = document.getElementById("after-thread");
+  afterEl.style.display = "block";
+  DATA.reorder.forEach((m) => afterEl.appendChild(bubble(m)));
+  DATA.after.forEach((m) => afterEl.appendChild(bubble(m)));
+
+  document.getElementById("chat-note").style.display = "block";
+
+  JH.set("ch3_done", true);
+  JHNotebook.add(
+    "ch3_meetup",
+    "約定成立:8/14 16:00,河西・文昌站 2 號出口,連鎖咖啡廳",
+    "chat/thread.html"
+  );
+  JHNotebook.add(
+    "ch3_time_change",
+    "8/13 他說會塞車,把時間改成 17:30",
+    "chat/thread.html"
+  );
+
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  JHPhone.push("nudge_ch4", "約定確認了,我們來重建 8/14 那天。", "xunren/rebuild-0814.html");
+}
+
+document.getElementById("continue-btn").addEventListener("click", () => {
+  window.location.href = "xunren/rebuild-0814.html";
+});
+</script>
+</body>
+</html>

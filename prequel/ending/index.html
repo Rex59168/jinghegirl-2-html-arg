@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>終幕 | 協尋林晞</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-xunren.css">
+</head>
+<body class="site-xunren" data-requires="news_done">
+<!-- 013 不是最後一個號碼 -->
+<header class="xunren-head">
+  <h1>協尋林晞</h1>
+  <div class="sub">靖河市失蹤協尋網</div>
+</header>
+
+<main class="container">
+  <div class="notice-box" id="zy-final" style="white-space:pre-wrap;"></div>
+
+  <section class="panel">
+    <h2>/收藏</h2>
+    <p style="font-size:13px;color:#888;">資料夾多了一個新檔案</p>
+    <pre style="background:#f7f7f7;border:1px solid #ddd;padding:12px;font-size:13px;white-space:pre-wrap;" id="file013"></pre>
+  </section>
+
+  <section class="panel" style="text-align:center;">
+    <button type="button" class="btn" id="continue-btn">繼續</button>
+  </section>
+</main>
+
+<style>
+.typewriter-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  animation: jh-blink 0.9s step-start infinite;
+}
+@keyframes jh-blink {
+  50% { opacity: 0; }
+}
+</style>
+
+<div id="blackout" style="position:fixed;inset:0;background:#000;z-index:300;display:none;color:#eee;">
+  <div id="blackout-caption" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-size:17px;color:#999;opacity:0;transition:opacity 0.8s;"></div>
+  <div id="blackout-lines" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-size:17px;line-height:2.4;padding:0 24px;max-width:480px;"></div>
+  <div id="blackout-letter" style="display:none;position:absolute;bottom:24px;left:0;right:0;text-align:center;padding:0 20px;opacity:0;transition:opacity 1s;">
+    <div style="max-width:420px;margin:0 auto 20px;background:#141414;border:1px solid #333;border-radius:8px;padding:18px 20px;text-align:left;font-size:13px;line-height:1.8;color:#bbb;">
+      <p id="letter-title" style="margin:0 0 8px;color:#eee;font-size:14px;"></p>
+      <p id="letter-body" style="margin:0 0 12px;white-space:pre-wrap;"></p>
+      <a id="letter-link" href="../index.html" style="color:#9fc7ff;font-size:14px;"></a>
+    </div>
+  </div>
+  <div id="blackout-footer" style="display:none;position:absolute;bottom:24px;left:0;right:0;text-align:center;max-height:70vh;overflow-y:auto;padding:0 20px;">
+    <a href="ending/checkself.html" style="color:#777;font-size:13px;">你留下了什麼 →</a>
+
+    <p id="stats-line" style="display:none;font-size:12px;color:#666;margin-top:18px;"></p>
+
+    <div style="margin-top:22px;">
+      <button type="button" id="gen-card-btn" style="background:#333;color:#fff;border:1px solid #555;padding:10px 20px;border-radius:8px;font-size:14px;">下載通關截圖</button>
+      <div id="share-card-preview" style="display:none;margin-top:16px;">
+        <canvas id="share-canvas" style="width:100%;max-width:280px;border-radius:8px;"></canvas>
+        <p style="font-size:11px;color:#666;margin-top:8px;">沒有自動下載的話,長按上面的圖片存檔</p>
+      </div>
+    </div>
+
+    <div style="margin-top:28px;">
+      <button type="button" id="reset-btn" style="background:none;color:#888;border:1px solid #444;padding:8px 16px;border-radius:8px;font-size:12px;">重置所有進度</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script src="assets/js/idle-scroll.js"></script>
+<script src="assets/js/share-card.js"></script>
+<script src="assets/js/stats.js"></script>
+<script>
+const nickname = JH.get("nickname") || "（未知）";
+const howKnown = JH.get("how_known") || "（未知）";
+const today = new Date();
+const dateStr = `${today.getFullYear()}/${String(today.getMonth()+1).padStart(2,"0")}/${String(today.getDate()).padStart(2,"0")}`;
+
+// 013.txt 的建檔日期:第一次看到時顯示今天,之後重訪一律顯示同一個提前一天的日期
+// ——暗示這個檔案在你填表單之前,其實就已經在那裡了
+let file013Date = JH.get("file013_date");
+if (!file013Date) {
+  file013Date = dateStr;
+  const backdated = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+  JH.set(
+    "file013_date",
+    `${backdated.getFullYear()}/${String(backdated.getMonth() + 1).padStart(2, "0")}/${String(backdated.getDate()).padStart(2, "0")}`
+  );
+}
+
+// file013 混合了固定標籤和玩家自己填的自由文字(暱稱、how_known),
+// i18n.js 的字典比對沒辦法處理任意玩家輸入,所以標籤本身直接依語言挑選。
+const FILE013_LABELS = {
+  "zh-Hant": { nickname: "暱稱", howKnown: "你是怎麼知道這件事的", date: "建檔日期" },
+  "zh-Hans": { nickname: "昵称", howKnown: "你是怎么知道这件事的", date: "建档日期" },
+  en: { nickname: "Nickname", howKnown: "How you heard about this", date: "Date created" },
+};
+function renderFile013() {
+  const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
+  const L = FILE013_LABELS[lang] || FILE013_LABELS["zh-Hant"];
+  document.getElementById("file013").textContent =
+`013.txt
+
+${L.nickname}：${nickname}
+${L.howKnown}：${howKnown}
+${L.date}：${file013Date}`;
+}
+renderFile013();
+document.addEventListener("jh-lang-changed", renderFile013);
+
+const ZY_FINAL_DEFAULT = `…我不知道還能做什麼。這個網站我會留著。
+如果你看到這裡了,謝謝你陪我走完這一段。`;
+
+const ZY_FINAL_NEWS = `…我不知道還能做什麼。這個網站我本來是為了找晞晞才架的。
+
+我沒想到最後找到的是姐姐。
+
+三年了,我一直跟她們家說「說不定哪天林昭會自己回來」,現在我不知道要拿什麼臉再去見他們。
+
+晞晞呢?我不敢往下想。這個網站我會留著。
+如果你看到這裡了,謝謝你陪我走完這一段。`;
+
+document.getElementById("zy-final").textContent = JH.get("news_done")
+  ? ZY_FINAL_NEWS
+  : ZY_FINAL_DEFAULT;
+
+// 逐字打字動畫每敲一個字都會重建文字節點,i18n.js 的 MutationObserver 只看得到
+// 打到一半的片段字串,永遠比對不上字典裡的完整句子,所以這裡直接依語言選整份陣列。
+const LINES_BY_LANG = {
+  "zh-Hant": [
+    "你花了兩個小時，",
+    "就從一個女生的貼文裡拼出她讀哪間學校、幾點放學、家裡剩幾個人。",
+    "",
+    "他也是這樣做的。",
+    "",
+    "他花了兩年。",
+    "",
+    "你以為網路上的陌生人不了解你。",
+  ],
+  "zh-Hans": [
+    "你花了两个小时，",
+    "就从一个女生的贴文里拼出她读哪间学校、几点放学、家里剩几个人。",
+    "",
+    "他也是这样做的。",
+    "",
+    "他花了两年。",
+    "",
+    "你以为网路上的陌生人不了解你。",
+  ],
+  en: [
+    "It took you two hours",
+    "to piece together, from one girl's posts, what school she goes to, when she gets out, how many people are left at home.",
+    "",
+    "He did the same thing.",
+    "",
+    "He just took two years.",
+    "",
+    "You thought a stranger online didn't know you.",
+  ],
+};
+function currentLines() {
+  const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
+  return LINES_BY_LANG[lang] || LINES_BY_LANG["zh-Hant"];
+}
+
+const SKIP_CAPTION_BY_LANG = {
+  "zh-Hant": "一年後。",
+  "zh-Hans": "一年后。",
+  en: "One year later.",
+};
+
+const LETTER_BY_LANG = {
+  "zh-Hant": {
+    title: "尋人資料庫・新增案件通知",
+    body: "陳語安、16 歲、河東人。\n失蹤日期:2026/8/26。\n案件已建檔,協尋仍在進行。",
+    link: "→ 查看協尋進度",
+  },
+  "zh-Hans": {
+    title: "寻人资料库・新增案件通知",
+    body: "陈语安、16 岁、河东人。\n失踪日期:2026/8/26。\n案件已建档,协寻仍在进行。",
+    link: "→ 查看协寻进度",
+  },
+  en: {
+    title: "Missing Persons Database — New Case",
+    body: "Chen Yu-An, 16, from Hedong.\nDate of disappearance: 2026/8/26.\nCase filed; search ongoing.",
+    link: "→ View search progress",
+  },
+};
+
+let endingStarted = false;
+
+document.getElementById("continue-btn").addEventListener("click", () => {
+  if (endingStarted) return; // 防止手機誤觸雙擊,造成兩輪逐字動畫同時疊在一起
+  endingStarted = true;
+
+  const btn = document.getElementById("continue-btn");
+  btn.disabled = true;
+  btn.style.display = "none";
+
+  JH.set("ending_seen", true);
+  JH_STATS.trackEnding();
+  const bo = document.getElementById("blackout");
+  bo.style.display = "block";
+  document.body.style.overflow = "hidden";
+  const linesEl = document.getElementById("blackout-lines");
+  linesEl.innerHTML = "";
+
+  const captionEl = document.getElementById("blackout-caption");
+  const lang0 = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
+  captionEl.textContent = SKIP_CAPTION_BY_LANG[lang0] || SKIP_CAPTION_BY_LANG["zh-Hant"];
+
+  setTimeout(() => { captionEl.style.opacity = "1"; }, 300);
+  setTimeout(() => { captionEl.style.opacity = "0"; }, 1800);
+
+  setTimeout(() => {
+    typeLines(linesEl, 0, () => {
+      setTimeout(() => {
+        const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
+        const L = LETTER_BY_LANG[lang] || LETTER_BY_LANG["zh-Hant"];
+        document.getElementById("letter-title").textContent = L.title;
+        document.getElementById("letter-body").textContent = L.body;
+        document.getElementById("letter-link").textContent = L.link;
+        const letterEl = document.getElementById("blackout-letter");
+        letterEl.style.display = "block";
+        requestAnimationFrame(() => { letterEl.style.opacity = "1"; });
+
+        setTimeout(() => {
+          document.getElementById("blackout-footer").style.display = "block";
+        }, 3000);
+      }, 800);
+    });
+  }, 3600);
+});
+
+document.getElementById("letter-link").addEventListener("click", () => {
+  localStorage.setItem("jh2bridge:prequel_done", "1");
+});
+
+function renderLetter() {
+  const letterEl = document.getElementById("blackout-letter");
+  if (letterEl.style.display !== "block") return;
+  const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
+  const L = LETTER_BY_LANG[lang] || LETTER_BY_LANG["zh-Hant"];
+  document.getElementById("letter-title").textContent = L.title;
+  document.getElementById("letter-body").textContent = L.body;
+  document.getElementById("letter-link").textContent = L.link;
+}
+document.addEventListener("jh-lang-changed", renderLetter);
+
+function typeLines(container, index, onDone) {
+  const lines = currentLines();
+  if (index >= lines.length) {
+    onDone();
+    return;
+  }
+  const text = lines[index];
+  const p = document.createElement("p");
+  p.style.margin = "0 0 6px";
+  p.style.minHeight = "1.4em";
+  container.appendChild(p);
+
+  if (text === "") {
+    setTimeout(() => typeLines(container, index + 1, onDone), 500);
+    return;
+  }
+
+  const cursor = document.createElement("span");
+  cursor.className = "typewriter-cursor";
+  cursor.textContent = "▌";
+
+  let charIndex = 0;
+  function typeChar() {
+    if (charIndex >= text.length) {
+      cursor.remove();
+      setTimeout(() => typeLines(container, index + 1, onDone), 700);
+      return;
+    }
+    charIndex++;
+    p.textContent = text.slice(0, charIndex);
+    p.appendChild(cursor);
+    setTimeout(typeChar, 55);
+  }
+  typeChar();
+}
+
+document.getElementById("gen-card-btn").addEventListener("click", () => {
+  const elapsedMs = Math.max(1000, JH.activeMs());
+
+  const canvas = document.getElementById("share-canvas");
+  JHShareCard.draw(canvas, {
+    elapsedMs,
+    nickname,
+    siteHost: window.location.host,
+  });
+
+  document.getElementById("share-card-preview").style.display = "block";
+  JHShareCard.download(canvas, "013.png");
+});
+
+document.getElementById("reset-btn").addEventListener("click", () => {
+  const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
+  const CONFIRM_TEXT = {
+    "zh-Hant": "確定要重置所有進度嗎?\n\n這會清空筆記本、周妤的訊息記錄、累計遊玩時間,回到協尋站首頁從頭開始。",
+    "zh-Hans": "确定要重置所有进度吗?\n\n这会清空笔记本、周妤的讯息记录、累计游玩时间,回到协寻站首页从头开始。",
+    "en": "Reset all progress?\n\nThis clears your notebook, Zhouyu's messages, and total playtime, and takes you back to the start of the site.",
+  };
+  const ok = confirm(CONFIRM_TEXT[lang] || CONFIRM_TEXT["zh-Hant"]);
+  if (!ok) return;
+  const KEEP_ON_RESET = [JH.PREFIX + "lang", JH.PREFIX + "stats_entered_sent", JH.PREFIX + "stats_ending_sent"];
+  Object.keys(localStorage)
+    .filter((k) => k.startsWith(JH.PREFIX) && !KEEP_ON_RESET.includes(k))
+    .forEach((k) => localStorage.removeItem(k));
+  window.location.href = "index.html";
+});
+
+// 進站/抵達結局人數:兩個數字都抓到才顯示,抓不到(例如統計服務還沒設好公開計數器)就整行不顯示
+const STATS_LABELS = {
+  "zh-Hant": (entered, ending) => `已有 ${entered} 人進站,其中 ${ending} 人抵達這裡。`,
+  "zh-Hans": (entered, ending) => `已有 ${entered} 人进站,其中 ${ending} 人抵达这里。`,
+  en: (entered, ending) => `${entered} people have entered this site, and ${ending} of them made it here.`,
+};
+let statsCache = null;
+function renderStats() {
+  if (!statsCache) return;
+  const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
+  const fn = STATS_LABELS[lang] || STATS_LABELS["zh-Hant"];
+  const el = document.getElementById("stats-line");
+  el.textContent = fn(statsCache.entered, statsCache.ending);
+  el.style.display = "block";
+}
+Promise.all([JH_STATS.getEnteredCount(), JH_STATS.getEndingCount()]).then(([entered, ending]) => {
+  if (entered == null || ending == null) return;
+  statsCache = { entered, ending };
+  renderStats();
+});
+document.addEventListener("jh-lang-changed", renderStats);
+</script>
+</body>
+</html>

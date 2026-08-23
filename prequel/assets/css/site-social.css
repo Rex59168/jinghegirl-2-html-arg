@@ -1,0 +1,86 @@
+/* site-social.css — 社群平台,現代白底圓角卡片 */
+body.site-social {
+  background: #fafafa;
+  color: #111;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", sans-serif;
+}
+.site-social header.social-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  position: sticky; top: 40px;
+  background: #fff;
+  z-index: 10;
+}
+.site-social .avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#ddd,#bbb);
+  flex-shrink: 0;
+}
+.site-social .handle { font-weight: 600; }
+.site-social .handle small { display: block; font-weight: 400; color: #888; font-size: 13px; }
+
+.site-social .story-rail {
+  display: flex; gap: 12px;
+  padding: 14px 16px;
+  overflow-x: auto;
+}
+.site-social .story-item {
+  flex: 0 0 auto;
+  width: 74px;
+  text-align: center;
+  font-size: 12px;
+  color: #444;
+}
+.site-social .story-ring {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  border: 2px solid #d33;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 6px;
+  background: #f2f2f2;
+  font-size: 11px;
+  color: #999;
+}
+.site-social .story-item .ts { display: block; margin-top: 2px; color: #aaa; }
+
+.site-social .card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  margin: 12px 16px;
+  padding: 14px;
+}
+.site-social .card p { margin: 6px 0; line-height: 1.6; }
+.site-social .card .meta { font-size: 12px; color: #999; }
+
+.site-social .story-viewer {
+  position: fixed; inset: 0;
+  background: #111;
+  color: #fff;
+  z-index: 200;
+  display: none;
+  flex-direction: column;
+}
+.site-social .story-viewer.open { display: flex; }
+.site-social .story-viewer .sv-top {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px;
+}
+.site-social .story-viewer .sv-body {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  text-align: center;
+  font-size: 16px;
+}
+.site-social .story-viewer .sv-close { background: none; border: none; color: #fff; font-size: 20px; }
+.site-social .story-viewer .sv-progress {
+  display: flex; gap: 4px; padding: 8px 16px 0;
+}
+.site-social .story-viewer .sv-progress span {
+  height: 3px; flex: 1; background: rgba(255,255,255,.3); border-radius: 2px;
+}
+.site-social .story-viewer .sv-progress span.active { background: #fff; }
+.site-social .story-viewer .sv-caption { font-size: 13px; opacity: .7; margin-top: 10px; }

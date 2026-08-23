@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>你留下了什麼</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<style>
+body { background:#0d0d0d; color:#ddd; font-family:-apple-system,'PingFang TC',sans-serif; }
+</style>
+</head>
+<body data-requires="ending_seen">
+<main class="container" style="padding-top:30px;padding-bottom:60px;">
+  <h1 style="font-size:19px;">你留下了什麼</h1>
+  <div id="report" style="background:#181818;border:1px solid #333;border-radius:10px;padding:16px;font-size:14px;line-height:2;margin:20px 0;"></div>
+  <p style="font-size:14px;color:#aaa;line-height:1.9;">
+    以上全部沒有離開你的裝置,我們沒有存任何一筆。<br>
+    但這些是任何一個網站都拿得到的。<br>
+    他不需要你告訴他任何事。
+  </p>
+  <p style="margin-top:30px;"><a href="index.html" style="color:#9fc7ff;">← 回協尋站首頁</a></p>
+</main>
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script>
+const nickname = JH.get("nickname") || "（未知）";
+const activeMs = JH.activeMs();
+const activeSeconds = Math.round(activeMs / 1000);
+const elapsedStr = activeSeconds < 60 ? activeSeconds + " 秒" : Math.round(activeSeconds / 60) + " 分鐘";
+const now = new Date();
+
+const rows = [
+  ["瀏覽器語言", navigator.language || "（未知）"],
+  ["時區", Intl.DateTimeFormat().resolvedOptions().timeZone || "（未知）"],
+  ["螢幕解析度", screen.width + " × " + screen.height],
+  ["裝置類型", /Mobi|Android|iPhone/i.test(navigator.userAgent) ? "行動裝置" : "桌機/平板"],
+  ["造訪時間", now.toLocaleString((typeof JH_I18N !== "undefined" && JH_I18N.getLang() === "en") ? "en-US" : "zh-TW")],
+  ["累計停留時間", elapsedStr],
+  ["你當初在表單填的暱稱", nickname],
+];
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+}
+
+document.getElementById("report").innerHTML = rows
+  .map(([k, v]) => `<div style="display:flex;justify-content:space-between;border-bottom:1px dashed #333;padding:4px 0;"><span style="color:#888;">${escapeHtml(k)}</span><span>${escapeHtml(v)}</span></div>`)
+  .join("");
+</script>
+</body>
+</html>
