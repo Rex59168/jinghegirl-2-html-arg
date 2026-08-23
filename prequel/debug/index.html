@@ -1,98 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<base href="../">
 <title>debug</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="stylesheet" href="assets/css/base.css">
+<meta http-equiv="refresh" content="0; url=../../admin.html">
 </head>
-<body style="background:#111;color:#0f0;font-family:monospace;padding:16px;">
-<h1>/debug</h1>
-<p>不顯示任何謎題答案,只用來跳關方便測試。</p>
-
-<div id="state-dump" style="white-space:pre-wrap;background:#000;padding:10px;margin:14px 0;font-size:12px;"></div>
-
-<p>
-  <button type="button" id="unlock-all">全部章節標記為已完成</button>
-  <button type="button" id="clear-all">清空所有進度(localStorage)</button>
-</p>
-
-<h2>快速跳轉</h2>
-<ul>
-  <li><a href="home.html">/home.html 首頁(不含殼層,直接看內容)</a></li>
-  <li><a href="index.html">/index.html 殼層(手機桌布/開機動畫)</a></li>
-  <li><a href="social/lin-xi.html">/social/lin-xi.html 序章謎題</a></li>
-  <li><a href="xunren/correction.html">/xunren/correction.html 序章過關</a></li>
-  <li><a href="editor/album.html">/editor/album.html 第一章密碼門</a></li>
-  <li><a href="editor/img0431.html">/editor/img0431.html 第一章謎題</a></li>
-  <li><a href="market/listing.html">/market/listing.html 第二章二手平台</a></li>
-  <li><a href="market/bookmarks.html">/market/bookmarks.html 找碟書籤</a></li>
-  <li><a href="news/2022-report.html">/news/2022-report.html 2022年舊聞</a></li>
-  <li><a href="social/lin-zhao-2019.html">/social/lin-zhao-2019.html 林昭舊帳號</a></li>
-  <li><a href="chat/thread.html">/chat/thread.html 第三章對話記錄</a></li>
-  <li><a href="xunren/rebuild-0814.html">/xunren/rebuild-0814.html 第四章總覽</a></li>
-  <li><a href="transit/query.html">/transit/query.html 第四章-1</a></li>
-  <li><a href="transit/card-record.html">/transit/card-record.html 第四章-2</a></li>
-  <li><a href="social/rec1029.html">/social/rec1029.html 第四章-3</a></li>
-  <li><a href="xunren/zhouyu-chat.html">/xunren/zhouyu-chat.html 第四章-4</a></li>
-  <li><a href="transit/location-share.html">/transit/location-share.html 第四章-5</a></li>
-  <li><a href="chat/thread-review.html">/chat/thread-review.html 第五章標註</a></li>
-  <li><a href="files/collection.html">/files/collection.html 第六章清單</a></li>
-  <li><a href="news/report.html">/news/report.html 新聞:遺骸尋獲</a></li>
-  <li><a href="news/identified.html">/news/identified.html 新聞:確認身分</a></li>
-  <li><a href="ending/index.html">/ending/index.html 終幕</a></li>
-  <li><a href="ending/checkself.html">/ending/checkself.html 你留下了什麼</a></li>
-  <li><a href="xunren/updates.html">/xunren/updates.html 進度公告</a></li>
-</ul>
-
-<script src="assets/js/state.js"></script>
-<script src="assets/js/entry-warning.js"></script>
-<script src="assets/js/chapter-guard.js"></script>
-<script src="assets/js/t2s-map.js"></script>
-<script src="assets/js/i18n-en.js"></script>
-<script src="assets/js/i18n.js"></script>
-<script>
-function dump() {
-  const out = {};
-  Object.keys(localStorage)
-    .filter((k) => k.startsWith(JH.PREFIX))
-    .forEach((k) => (out[k] = localStorage.getItem(k)));
-  document.getElementById("state-dump").textContent = JSON.stringify(out, null, 2);
-}
-dump();
-
-document.getElementById("unlock-all").addEventListener("click", () => {
-  JH.set("ch0_done", true);
-  JH.set("album_unlocked", true);
-  JH.set("ch1_done", true);
-  JH.set("ch2_done", true);
-  JH.set("ch3_done", true);
-  JH.set("ch4_t1", true);
-  JH.set("ch4_t2", true);
-  JH.set("ch4_t3", true);
-  JH.set("ch4_t4", true);
-  JH.set("ch4_t5", true);
-  JH.set("ch4_done", true);
-  JH.set("ch5_done", true);
-  JH.set("ch6_done", true);
-  JH.set("news_done", true);
-  if (!JH.get("nickname")) JH.set("nickname", "測試員");
-  if (!JH.get("how_known")) JH.set("how_known", "debug 頁面");
-  dump();
-});
-
-document.getElementById("clear-all").addEventListener("click", () => {
-  Object.keys(localStorage)
-    .filter((k) => k.startsWith(JH.PREFIX))
-    .forEach((k) => localStorage.removeItem(k));
-  // 殼層的開機動畫旗標跟全螢幕旗標不走 JH 前綴(跨章節共用),這裡一併清掉,
-  // 方便測試時重看一次開機動畫。
-  localStorage.removeItem("jh2bridge:ch1_boot_seen");
-  localStorage.removeItem("jh2bridge:fullscreen_opt_in");
-  dump();
-});
-</script>
+<body>
+<!-- 第一章、第二章的管理面板已經整合成同一個(需要密碼),搬到根目錄 /admin.html 了。 -->
+<p>已搬移,請至 <a href="../../admin.html">/admin.html</a></p>
 </body>
 </html>

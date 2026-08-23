@@ -3,38 +3,317 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>管理員重置面板</title>
-<link rel="stylesheet" href="styles/tokens.css">
-<link rel="stylesheet" href="styles/base.css">
-<link rel="stylesheet" href="styles/layout.css">
-<link rel="stylesheet" href="styles/components.css">
-<link rel="stylesheet" href="styles/endgame.css">
+<title>管理員控制面板</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    background: #111; color: #0f0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+    padding: 16px; max-width: 720px; margin: 0 auto;
+  }
+  h1 { font-size: 20px; }
+  h2 { font-size: 16px; border-bottom: 1px solid #2a2a2a; padding-bottom: 6px; margin-top: 32px; }
+  h3 { font-size: 13px; color: #9a9a9a; margin: 18px 0 6px; }
+  p { line-height: 1.6; }
+  .note { color: #9a9a9a; font-size: 13px; }
+  .state-dump {
+    white-space: pre-wrap; background: #000; padding: 10px; margin: 10px 0;
+    font-size: 12px; border: 1px solid #2a2a2a; max-height: 220px; overflow-y: auto;
+  }
+  button {
+    display: block; width: 100%; text-align: left;
+    background: #1c1c1c; color: #0f0; border: 1px solid #2a2a2a;
+    padding: 10px 12px; margin: 6px 0; font-size: 13px; font-family: inherit; cursor: pointer;
+  }
+  button:hover { background: #262626; }
+  ul { padding-left: 0; list-style: none; }
+  li { padding: 4px 0; border-bottom: 1px dashed #222; font-size: 13px; }
+  a { color: #6cf; }
+  #gate { max-width: 320px; margin: 80px auto; text-align: center; }
+  #gate input {
+    width: 100%; background: #000; color: #0f0; border: 1px solid #2a2a2a;
+    padding: 10px; font-size: 15px; font-family: inherit; margin: 12px 0;
+  }
+  #gate button { text-align: center; }
+  #pw-err { color: #f66; min-height: 1.4em; font-size: 13px; }
+</style>
 </head>
 <body>
 
-<div id="content-warning" class="content-warning" hidden>
-  <div class="content-warning__box">
-    <h1 class="content-warning__title"></h1>
-    <p class="content-warning__body"></p>
-    <button type="button" class="content-warning__continue"></button>
-    <div class="lang-switcher" id="lang-switcher-warning"></div>
-  </div>
+<div id="gate">
+  <h1>管理員控制面板</h1>
+  <p class="note">請輸入密碼</p>
+  <input type="password" id="pw-input" placeholder="密碼" autocomplete="off">
+  <button type="button" id="pw-submit">進入</button>
+  <p id="pw-err"></p>
 </div>
 
-<div id="app" hidden>
-  <main id="main"></main>
-  <div class="lang-switcher" id="lang-switcher"></div>
+<div id="panel" hidden>
+  <h1>管理員控制面板</h1>
+  <p class="note">這頁不對外連結,僅供測試用。按鈕會直接改本機儲存的進度,大部分會自動重新整頁。</p>
+
+  <section>
+    <h2>第一章・協尋林晞</h2>
+    <div class="state-dump" id="ch1-state-dump"></div>
+    <button type="button" id="ch1-unlock-all">全部章節標記為已完成</button>
+    <button type="button" id="ch1-clear-all">清空第一章進度(localStorage)</button>
+
+    <h3>快速跳轉</h3>
+    <ul id="ch1-links"></ul>
+  </section>
+
+  <section>
+    <h2>第二章・尋人資料庫</h2>
+    <div class="state-dump" id="ch2-state-dump"></div>
+    <div id="ch2-buttons"></div>
+  </section>
 </div>
 
-<script type="module">
-  import * as guard from './scripts/guard.js';
-  import * as chrome from './scripts/chrome.js';
-  import { renderAdmin } from './scripts/render.js';
+<script>
+(() => {
+  // ══════════════════ 密碼門 ══════════════════
+  // 純前端擋一下,不是真的安全機制——只是不想讓玩家不小心滑到管理面板。
+  // 解鎖狀態存在跟兩章劇情進度不同的 key,兩邊「清空進度」都不會把它洗掉,
+  // 不用每次測完重置又要重輸一次密碼。
+  const ADMIN_PW = "0803";
+  const UNLOCK_KEY = "jhAdminUnlocked";
 
-  guard.enter({ bypassChecks: true }, () => {
-    chrome.mountBare();
-    document.getElementById('main').replaceChildren(renderAdmin());
-  });
+  const gate = document.getElementById("gate");
+  const panel = document.getElementById("panel");
+  const pwInput = document.getElementById("pw-input");
+  const pwErr = document.getElementById("pw-err");
+
+  function unlock() {
+    try { localStorage.setItem(UNLOCK_KEY, "1"); } catch (e) {}
+    gate.hidden = true;
+    panel.hidden = false;
+    boot();
+  }
+
+  function tryPassword() {
+    if (pwInput.value === ADMIN_PW) {
+      unlock();
+    } else {
+      pwErr.textContent = "密碼錯誤";
+      pwInput.value = "";
+      pwInput.focus();
+    }
+  }
+
+  document.getElementById("pw-submit").addEventListener("click", tryPassword);
+  pwInput.addEventListener("keydown", (e) => { if (e.key === "Enter") tryPassword(); });
+
+  // ══════════════════ 第一章(prequel,前綴 jh1f_)══════════════════
+  const JH1_PREFIX = "jh1f_";
+  function jh1Get(key, fallback) {
+    try {
+      const v = localStorage.getItem(JH1_PREFIX + key);
+      return v === null ? fallback : JSON.parse(v);
+    } catch (e) { return fallback; }
+  }
+  function jh1Set(key, value) {
+    try { localStorage.setItem(JH1_PREFIX + key, JSON.stringify(value)); } catch (e) {}
+  }
+
+  const CH1_LINKS = [
+    ["prequel/home.html", "/home.html 首頁(不含殼層,直接看內容)"],
+    ["prequel/index.html", "/index.html 殼層(手機桌布/開機動畫)"],
+    ["prequel/social/lin-xi.html", "/social/lin-xi.html 序章謎題"],
+    ["prequel/xunren/correction.html", "/xunren/correction.html 序章過關"],
+    ["prequel/editor/album.html", "/editor/album.html 第一章密碼門"],
+    ["prequel/editor/img0431.html", "/editor/img0431.html 第一章謎題"],
+    ["prequel/market/listing.html", "/market/listing.html 第二章二手平台"],
+    ["prequel/market/bookmarks.html", "/market/bookmarks.html 找碟書籤"],
+    ["prequel/news/2022-report.html", "/news/2022-report.html 2022年舊聞"],
+    ["prequel/social/lin-zhao-2019.html", "/social/lin-zhao-2019.html 林昭舊帳號"],
+    ["prequel/chat/thread.html", "/chat/thread.html 第三章對話記錄"],
+    ["prequel/xunren/rebuild-0814.html", "/xunren/rebuild-0814.html 第四章總覽"],
+    ["prequel/transit/query.html", "/transit/query.html 第四章-1"],
+    ["prequel/transit/card-record.html", "/transit/card-record.html 第四章-2"],
+    ["prequel/social/rec1029.html", "/social/rec1029.html 第四章-3"],
+    ["prequel/xunren/zhouyu-chat.html", "/xunren/zhouyu-chat.html 第四章-4"],
+    ["prequel/transit/location-share.html", "/transit/location-share.html 第四章-5"],
+    ["prequel/chat/thread-review.html", "/chat/thread-review.html 第五章標註"],
+    ["prequel/files/collection.html", "/files/collection.html 第六章清單"],
+    ["prequel/news/report.html", "/news/report.html 新聞:遺骸尋獲"],
+    ["prequel/news/identified.html", "/news/identified.html 新聞:確認身分"],
+    ["prequel/ending/index.html", "/ending/index.html 終幕"],
+    ["prequel/ending/checkself.html", "/ending/checkself.html 你留下了什麼"],
+    ["prequel/xunren/updates.html", "/xunren/updates.html 進度公告"],
+  ];
+
+  function dumpCh1() {
+    const out = {};
+    Object.keys(localStorage)
+      .filter((k) => k.startsWith(JH1_PREFIX))
+      .forEach((k) => (out[k] = localStorage.getItem(k)));
+    document.getElementById("ch1-state-dump").textContent = JSON.stringify(out, null, 2);
+  }
+
+  function mountCh1() {
+    dumpCh1();
+
+    const linksEl = document.getElementById("ch1-links");
+    CH1_LINKS.forEach(([href, label]) => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = href;
+      a.textContent = label;
+      li.appendChild(a);
+      linksEl.appendChild(li);
+    });
+
+    document.getElementById("ch1-unlock-all").addEventListener("click", () => {
+      jh1Set("ch0_done", true);
+      jh1Set("album_unlocked", true);
+      jh1Set("ch1_done", true);
+      jh1Set("ch2_done", true);
+      jh1Set("ch3_done", true);
+      jh1Set("ch4_t1", true);
+      jh1Set("ch4_t2", true);
+      jh1Set("ch4_t3", true);
+      jh1Set("ch4_t4", true);
+      jh1Set("ch4_t5", true);
+      jh1Set("ch4_done", true);
+      jh1Set("ch5_done", true);
+      jh1Set("ch6_done", true);
+      jh1Set("news_done", true);
+      if (!jh1Get("nickname")) jh1Set("nickname", "測試員");
+      if (!jh1Get("how_known")) jh1Set("how_known", "debug 頁面");
+      dumpCh1();
+    });
+
+    document.getElementById("ch1-clear-all").addEventListener("click", () => {
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith(JH1_PREFIX))
+        .forEach((k) => localStorage.removeItem(k));
+      // 殼層的開機動畫旗標跟全螢幕旗標不走 jh1f_ 前綴(跨章節共用),這裡一併清掉,
+      // 方便測試時重看一次開機動畫。
+      localStorage.removeItem("jh2bridge:ch1_boot_seen");
+      localStorage.removeItem("jh2bridge:fullscreen_opt_in");
+      dumpCh1();
+    });
+  }
+
+  // ══════════════════ 第二章(root,前綴 jh4:)══════════════════
+  const JH4_PREFIX = "jh4:";
+  function jh4Get(key, fallback) {
+    try {
+      const v = localStorage.getItem(JH4_PREFIX + key);
+      return v === null ? fallback : JSON.parse(v);
+    } catch (e) { return fallback; }
+  }
+  function jh4Set(key, value) {
+    try { localStorage.setItem(JH4_PREFIX + key, JSON.stringify(value)); } catch (e) {}
+  }
+  function jh4MarkSeen(id) {
+    const seen = jh4Get("seen", {});
+    if (seen[id]) return;
+    jh4Set("seen", { ...seen, [id]: true });
+  }
+
+  const CH2_STATE_KEYS = [
+    "locale", "nickname", "howYouKnew", "firstVisitDate", "warningSeen", "introCompletedAt",
+    "midUpdateFired", "secondUpdateFired", "collectionUnlocked", "trustPuzzleSolved", "refusedCount", "finished"
+  ];
+
+  function dumpCh2() {
+    const lines = CH2_STATE_KEYS.map((k) => k + ": " + JSON.stringify(jh4Get(k)));
+    lines.push("seen: " + JSON.stringify(jh4Get("seen", {})));
+    document.getElementById("ch2-state-dump").textContent = lines.join("\n");
+  }
+
+  function ch2Button(container, labelText, onClick, { reload = true } = {}) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = labelText;
+    btn.addEventListener("click", () => {
+      onClick();
+      if (reload) location.reload();
+    });
+    container.appendChild(btn);
+  }
+
+  function mountCh2() {
+    dumpCh2();
+    const container = document.getElementById("ch2-buttons");
+    container.innerHTML = "";
+
+    ch2Button(container, "全部重置(清空進度,回到告示畫面)", () => {
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith(JH4_PREFIX))
+        .forEach((k) => localStorage.removeItem(k));
+    });
+
+    ch2Button(container, "略過序章(暱稱設為 admin)", () => {
+      jh4Set("nickname", "admin");
+      jh4Set("howYouKnew", "(管理員測試帳號)");
+    });
+
+    ch2Button(container, "強制觸發中段更新(林晞已尋獲公告)", () => {
+      jh4Set("midUpdateFired", true);
+    });
+
+    ch2Button(container, "把「志工登錄時間」往前撥 3 小時(跳過中段更新的真實時間門檻)", () => {
+      jh4Set("introCompletedAt", Date.now() - 3 * 60 * 60 * 1000);
+    });
+
+    ch2Button(container, "強制觸發二次更新(JH-2026-004 摘要修正)", () => {
+      jh4Set("midUpdateFired", true);
+      jh4MarkSeen("page-legacy");
+      jh4MarkSeen("file-015");
+      jh4Set("secondUpdateFired", true);
+    });
+
+    ch2Button(container, "強制解鎖收藏頁(標記三個 .txt 已讀)", () => {
+      jh4MarkSeen("file-007");
+      jh4MarkSeen("file-012");
+      jh4MarkSeen("file-015");
+      jh4Set("collectionUnlocked", true);
+    });
+
+    ch2Button(container, "強制解鎖第六幕(含上面全部條件)", () => {
+      jh4MarkSeen("file-007");
+      jh4MarkSeen("file-012");
+      jh4MarkSeen("file-015");
+      jh4Set("collectionUnlocked", true);
+      jh4MarkSeen("page-trust");
+      jh4Set("trustPuzzleSolved", true);
+      jh4MarkSeen("page-archive2019");
+      jh4MarkSeen("page-market");
+      jh4MarkSeen("page-collection");
+    });
+
+    ch2Button(container, "解鎖並直接跳到第六幕", () => {
+      jh4MarkSeen("file-007");
+      jh4MarkSeen("file-012");
+      jh4MarkSeen("file-015");
+      jh4Set("collectionUnlocked", true);
+      jh4MarkSeen("page-trust");
+      jh4Set("trustPuzzleSolved", true);
+      jh4MarkSeen("page-archive2019");
+      jh4MarkSeen("page-market");
+      jh4MarkSeen("page-collection");
+      location.href = "walk.html";
+    }, { reload: false });
+
+    ch2Button(container, "清除「已結束」狀態(重新打開網站)", () => {
+      jh4Set("finished", false);
+    });
+  }
+
+  function boot() {
+    mountCh1();
+    mountCh2();
+  }
+
+  if (localStorage.getItem(UNLOCK_KEY) === "1") {
+    unlock();
+  } else {
+    pwInput.focus();
+  }
+})();
 </script>
 </body>
 </html>
