@@ -33,20 +33,12 @@
 
 <div id="blackout" style="position:fixed;inset:0;background:#000;z-index:300;display:none;color:#eee;">
   <div id="blackout-caption" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;font-size:17px;color:#999;opacity:0;transition:opacity 0.8s;"></div>
-  <div id="blackout-letter" style="display:none;position:absolute;bottom:24px;left:0;right:0;text-align:center;padding:0 20px;opacity:0;transition:opacity 1s;">
+  <div id="blackout-letter" style="display:none;position:absolute;bottom:24px;left:0;right:0;text-align:center;padding:0 20px;opacity:0;transition:opacity 1s;max-height:80vh;overflow-y:auto;">
     <div style="max-width:420px;margin:0 auto 20px;background:#141414;border:1px solid #333;border-radius:8px;padding:18px 20px;text-align:left;font-size:13px;line-height:1.8;color:#bbb;">
       <p id="letter-title" style="margin:0 0 8px;color:#eee;font-size:14px;"></p>
       <p id="letter-body" style="margin:0 0 12px;white-space:pre-wrap;"></p>
       <a id="letter-link" href="../index.html" style="color:#9fc7ff;font-size:14px;"></a>
-    </div>
-  </div>
-  <div id="blackout-footer" style="display:none;position:absolute;bottom:24px;left:0;right:0;text-align:center;max-height:70vh;overflow-y:auto;padding:0 20px;">
-    <a href="ending/checkself.html" style="color:#777;font-size:13px;">你留下了什麼 →</a>
-
-    <p id="stats-line" style="display:none;font-size:12px;color:#666;margin-top:18px;"></p>
-
-    <div style="margin-top:28px;">
-      <button type="button" id="reset-btn" style="background:none;color:#888;border:1px solid #444;padding:8px 16px;border-radius:8px;font-size:12px;">重置所有進度</button>
+      <p id="stats-line" style="display:none;font-size:12px;color:#666;margin:16px 0 0;padding-top:12px;border-top:1px solid #2a2a2a;"></p>
     </div>
   </div>
 </div>
@@ -170,10 +162,6 @@ document.getElementById("continue-btn").addEventListener("click", () => {
     const letterEl = document.getElementById("blackout-letter");
     letterEl.style.display = "block";
     requestAnimationFrame(() => { letterEl.style.opacity = "1"; });
-
-    setTimeout(() => {
-      document.getElementById("blackout-footer").style.display = "block";
-    }, 3000);
   }, 3400);
 });
 
@@ -191,22 +179,6 @@ function renderLetter() {
   document.getElementById("letter-link").textContent = L.link;
 }
 document.addEventListener("jh-lang-changed", renderLetter);
-
-document.getElementById("reset-btn").addEventListener("click", () => {
-  const lang = typeof JH_I18N !== "undefined" ? JH_I18N.getLang() : "zh-Hant";
-  const CONFIRM_TEXT = {
-    "zh-Hant": "確定要重置所有進度嗎?\n\n這會清空筆記本、周妤的訊息記錄、累計遊玩時間,回到協尋站首頁從頭開始。",
-    "zh-Hans": "确定要重置所有进度吗?\n\n这会清空笔记本、周妤的讯息记录、累计游玩时间,回到协寻站首页从头开始。",
-    "en": "Reset all progress?\n\nThis clears your notebook, Zhouyu's messages, and total playtime, and takes you back to the start of the site.",
-  };
-  const ok = confirm(CONFIRM_TEXT[lang] || CONFIRM_TEXT["zh-Hant"]);
-  if (!ok) return;
-  const KEEP_ON_RESET = [JH.PREFIX + "lang", JH.PREFIX + "stats_entered_sent", JH.PREFIX + "stats_ending_sent"];
-  Object.keys(localStorage)
-    .filter((k) => k.startsWith(JH.PREFIX) && !KEEP_ON_RESET.includes(k))
-    .forEach((k) => localStorage.removeItem(k));
-  window.location.href = "index.html";
-});
 
 // 進站/抵達結局人數:兩個數字都抓到才顯示,抓不到(例如統計服務還沒設好公開計數器)就整行不顯示
 const STATS_LABELS = {
