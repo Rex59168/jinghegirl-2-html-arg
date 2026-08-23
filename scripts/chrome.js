@@ -37,8 +37,52 @@ export function mountLangSwitchers() {
   document.querySelectorAll('.lang-switcher').forEach(buildLangSwitcherInto);
 }
 
+const SIGNAL_SVG = '<svg width="18" height="12" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="3" width="3" height="9" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>';
+const WIFI_SVG = '<svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.2a1.3 1.3 0 100 2.6 1.3 1.3 0 000-2.6z"/><path d="M4.2 7.4a5.4 5.4 0 017.6 0l-1.4 1.4a3.4 3.4 0 00-4.8 0L4.2 7.4z"/><path d="M1 4.2a9.6 9.6 0 0114 0L13.6 5.6a7.6 7.6 0 00-11.2 0L1 4.2z"/></svg>';
+const BATTERY_SVG = '<svg width="24" height="12" viewBox="0 0 24 12" fill="none"><rect x="0.5" y="0.5" width="20" height="11" rx="2.5" stroke="currentColor"/><rect x="2" y="2" width="17" height="8" rx="1" fill="currentColor"/><rect x="21" y="4" width="2" height="4" rx="1" fill="currentColor"/></svg>';
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+// 跟前作一樣：狀態列的時間是玩家裝置當下的真實時間(只有時:分)，純粹營造
+// 「你正拿著手機看」的臨場感，不代表故事裡的日期，所以不會跟續作 2026/8/26
+// 之後的時間線互相矛盾。
+function mountPhoneShell() {
+  if (document.body.classList.contains('jh-has-shell')) return;
+
+  if (!document.querySelector('link[data-phone-shell]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'styles/phone-shell.css';
+    link.setAttribute('data-phone-shell', '1');
+    document.head.appendChild(link);
+  }
+
+  const statusBar = document.createElement('div');
+  statusBar.className = 'jh-status-bar';
+  statusBar.innerHTML = `
+    <span class="jh-sb-time" id="jh-sb-time"></span>
+    <span class="jh-sb-icons">${SIGNAL_SVG}${WIFI_SVG}${BATTERY_SVG}</span>
+  `;
+  document.body.insertBefore(statusBar, document.body.firstChild);
+
+  function tick() {
+    const now = new Date();
+    statusBar.querySelector('#jh-sb-time').textContent = now.getHours() + ':' + pad2(now.getMinutes());
+  }
+  tick();
+  setInterval(tick, 15000);
+
+  const homeIndicator = document.createElement('div');
+  homeIndicator.className = 'jh-home-indicator';
+  homeIndicator.innerHTML = '<span class="jh-home-indicator__pill"></span>';
+  document.body.appendChild(homeIndicator);
+
+  document.body.classList.add('jh-has-shell');
+}
+
 // For pages with the full institutional shell (header/nav/breadcrumb/footer).
 export function mount({ breadcrumb = [] } = {}) {
+  mountPhoneShell();
   const headerNameEl = document.querySelector('.site-header__name');
   const donateEl = document.querySelector('.site-header__donate');
   const siteNavEl = document.getElementById('site-nav');
@@ -143,6 +187,7 @@ export function mount({ breadcrumb = [] } = {}) {
 // { skipWidgets: true } drops the notebook/mail drawers too — for gone.html, where the
 // site itself is supposed to have stopped working, not just lost its header.
 export function mountBare({ skipWidgets = false } = {}) {
+  mountPhoneShell();
   const appEl = document.getElementById('app');
   if (appEl) appEl.hidden = false;
   mountLangSwitchers();

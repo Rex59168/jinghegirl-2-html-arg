@@ -1,4 +1,53 @@
 /* browser-chrome.css — 假瀏覽器外框 */
+
+/* phone-shell — 手機狀態列 + 底部 Home 指示條,包住整個假瀏覽器外框，
+   讓整站看起來像是在一支手機螢幕裡瀏覽，不只是瀏覽器分頁。*/
+.jh-status-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 28px;
+  background: #000;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  z-index: 2000;
+  letter-spacing: 0.02em;
+}
+.jh-sb-time { font-variant-numeric: tabular-nums; }
+.jh-sb-icons { display: flex; align-items: center; gap: 5px; }
+.jh-sb-icons svg { display: block; }
+
+.jh-home-indicator {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 22px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.jh-home-indicator__pill {
+  width: 120px;
+  height: 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+body.jh-has-shell { padding-bottom: 22px; }
+body.jh-has-shell.jh-has-chrome { padding-top: 68px; }
+body.jh-has-shell:not(.jh-has-chrome) { padding-top: 28px; }
+.jh-has-chrome .jh-browser-chrome { top: 28px; }
+
+.jh-notebook-btn, .jh-hint-btn { bottom: calc(12px + 22px) !important; }
+.jh-notebook-btn { bottom: calc(68px + 22px) !important; }
+.jh-hint-panel, .jh-notebook-panel { padding-bottom: 22px; box-sizing: border-box; }
+
 .jh-browser-chrome {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -89,5 +138,3 @@
 .jh-bc-lang-opt:not(:last-child) { border-bottom: 1px solid #eee; }
 .jh-bc-lang-opt.active { background: #e9edf2; font-weight: 600; }
 .jh-bc-lang-opt:active { background: #dde1e6; }
-
-body.jh-has-chrome { padding-top: 40px; }
