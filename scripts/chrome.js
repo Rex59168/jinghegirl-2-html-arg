@@ -72,17 +72,18 @@ function computeUrl() {
 // 嘗試一次全螢幕——例如玩家自己按 Esc 跳出,下一次點擊就會自動接回來。
 const FULLSCREEN_KEY = 'jh2bridge:fullscreen_opt_in';
 function armFullscreenOnFirstClick() {
-  if (localStorage.getItem(FULLSCREEN_KEY) !== '1') return;
   if (window.top === window) return; // 不在殼層 iframe 裡(例如直接開這一頁測試)
-  document.addEventListener(
-    'click',
-    () => {
-      try {
-        if (typeof window.top.requestFullscreenNow === 'function') window.top.requestFullscreenNow();
-      } catch (e) {}
-    },
-    { once: true }
-  );
+  // 旗標的檢查要放在點擊當下,不能在掛載時就檢查一次定生死——掛載當下旗標
+  // 可能還沒被設成 "1",若只在掛載時檢查一次就會跳過、永遠不會補掛這個監聽器。
+  // 也不用 { once: true }——玩家可能在同一頁按好幾次 Esc 跳出全螢幕,每次點擊
+  // 都該重試一次。
+  document.addEventListener('click', () => {
+    try {
+      if (localStorage.getItem(FULLSCREEN_KEY) !== '1') return;
+      if (window.top.document.fullscreenElement) return; // 已經在全螢幕,不用重試
+      if (typeof window.top.requestFullscreenNow === 'function') window.top.requestFullscreenNow();
+    } catch (e) {}
+  });
 }
 
 function mountBrowserChrome() {
@@ -97,7 +98,13 @@ function mountBrowserChrome() {
   }
 
   const { text, isLocal, skip } = computeUrl();
-  if (skip) return;
+  if (skip) {
+    // 這幾頁(終局行走序列、網站已停用畫面)刻意不掛假網址列,但玩家在這裡
+    // 按 Esc 跳出全螢幕的話,還是要能靠下一次點擊接回來——不能因為沒有網址列
+    // 就連帶漏掉這個機制,尤其這幾頁正好是整段流程最後、最需要維持全螢幕的地方。
+    armFullscreenOnFirstClick();
+    return;
+  }
 
   const bar = document.createElement('div');
   bar.className = 'jh-browser-chrome';

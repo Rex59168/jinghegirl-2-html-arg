@@ -47,5 +47,20 @@
 <script src="assets/js/t2s-map.js"></script>
 <script src="assets/js/i18n-en.js"></script>
 <script src="assets/js/i18n.js"></script>
+<script>
+// 這頁刻意不掛假瀏覽器外框(要跳出敘事之外,呈現真實求助管道),但玩家還是
+// 可能在這裡按 Esc 跳出全螢幕,下一次點擊一樣要能請殼層重新嘗試接回來。
+(function () {
+  var FULLSCREEN_KEY = "jh2bridge:fullscreen_opt_in";
+  if (window.top === window) return;
+  document.addEventListener("click", function () {
+    try {
+      if (localStorage.getItem(FULLSCREEN_KEY) !== "1") return;
+      if (window.top.document.fullscreenElement) return;
+      if (typeof window.top.requestFullscreenNow === "function") window.top.requestFullscreenNow();
+    } catch (e) {}
+  });
+})();
+</script>
 </body>
 </html>

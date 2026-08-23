@@ -44,17 +44,19 @@
   // 例如玩家自己按 Esc 跳出全螢幕之後,不用整個殼層重載,下一次點擊就會自動接回來。
   const FULLSCREEN_KEY = "jh2bridge:fullscreen_opt_in";
   function armFullscreenOnFirstClick() {
-    if (localStorage.getItem(FULLSCREEN_KEY) !== "1") return;
     if (window.top === window) return; // 不在殼層 iframe 裡(例如直接開這一頁測試),沒有殼層可以請求
-    document.addEventListener(
-      "click",
-      () => {
-        try {
-          if (typeof window.top.requestFullscreenNow === "function") window.top.requestFullscreenNow();
-        } catch (e) {}
-      },
-      { once: true }
-    );
+    // 旗標的檢查要放在點擊當下,不能在掛載時就檢查一次定生死——像 home.html 這種
+    // 一開始就跟著殼層一起載入的頁面,掛載當下玩家可能都還沒點過「瀏覽器」圖示,
+    // 旗標根本還沒被設成 "1",若只在掛載時檢查一次就會直接跳過、永遠不會補掛這個
+    // 監聽器。也不用 { once: true }——玩家可能在同一頁按好幾次 Esc 跳出全螢幕,
+    // 每次點擊都該重試一次。
+    document.addEventListener("click", () => {
+      try {
+        if (localStorage.getItem(FULLSCREEN_KEY) !== "1") return;
+        if (window.top.document.fullscreenElement) return; // 已經在全螢幕,不用重試
+        if (typeof window.top.requestFullscreenNow === "function") window.top.requestFullscreenNow();
+      } catch (e) {}
+    });
   }
 
   function mount() {
