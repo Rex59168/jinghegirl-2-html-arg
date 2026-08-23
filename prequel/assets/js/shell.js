@@ -75,6 +75,9 @@
         { from: "me", text: "有一點點,我再注意" },
         { from: "them", text: "這個月生活費已經轉了,自己看一下" },
         { from: "me", text: "收到" },
+        { from: "them", text: "妳最近好像很常晚回家,還好嗎" },
+        { from: "me", text: "就朋友那邊的事,沒事的" },
+        { from: "them", text: "有事要說,別自己扛" },
       ],
     },
     {
@@ -87,6 +90,8 @@
         { from: "them", text: "好喔,那我先幫妳把材料存著" },
         { from: "them", text: "對了叔叔說中秋要一起烤肉,妳會回來嗎" },
         { from: "me", text: "應該會,到時候再說" },
+        { from: "them", text: "姐妳寒假要不要教我打那個副本" },
+        { from: "me", text: "可以啊,到時候敲我" },
       ],
     },
     {
@@ -99,6 +104,8 @@
         { from: "me", text: "抱歉在忙,晚點解釋" },
         { from: "them", text: "沒事啦,妳沒事就好,有空再聊" },
         { from: "me", text: "謝謝妳" },
+        { from: "them", text: "妳最近感覺怪怪的,真的沒事嗎" },
+        { from: "me", text: "只是比較累,妳別擔心" },
       ],
     },
   ];
