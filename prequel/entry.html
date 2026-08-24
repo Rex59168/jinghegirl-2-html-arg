@@ -72,6 +72,26 @@ document.getElementById("entry-form").addEventListener("submit", (e) => {
   JH.set("entry_done", true);
   location.href = "index.html";
 });
+
+// 這頁是整段流程最一開始看到的畫面,全螢幕也該從這裡就開始請求,不要讓玩家
+// 一路看著這頁跟稍後的手機畫面都不是全螢幕、直到點了「瀏覽器」圖示才切進去。
+// 換頁本來就一定會把全螢幕狀態重置(瀏覽器的安全限制,沒辦法跨頁保留),
+// 但至少在這頁瀏覽期間先進一次;送出表單、跳去 index.html 之後,鎖定畫面
+// 那邊點解鎖時也會再請求一次,兩邊接力,盡量不要有整段路都不是全螢幕的空窗。
+const FULLSCREEN_KEY = "jh2bridge:fullscreen_opt_in";
+function requestFullscreenOnce() {
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if (!req) return;
+  try {
+    const p = req.call(el);
+    if (p && p.catch) p.catch(() => {});
+  } catch (e) {}
+}
+document.addEventListener("click", () => {
+  localStorage.setItem(FULLSCREEN_KEY, "1");
+  if (!document.fullscreenElement) requestFullscreenOnce();
+});
 </script>
 </body>
 </html>

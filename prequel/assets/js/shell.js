@@ -365,9 +365,16 @@
       home.classList.remove("jh-boot__home--visible");
     }
 
-    function enterApp() {
+    // 全螢幕旗標打開、實際請求全螢幕——獨立成一個函式,因為現在有兩個地方要用:
+    // 點鎖定畫面解鎖(讓桌布主畫面一出現就已經是全螢幕),還有點「瀏覽器」圖示
+    // (原本唯一的入口,保留給略過開機動畫直接進站的情境)。
+    function requestFullscreenOptIn() {
       localStorage.setItem(FULLSCREEN_KEY, "1");
       window.requestFullscreenNow();
+    }
+
+    function enterApp() {
+      requestFullscreenOptIn();
       hideHomeScreen();
     }
 
@@ -395,6 +402,10 @@
         "click",
         () => {
           localStorage.setItem(BOOT_SEEN_KEY, "1");
+          // 全螢幕從這裡就開始請求,不用等到玩家另外點「瀏覽器」圖示——這是玩家
+          // 進站後第一個真正的手勢,桌布主畫面一出現就應該已經是全螢幕狀態,
+          // 不是空白晃一下才進全螢幕。
+          requestFullscreenOptIn();
           showHomeScreen();
         },
         { once: true }
