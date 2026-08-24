@@ -20,17 +20,8 @@
 <main class="container">
   <div id="form-view">
     <section class="panel">
-      <h2>在你送出之前</h2>
-      <p style="font-size:14px;">
-        我需要知道是誰在幫忙、還有你是怎麼找到這裡的——之後如果有進展,我才知道要通知誰。
-      </p>
+      <h2>更正時間戳</h2>
       <form id="correction-form">
-        <label for="nickname">你的暱稱</label>
-        <input type="text" id="nickname" required maxlength="30">
-
-        <label for="howknown">你是怎麼知道這件事的?</label>
-        <input type="text" id="howknown" required maxlength="80" placeholder="例如:朋友分享連結">
-
         <label for="answer">正確的最後動態時間(24小時制,例如 12:00)</label>
         <input type="text" id="answer" required maxlength="10" placeholder="12:00">
 
@@ -65,8 +56,6 @@ const ANSWER_HASH = "d5f915e54b6d7737c3d9a036dfe547944879b65b3b72e0e6a44f21ba62d
 
 document.getElementById("correction-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const nickname = document.getElementById("nickname").value.trim();
-  const howknown = document.getElementById("howknown").value.trim();
   const answer = document.getElementById("answer").value;
   const errEl = document.getElementById("err");
 
@@ -77,8 +66,6 @@ document.getElementById("correction-form").addEventListener("submit", async (e) 
   }
   errEl.textContent = "";
 
-  JH.set("nickname", nickname);
-  JH.set("how_known", howknown);
   JH.set("ch0_done", true);
 
   JHNotebook.add(

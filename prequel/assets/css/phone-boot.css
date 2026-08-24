@@ -384,14 +384,17 @@
 
 /* ══════════════════ 備忘錄 App(已知事項清單) ══════════════════
    跟 .jh-messages / .jh-mail 佔一樣的範圍,從主畫面「備忘錄」圖示點進來。純粹是
-   一份事實清單,不用聯絡人/對話串那層,面板是單一列表。 */
+   一份事實清單,不用聯絡人/對話串那層,面板是單一列表。z-index 特意設得比訊息
+   面板高一截(不是同一個數字)——備忘錄只要開著,不管訊息面板有沒有被關乾淨,
+   都要無條件疊在最上面,不依賴「切換時記得把別的面板關掉」這種容易漏掉的邏輯。
+   仍然低於多工切換畫面(1650),不會擋住玩家用它切去別的畫面。 */
 .jh-notes {
   position: fixed;
   top: 28px;
   bottom: 44px;
   left: 0;
   right: 0;
-  z-index: 1600;
+  z-index: 1630;
   background: #fff;
   color: #222;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

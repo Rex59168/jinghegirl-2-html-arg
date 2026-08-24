@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>內容提醒 | 協尋林晞</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/site-xunren.css">
+</head>
+<body class="site-xunren">
+
+<header class="xunren-head">
+  <h1>協尋林晞</h1>
+  <div class="sub">靖河市失蹤協尋網</div>
+</header>
+
+<main class="container">
+  <div class="entry-lang" id="entry-lang">
+    <button type="button" class="entry-lang__btn" data-lang="zh-Hant">繁</button>
+    <button type="button" class="entry-lang__btn" data-lang="zh-Hans">简</button>
+    <button type="button" class="entry-lang__btn" data-lang="en">EN</button>
+  </div>
+
+  <section class="panel">
+    <h2>內容提醒</h2>
+    <p>本站故事情節含失蹤、跟蹤等令人不安的描寫,為虛構創作,建議 15 歲以上瀏覽。如你正處於類似的真實處境,請撥打 110 / 113 尋求協助。</p>
+    <p><a href="resources/help.html">→ 查看完整求助資訊</a></p>
+  </section>
+
+  <section class="panel">
+    <h2>在你繼續之前</h2>
+    <p style="font-size:14px;">我需要知道是誰在幫忙、還有你是怎麼找到這裡的——之後如果有進展,我才知道要通知誰。</p>
+    <form id="entry-form">
+      <label for="nickname">你的暱稱</label>
+      <input type="text" id="nickname" required maxlength="30">
+
+      <label for="howknown">你是怎麼知道這件事的?</label>
+      <input type="text" id="howknown" required maxlength="80" placeholder="例如:朋友分享連結">
+
+      <p><button type="submit" class="btn">我了解,繼續</button></p>
+    </form>
+  </section>
+</main>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script>
+function refreshActiveLang() {
+  const current = JH_I18N.getLang();
+  document.querySelectorAll(".entry-lang__btn").forEach((btn) => {
+    btn.classList.toggle("entry-lang__btn--active", btn.dataset.lang === current);
+  });
+}
+refreshActiveLang();
+document.querySelectorAll(".entry-lang__btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    JH_I18N.setLang(btn.dataset.lang);
+    refreshActiveLang();
+  });
+});
+
+document.getElementById("entry-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+  const nickname = document.getElementById("nickname").value.trim();
+  const howKnown = document.getElementById("howknown").value.trim();
+  if (!nickname || !howKnown) return;
+  JH.set("nickname", nickname);
+  JH.set("how_known", howKnown);
+  JH.set("warning_seen", true);
+  JH.set("entry_done", true);
+  location.href = "index.html";
+});
+</script>
+</body>
+</html>

@@ -10,6 +10,14 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="你以為是你找到的">
 <meta property="og:url" content="https://rex59168.github.io/jinghegirl-HTML-ARG/">
+<script>
+  // 進站同意書+暱稱表單(entry.html)還沒填過的話,先導去那邊——搶在下面的
+  // iframe 標籤被瀏覽器解析、開始預先載入內容之前就先跳走,不能讓玩家在填完
+  // 表單之前就看到開機動畫或手機畫面。
+  if (localStorage.getItem('jh1f_entry_done') !== 'true') {
+    location.replace('./entry.html');
+  }
+</script>
 <link rel="stylesheet" href="assets/css/shell.css">
 <link rel="stylesheet" href="assets/css/browser-chrome.css">
 <link rel="stylesheet" href="assets/css/phone-boot.css">

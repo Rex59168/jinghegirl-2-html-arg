@@ -4,11 +4,13 @@
 // JH_I18N_EN_PATTERNS 處理「固定文字 + 動態內容拼在同一個文字節點裡」的情況
 // (例如日期/數字/玩家自訂輸入),用 regex 分離動態片段、遞迴翻譯固定片段。
 const JH_I18N_EN = {
-  // ── 進站一次性警語彈窗 ──────────────────────────────────────────
+  // ── 進站一次性警語彈窗 / 進站同意書+暱稱表單(entry.html) ────────────
   "內容提醒": "Content Notice",
   "本站故事情節含失蹤、跟蹤等令人不安的描寫,為虛構創作,建議 15 歲以上瀏覽。如你正處於類似的真實處境,請撥打 110 / 113 尋求協助。":
     "This story involves disappearance and stalking that some may find disturbing. It is a work of fiction, recommended for ages 15+. If you are in a similar real situation, please call 110 / 113 for help.",
   "我了解,繼續": "I understand, continue",
+  "→ 查看完整求助資訊": "→ View full support resources",
+  "在你繼續之前": "Before you continue",
 
   // ── 共用元件:假瀏覽器外框 / 筆記本 / 周妤的手機 ──────────────────
   "上一頁": "Back",
@@ -565,13 +567,14 @@ const JH_I18N_EN = {
   // ── xunren/correction.html ────────────────────────────────────
   "更正資訊": "Submit a Correction",
   "協尋林晞・回報表單": "Find Lin Xi · Report Form",
+  "更正時間戳": "Correct the Timestamp",
   "在你送出之前": "Before You Submit",
   "我需要知道是誰在幫忙、還有你是怎麼找到這裡的——之後如果有進展,我才知道要通知誰。":
     "I need to know who's helping and how you found this site — so if there's any progress, I'll know who to notify.",
   "你的暱稱": "Your nickname",
   "你是怎麼知道這件事的?": "How did you hear about this?",
   "例如:朋友分享連結": "e.g. a friend shared the link",
-  "正確的最後動態時間(24小時制,例如 19:41)": "The correct last-activity time (24-hour format, e.g. 19:41)",
+  "正確的最後動態時間(24小時制,例如 12:00)": "The correct last-activity time (24-hour format, e.g. 12:00)",
   "送出更正": "Submit correction",
   "已收到,謝謝你": "Received, Thank You",
   "……妳說得對,我剛剛又去看了一次,真的是 19:41。我已經把公告改了。":

@@ -92,3 +92,28 @@ button, .btn, a.btn, input[type="submit"] {
 }
 .entry-warning__continue:hover { background: #4a4a4a; }
 
+/* 進站同意書+暱稱表單(entry.html)頁面最上方的語言選擇——玩家還沒進到手機畫面
+   之前就要能切語言,不用等進了假瀏覽器才看得到 🌐 圖示。 */
+.entry-lang {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 12px 0 0;
+}
+.entry-lang__btn {
+  background: none;
+  border: 1px solid #999;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
+  min-height: auto;
+  min-width: auto;
+}
+.entry-lang__btn--active {
+  background: #333;
+  border-color: #333;
+  color: #fff;
+}
+
