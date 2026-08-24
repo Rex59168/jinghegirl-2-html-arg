@@ -4,13 +4,12 @@
 (function () {
   const DOMAIN_MAP = {
     social: "sns.today",
-    editor: "雲端",
     market: "market.tw",
     chat: "message-export.local",
     transit: "transit.jinghe.gov.tw",
     news: "jinghedaily.tw",
   };
-  const KNOWN_DIRS = ["xunren", "social", "editor", "market", "chat", "transit", "files", "news", "resources", "ending"];
+  const KNOWN_DIRS = ["xunren", "social", "market", "chat", "transit", "files", "news", "resources", "ending"];
 
   function computeUrl() {
     // 用「路徑裡有沒有出現已知目錄名」來判斷,不管實際部署在網域根目錄
@@ -118,11 +117,11 @@
   window.jhGoForwardInSite = goForwardInSite;
 
   // 多工切換畫面(殼層 shell.js)原本只有固定的「訊息/備忘錄/網站」三張卡片,
-  // 玩家實際逛過雲端相簿/社交媒體/二手平台之後,這幾個板塊也該像獨立 App 一樣
-  // 出現在多工畫面裡,點下去直接跳回上次逛到的那一頁——跟一般手機的多工畫面
-  // 只列出「玩家實際開過的 App」是同一個道理。用跟 state.js 一樣的前綴直接寫
+  // 玩家實際逛過社交媒體/二手平台之後,這幾個板塊也該像獨立 App 一樣出現在
+  // 多工畫面裡,點下去直接跳回上次逛到的那一頁——跟一般手機的多工畫面只
+  // 列出「玩家實際開過的 App」是同一個道理。用跟 state.js 一樣的前綴直接寫
   // localStorage(這頁本來就有載入 state.js,JH 物件可以直接用)。
-  const APP_TAB_MAP = { editor: "album", social: "social", market: "market" };
+  const APP_TAB_MAP = { social: "social", market: "market" };
   function trackAppTabVisit() {
     // chapter-guard.js 比這支腳本先載入,如果這頁還沒解鎖,它會呼叫
     // location.href 把玩家導回 home.html——但那個導頁不是立刻生效,同一份文件

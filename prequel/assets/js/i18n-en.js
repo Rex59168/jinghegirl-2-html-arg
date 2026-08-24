@@ -258,8 +258,8 @@ const JH_I18N_EN = {
   "周妤持續更新": "Continuously updated by Zhou Yu",
   "公告": "Announcements",
   "建站。官方公告最後聯繫時間為 17:32。": "Site launched. Officials reported the last contact time as 17:32.",
-  "晞晞在找一張光碟,只知道編號開頭是 #18_。她房間的相簿裡藏著這條線索,不知道她自己有沒有發現。":
-    "Xi Xi was looking for a disc — all we knew was the serial started with #18_. The clue was hidden in the album on her computer; I don't know if she ever noticed it herself.",
+  "晞晞在找一張光碟,只知道編號開頭是 #18_。她社群帳號私人相簿裡的一張照片藏著這條線索,不知道她自己有沒有發現。":
+    "Xi Xi was looking for a disc — all we knew was the serial started with #18_. The clue was hidden in a photo in her account's private album; I don't know if she ever noticed it herself.",
   "確認編號是 #188。這份光碟從 2023/11/06 掛在二手平台上,兩年沒人動過,留言 47 則,賣家一則都沒回——直到今年七月。":
     "Confirmed the serial number: #188. This disc has been listed on the resale site since 2023/11/06 — two years untouched, 47 comments, and the seller never replied to a single one — until this July.",
   "拿到完整對話記錄。他們約在 8/14 文昌站見面,原本 16:00,後來他說塞車改成 17:30。":
@@ -532,18 +532,15 @@ const JH_I18N_EN = {
   "周妤傳來一則新聞連結 →": "Zhou Yu sent a news link →",
   "013 不是最後一個號碼。": "013 isn't the last number.",
 
-  // ── editor/album.html ─────────────────────────────────────────
-  "雲端相簿": "Cloud Album",
-  "lin_xi 的相簿": "lin_xi's Album",
-  "此相簿已加密": "This album is encrypted",
+  // ── social/lin-xi.html 私人限定相簿(原 editor/album.html)────────
+  "她另外設了一組「私人限定」相簿,需要密碼才能查看。": "She's set up a separate password-locked private album.",
   "輸入密碼": "Enter password",
   "解鎖": "Unlock",
   "密碼不對,再確認一次周妤傳給你的訊息。": "Wrong password — double-check the message Zhou Yu sent you.",
-  "相簿・18 張照片": "Album · 18 Photos",
-  "依拍攝時間排序,由新到舊": "Sorted by date taken, newest first",
+  "私人限定・5 張照片・依時間排序,由新到舊": "Private · 5 photos · sorted by date, newest first",
 
-  // ── editor/img0431.html ───────────────────────────────────────
-  "雲端相簿・編輯紀錄": "Cloud Album · Edit History",
+  // ── social/img0431.html(原 editor/img0431.html)───────────────
+  "私人相簿・編輯紀錄": "Private Album · Edit History",
   "版本紀錄": "Version History",
   "IMG_0431 ── 版本紀錄 ├─ v1_原始 ├─ v2 圖層 2｜修補筆刷 ×11(區域:臉部) │ 圖層 3｜物件移除(區域:右下 8%) ├─ v3 圖層 5｜物件移除(區域:左上 14%) │ 圖層 6｜已隱藏":
     "IMG_0431 ── Version History\n├─ v1_original\n├─ v2  Layer 2 | Retouch brush ×11 (area: face)\n│      Layer 3 | Object removal (area: bottom-right 8%)\n├─ v3  Layer 5 | Object removal (area: top-left 14%)\n│      Layer 6 | Hidden",
@@ -579,9 +576,8 @@ const JH_I18N_EN = {
   "已收到,謝謝你": "Received, Thank You",
   "……妳說得對,我剛剛又去看了一次,真的是 19:41。我已經把公告改了。":
     "…you're right, I just went and checked again, it really is 19:41. I've already updated the notice.",
-  "對了——我把她雲端相簿的密碼傳給你了:": "Oh — I sent you the password to her cloud album:",
-  "我一直沒敢自己點進去看,你能不能幫我看看裡面有沒有什麼?": "I never had the guts to look through it myself. Could you check if there's anything in there?",
-  "前往她的雲端相簿 →": "Go to her cloud album →",
+  "對了——她的帳號有一組私人限定相簿要密碼才看得到,我把密碼傳給妳了:linxi0417。我一直沒敢自己點進去看,妳能不能幫我看看裡面有沒有什麼?":
+    "Oh — her account has a password-locked private album. I sent you the password: linxi0417. I never had the guts to look through it myself. Could you check if there's anything in there?",
   "時間好像不太對,你再確認一次她最後一則動態的時間戳。": "That time doesn't look right — double-check the timestamp on her last post.",
 
   // ── xunren/rebuild-0814.html ──────────────────────────────────
@@ -681,8 +677,6 @@ const JH_I18N_EN_PATTERNS = [
   { re: /^〔已編輯〕([\s\S]+)$/, build: (m, tr) => `〔Edited〕${tr(m[1])}` },
   // 對話重排謎題:已放置訊息的「時間・點一下拿回來重排」
   { re: /^(\d{2}\/\d{2} \d{2}:\d{2})・點一下拿回來重排$/, build: (m) => `${m[1]} · tap to pick it back up` },
-  // 假瀏覽器網址列:雲端相簿的網域顯示
-  { re: /^雲端(\/.*)?$/, build: (m) => `Cloud${m[1] || ""}` },
   // 二手平台留言數「X 則」或「X 則・賣家回覆 Y 則」
   {
     re: /^(\d+) 則(?:・賣家回覆 (\d+) 則)?$/,
@@ -714,7 +708,7 @@ const JH_I18N_EN_PATTERNS = [
     re: /^(\d{2}:\d{2}) (進站|出站)$/,
     build: (m) => `${m[1]} ${m[2] === "進站" ? "Entry" : "Exit"}`,
   },
-  // 雲端相簿縮圖備註「── IMG_xxxx:沒有異常,普通生活照。」
+  // 私人限定相簿縮圖備註「── IMG_xxxx:沒有異常,普通生活照。」
   {
     re: /^── (IMG_\d+):沒有異常,普通生活照。$/,
     build: (m) => `── ${m[1]}: nothing unusual, just an ordinary photo.`,

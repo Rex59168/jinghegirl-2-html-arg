@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<base href="../">
+<title>社交媒體</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<link rel="stylesheet" href="assets/css/browser-chrome.css">
+<link rel="stylesheet" href="assets/css/widgets.css">
+<link rel="stylesheet" href="assets/css/site-social.css">
+</head>
+<body class="site-social">
+
+<header class="ig-appbar">
+  <span class="ig-appbar__icon">📷</span>
+  <span class="ig-appbar__brand">晴語</span>
+  <span class="ig-appbar__actions"><span>♡</span><span>✉️</span></span>
+</header>
+
+<div class="story-rail ig-storyrail" id="story-rail">
+  <button type="button" class="story-item" data-story="tea">
+    <span class="story-ring">🧋</span>
+    <span class="ts">tea.ling_</span>
+  </button>
+  <button type="button" class="story-item" data-story="cat">
+    <span class="story-ring">🐱</span>
+    <span class="ts">tiny.catcat</span>
+  </button>
+  <a class="story-item" href="social/lin-xi.html" style="text-decoration:none;color:inherit;">
+    <span class="story-ring">🌑</span>
+    <span class="ts">linxi_0417</span>
+  </a>
+  <button type="button" class="story-item" data-story="idol">
+    <span class="story-ring">🎤</span>
+    <span class="ts">noctis_fan_tw</span>
+  </button>
+  <button type="button" class="story-item" data-story="sport">
+    <span class="story-ring">🏀</span>
+    <span class="ts">kevin.b07</span>
+  </button>
+  <button type="button" class="story-item" data-story="dessert">
+    <span class="story-ring">🍰</span>
+    <span class="ts">dessert.diary</span>
+  </button>
+</div>
+
+<main class="container" id="feed-list"></main>
+
+<div class="ig-tabnav">
+  <span class="active">🏠</span><span>🔍</span><span>➕</span><span>🎬</span><span>👤</span>
+</div>
+
+<div class="story-viewer" id="story-viewer">
+  <div class="sv-progress" id="sv-progress"><span class="active"></span></div>
+  <div class="sv-top">
+    <div class="handle" id="sv-handle"></div>
+    <button type="button" class="sv-close" id="sv-close" aria-label="關閉">✕</button>
+  </div>
+  <div class="sv-body" id="sv-body"></div>
+</div>
+
+<p style="text-align:center;margin:20px 0;">
+  <a href="home.html">← 回協尋站</a>
+</p>
+
+<script src="assets/js/state.js"></script>
+<script src="assets/js/entry-warning.js"></script>
+<script src="assets/js/chapter-guard.js"></script>
+<script src="assets/js/t2s-map.js"></script>
+<script src="assets/js/i18n-en.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/browser-chrome.js"></script>
+<script src="assets/js/notebook.js"></script>
+<script src="assets/js/hint.js"></script>
+<script src="assets/js/ambient.js"></script>
+<script>
+// 社交媒體 App 平常點進來的樣子——別人的動態牆,跟這起案件完全無關,單純
+// 營造「這是一個真的有人在用的社群平台」的日常感。林晞的帳號只是牆上會
+// 混到的其中一則貼文,不用另外特別強調她,跟真的追蹤名單裡混著陌生帳號
+// 是一樣的感覺。
+const FEED_POSTS = [
+  { handle: "tea.ling_", color: "#c98b4b", photo: "tea", emoji: "🧋", caption: "貢茶買一送一衝了,今天決定波霸半糖", likes: 89, time: "2 小時前" },
+  { handle: "tiny.catcat", color: "#a97c50", photo: "cat", emoji: "🐱", caption: "皮蛋今天在紙箱裡睡了一整天,家裡最忙的就是牠", likes: 152, time: "3 小時前" },
+  { handle: "linxi_0417", color: "#555", photo: "exam", emoji: "📖", caption: "模擬考終於考完啦啦啦啦啦", likes: 52, time: "5 小時前", link: "social/lin-xi.html" },
+  { handle: "noctis_fan_tw", color: "#8f5fae", photo: "idol", emoji: "🎤", caption: "巡演周邊到貨,今晚拆團開箱,已經緊張到手抖", likes: 210, time: "6 小時前" },
+  { handle: "kevin.b07", color: "#e2762f", photo: "sport", emoji: "🏀", caption: "校隊晉級啦!!下禮拜決賽,大家記得幫我加油", likes: 76, time: "8 小時前" },
+  { handle: "rain.diary_north", color: "#5c7186", photo: "rain", emoji: "🌧️", caption: "靖河這幾天雨一直下,傘都快壞了,好想放晴", likes: 45, time: "昨天" },
+  { handle: "dessert.diary", color: "#d97a97", photo: "dessert", emoji: "🍰", caption: "排隊三小時終於吃到那家可頌,值得", likes: 98, time: "2 天前" },
+  { handle: "jh_study_diary", color: "#7f97b8", photo: "study", emoji: "📚", caption: "暑輔第一天,教室冷氣壞掉,想哭", likes: 29, time: "3 天前" },
+];
+
+const feedList = document.getElementById("feed-list");
+FEED_POSTS.forEach((p) => {
+  const post = document.createElement("article");
+  post.className = "ig-post";
+  const handleHtml = p.link ? `<a href="${p.link}">${p.handle}</a>` : p.handle;
+  post.innerHTML = `
+    <div class="ig-post__head">
+      <div class="ig-avatar-sm" style="background:${p.color}">${p.handle.slice(0,1).toUpperCase()}</div>
+      <div class="ig-post__who">
+        <span class="ig-post__handle">${handleHtml}</span>
+        <span class="ig-post__time">${p.time}</span>
+      </div>
+    </div>
+    <div class="ig-photo ig-photo--${p.photo}">${p.emoji}</div>
+    <div class="ig-post__actions">♡ 💬 ➤</div>
+    <div class="ig-post__likes">${p.likes} 個讚</div>
+    <div class="ig-post__caption"><b>${p.handle}</b>${p.caption}</div>
+    <div class="ig-post__comments">查看全部留言</div>
+  `;
+  feedList.appendChild(post);
+});
+
+// 限動列的其他帳號都只是氛圍用的填充內容,點開只有一句不痛不癢的敘述,
+// 跟這起案件無關——林晞那一顆(linxi_0417)是真的連結,不用這支腳本處理。
+const FILLER_STORIES = {
+  tea: "貢茶買一送一,今天終於排到我了。",
+  cat: "皮蛋:今天也是躺平的一天。",
+  idol: "周邊到貨,拆團拆到一半先發個限動。",
+  sport: "練球練到腿快斷,晉級值得。",
+  dessert: "排隊排到懷疑人生,但真的好吃。",
+};
+
+const viewer = document.getElementById("story-viewer");
+const svHandle = document.getElementById("sv-handle");
+const svBody = document.getElementById("sv-body");
+document.querySelectorAll(".story-item[data-story]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const key = btn.dataset.story;
+    svHandle.textContent = btn.querySelector(".ts").textContent;
+    svBody.innerHTML = `<div>${FILLER_STORIES[key] || ""}</div>`;
+    viewer.classList.add("open");
+  });
+});
+document.getElementById("sv-close").addEventListener("click", () => viewer.classList.remove("open"));
+</script>
+</body>
+</html>

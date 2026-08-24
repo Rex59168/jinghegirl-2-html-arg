@@ -84,3 +84,140 @@ body.site-social {
 }
 .site-social .story-viewer .sv-progress span.active { background: #fff; }
 .site-social .story-viewer .sv-caption { font-size: 13px; opacity: .7; margin-top: 10px; }
+
+/* ══════════════════ IG 風格新元件 ══════════════════
+   這個環境對外連線有網域白名單,抓不到真的圖床(picsum/unsplash/pexels/
+   pixabay 都被閘道擋掉),配圖改用漸層色塊 + 情境 emoji 拼,完全自包、
+   不依賴外部圖源,也不會有拿真人臉照片去演一個(可能已經死亡的)失蹤
+   高中生這種問題——跟林晞原本的頭像一樣,全部走純色/漸層,不用真人臉。 */
+.site-social .ig-appbar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  position: sticky; top: 40px;
+  background: #fff;
+  z-index: 10;
+}
+.site-social .ig-appbar__icon { font-size: 20px; opacity: .8; }
+.site-social .ig-appbar__brand { font-family: "Brush Script MT", cursive; font-size: 22px; font-weight: 700; flex: 1; }
+.site-social .ig-appbar__actions { display: flex; gap: 14px; font-size: 19px; opacity: .8; }
+
+.site-social .ig-stats {
+  display: flex; gap: 22px;
+  padding: 4px 16px 12px;
+  font-size: 13px;
+}
+.site-social .ig-stats b { display: block; font-size: 15px; }
+.site-social .ig-bio { padding: 0 16px 12px; font-size: 13px; color: #555; line-height: 1.6; }
+
+.site-social .ig-avatar-sm {
+  width: 44px; height: 44px; border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 15px;
+}
+
+.site-social .ig-post { margin: 0 0 14px; border-bottom: 1px solid #f0f0f0; padding-bottom: 6px; }
+.site-social .ig-post__head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px;
+}
+.site-social .ig-post__who { flex: 1; min-width: 0; }
+.site-social .ig-post__handle { font-weight: 600; font-size: 13px; display: block; }
+.site-social .ig-post__handle a { color: inherit; text-decoration: none; }
+.site-social .ig-post__time { font-size: 11px; color: #999; }
+
+.site-social .ig-photo {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 46px;
+  position: relative;
+  overflow: hidden;
+}
+.site-social .ig-photo--tea { background: linear-gradient(160deg,#f6d190,#c98b4b); }
+.site-social .ig-photo--cat { background: linear-gradient(160deg,#e8c9a0,#a97c50); }
+.site-social .ig-photo--study { background: linear-gradient(160deg,#c9d6e8,#7f97b8); }
+.site-social .ig-photo--idol { background: linear-gradient(160deg,#d8b8e8,#8f5fae); }
+.site-social .ig-photo--sport { background: linear-gradient(160deg,#ffcf8a,#e2762f); }
+.site-social .ig-photo--rain { background: linear-gradient(160deg,#aebfce,#5c7186); }
+.site-social .ig-photo--dessert { background: linear-gradient(160deg,#f7c9d6,#d97a97); }
+.site-social .ig-photo--school { background: linear-gradient(160deg,#bcd6c9,#5f8f79); }
+.site-social .ig-photo--window { background: linear-gradient(160deg,#dce8f2,#9db8cc); }
+.site-social .ig-photo--drink { background: linear-gradient(160deg,#f4e2a8,#d1a441); }
+.site-social .ig-photo--metro { background: linear-gradient(160deg,#c7c9d1,#6b6f7a); }
+.site-social .ig-photo--alley { background: linear-gradient(160deg,#7c7f8c,#3a3c46); }
+.site-social .ig-photo--typhoon { background: linear-gradient(160deg,#9fb0bd,#4c5c68); }
+.site-social .ig-photo--headphone { background: linear-gradient(160deg,#c8a8e8,#7c53a8); }
+.site-social .ig-photo--fried { background: linear-gradient(160deg,#f0b46a,#c9762c); }
+.site-social .ig-photo--ac { background: linear-gradient(160deg,#a9c6e8,#5b82ad); }
+.site-social .ig-photo--karaoke { background: linear-gradient(160deg,#e89ab0,#b04f70); }
+.site-social .ig-photo--haircut { background: linear-gradient(160deg,#d9c3a9,#a17c53); }
+.site-social .ig-photo--exam { background: linear-gradient(160deg,#c3ccd9,#7f8ba3); }
+.site-social .ig-photo--dark { background: linear-gradient(160deg,#2a2c33,#0c0d10); font-size: 13px; color: #666; }
+
+.site-social .ig-post__actions { padding: 8px 16px 0; font-size: 20px; }
+.site-social .ig-post__likes { padding: 2px 16px 0; font-size: 13px; font-weight: 600; }
+.site-social .ig-post__caption { padding: 4px 16px 0; font-size: 13px; line-height: 1.6; }
+.site-social .ig-post__caption b { margin-right: 6px; }
+.site-social .ig-post__comments { padding: 4px 16px 0; font-size: 12px; color: #999; }
+
+.site-social .ig-storyrail .story-ring {
+  border-color: #e0995c;
+  background: linear-gradient(160deg,#3a3c46,#17181a);
+  font-size: 22px;
+  color: #fff;
+}
+
+/* 私人限定相簿:密碼門(嵌在她個人頁下方,不是獨立頁面) */
+.site-social .ig-lock {
+  margin: 16px;
+  padding: 18px;
+  border: 1px dashed #ccc;
+  border-radius: 12px;
+  text-align: center;
+}
+.site-social .ig-lock__icon { font-size: 26px; margin-bottom: 6px; }
+.site-social .ig-lock input[type="password"] {
+  width: 100%;
+  max-width: 260px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 15px;
+  margin: 10px 0;
+  text-align: center;
+}
+.site-social .ig-lock button.unlock {
+  background: #111; color: #fff; border: none;
+  border-radius: 8px; padding: 9px 20px; font-size: 14px;
+}
+.site-social .ig-lock .err { color: #c0392b; font-size: 12px; min-height: 16px; }
+
+.site-social .ig-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin: 0 16px 16px;
+}
+.site-social .ig-grid a.ig-photo,
+.site-social .ig-grid button.ig-photo {
+  border: none; cursor: pointer; padding: 0;
+  aspect-ratio: 1;
+}
+.site-social .ig-grid .ig-grid__star {
+  position: absolute; top: 6px; right: 6px;
+  font-size: 13px;
+}
+.site-social .ig-grid-note { padding: 0 16px; font-size: 12px; color: #999; min-height: 18px; }
+
+.site-social .ig-tabnav {
+  position: sticky; bottom: 0;
+  display: flex; justify-content: space-around;
+  padding: 12px 0;
+  background: #fff;
+  border-top: 1px solid #eee;
+  font-size: 20px;
+}
+.site-social .ig-tabnav span.active { opacity: 1; }
+.site-social .ig-tabnav span { opacity: .35; }
