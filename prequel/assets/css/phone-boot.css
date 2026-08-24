@@ -382,6 +382,20 @@
   text-overflow: ellipsis;
 }
 
+/* 線索通知橫幅:跟訊息通知共用 .jh-notif 外觀,錯開到下面一排、換個圖示
+   顏色,兩則通知同時跳出來時不會疊在一起、也分得出是哪一種。收合時的位移
+   量改用固定像素(不是繼承 .jh-notif 的 -140%),不然 top 加大之後,同樣
+   百分比位移量不夠把它整個推出畫面外,會在「隱藏」狀態下還擋住下面的元素、
+   吃掉點擊。 */
+.jh-clue-notif {
+  top: 96px;
+  transform: translateY(-200px);
+}
+.jh-clue-notif.jh-notif--visible { transform: translateY(6px); }
+.jh-clue-notif .jh-notif__icon {
+  background: linear-gradient(160deg, #f0a742, #d97706);
+}
+
 /* ══════════════════ 備忘錄 App(已知事項清單) ══════════════════
    跟 .jh-messages / .jh-mail 佔一樣的範圍,從主畫面「備忘錄」圖示點進來。純粹是
    一份事實清單,不用聯絡人/對話串那層,面板是單一列表。z-index 特意設得比訊息

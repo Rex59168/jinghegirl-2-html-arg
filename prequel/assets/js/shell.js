@@ -702,6 +702,36 @@
     document.getElementById("jh-boot-notes").addEventListener("click", openNotes);
     document.getElementById("jh-notes-close").addEventListener("click", closeNotes);
 
+    // ── 線索通知橫幅:iframe 裡任何一頁呼叫 JHNotebook.add(...) 新增一筆
+    // *還沒記錄過* 的線索時,會跳出這個橫幅(跟訊息通知同一套視覺,錯開位置
+    // 避免疊在一起),點一下直接開備忘錄查看剛蒐集到的那則線索。 ──
+    const clueNotif = document.createElement("div");
+    clueNotif.className = "jh-notif jh-clue-notif";
+    clueNotif.id = "jh-clue-notif";
+    clueNotif.innerHTML = `
+      <div class="jh-notif__icon">📝</div>
+      <div class="jh-notif__text">
+        <div class="jh-notif__title">已記錄新線索</div>
+        <div class="jh-notif__body" id="jh-clue-notif-body"></div>
+      </div>
+    `;
+    document.body.appendChild(clueNotif);
+
+    let clueNotifTimer = null;
+    window.jhClueNotify = function jhClueNotify(text) {
+      renderNotesBadge();
+      document.getElementById("jh-clue-notif-body").textContent = text;
+      clueNotif.classList.add("jh-notif--visible");
+      clearTimeout(clueNotifTimer);
+      clueNotifTimer = setTimeout(() => clueNotif.classList.remove("jh-notif--visible"), 5000);
+    };
+    clueNotif.addEventListener("click", () => {
+      clueNotif.classList.remove("jh-notif--visible");
+      clearTimeout(clueNotifTimer);
+      closeAllPanelsForSwitch();
+      openNotes();
+    });
+
     // iframe 裡任何一頁呼叫 JHNotebook.add(...) 都會透過這個跨框呼叫通知殼層
     // 立刻更新角標數字,不用等玩家自己點開備忘錄才看到最新數字。
     window.jhRefreshNotesBadge = renderNotesBadge;
