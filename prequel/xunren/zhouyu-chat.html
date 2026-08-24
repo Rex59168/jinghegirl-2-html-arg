@@ -23,12 +23,11 @@
     <p><strong>我</strong> 16:41・去哪?</p>
     <p id="vague-line" style="cursor:pointer;padding:6px 8px;border-radius:6px;">
       <strong>晞晞</strong> 16:43・<span style="border-bottom:2px dotted #b3261e;">跟同學去買東西</span>
+      <span id="vague-line-note" style="display:none;margin-left:8px;font-size:12px;color:#b3261e;">這裡不對勁 — 周妤</span>
     </p>
     <p><strong>我</strong> 16:44・喔好,早點回家</p>
     <p><strong>晞晞</strong> 16:44・知道啦</p>
   </section>
-
-  <p style="text-align:center;margin-top:14px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
 </main>
 
 <script src="assets/js/state.js"></script>
@@ -47,7 +46,7 @@ JHPhone.push("open_zhouyuchat", "這是我跟她那天的對話紀錄。我一�
 </script>
 <script>
 function complete() {
-  document.getElementById("back-link").style.display = "block";
+  document.getElementById("vague-line-note").style.display = "inline";
   JH.set("ch4_t4", true);
   JHNotebook.add(
     "ch4_t4",

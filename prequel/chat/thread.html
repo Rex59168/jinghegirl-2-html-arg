@@ -28,12 +28,6 @@
 
 <div class="chat-thread" id="after-thread" style="display:none;"></div>
 
-<div class="chat-note" id="chat-note" style="display:none;">
-  你有沒有發現——他每次回覆的間隔,幾乎都精準落在 8 到 12 分鐘之間。一個半月來,從無例外。
-  <br><br>
-  <button type="button" class="chat-continue-btn" id="continue-btn">重建 8/14 那一天 →</button>
-</div>
-
 <p style="color:#ece5dd;font-size:12px;text-align:center;margin-top:40px;user-select:text;">已讀不代表安全。</p>
 
 <script src="assets/js/state.js"></script>
@@ -167,9 +161,10 @@ function solveReorder() {
   DATA.reorder.forEach((m) => afterEl.appendChild(bubble(m)));
   DATA.after.forEach((m) => afterEl.appendChild(bubble(m)));
 
-  document.getElementById("chat-note").style.display = "block";
-
-  JH.set("ch3_done", true);
+  // 排序完成本身就是發現——不需要另外一顆「繼續」按鈕。被動記下線索,
+  // 並在跟周妤的訊息串裡放一張已經編輯好的快捷回覆卡片,玩家自己決定
+  // 什麼時候按傳送;ch3_done、後續回覆跟給下一章連結的動作,都要等玩家
+  // 真的按下傳送才會發生(見殼層的 QUICK_REPLIES.ch3_quickreply)。
   JHNotebook.add(
     "ch3_meetup",
     "約定成立:8/14 16:00,河西・文昌站 2 號出口,連鎖咖啡廳",
@@ -182,12 +177,8 @@ function solveReorder() {
   );
 
   window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  JHPhone.push("nudge_ch4", "約定確認了,我們來重建 8/14 那天。", "xunren/rebuild-0814.html");
+  JHPhone.pushQuickReply("ch3_quickreply", "妳有沒有發現——他每次回覆的間隔,幾乎都精準落在 8 到 12 分鐘之間。一個半月來,從無例外。");
 }
-
-document.getElementById("continue-btn").addEventListener("click", () => {
-  window.location.href = "xunren/rebuild-0814.html";
-});
 </script>
 </body>
 </html>

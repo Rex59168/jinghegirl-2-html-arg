@@ -104,13 +104,3 @@ body.site-market {
   border-radius: 6px;
 }
 .site-market .pager button:disabled { opacity: .4; }
-
-.site-market .confirm-btn {
-  margin-top: 10px;
-  background: #c94b1e;
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-}

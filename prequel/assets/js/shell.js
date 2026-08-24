@@ -205,6 +205,38 @@
       },
     };
 
+    // 快捷回覆:跟上面的 CLUE_REQUESTS(多選、可能選錯)不一樣,這種情境是玩家
+    // 在內容頁被動拿到一句「已經幫她編輯好」的回覆,沒有選擇的餘地、也沒有答錯
+    // 這回事,回訊息串裡只是等玩家自己按下傳送——對應 JHPhone.pushQuickReply(...),
+    // key 是傳進來的 id,onSend() 是玩家按下傳送之後才觸發的效果(周妤看到這句話
+    // 之後的反應),不是一打開就自動發生。
+    const QUICK_REPLIES = {
+      ch2_quickreply: {
+        onSend() {
+          jhSet("ch2_done", true);
+          pushZY("ch2_zy_msg1", "……#188?兩年都沒人接手喔。");
+          setTimeout(() => {
+            pushZY("ch2_zy_msg2", "上架這麼久都沒降價、沒下架,留言也沒人回——這帳號本來就怪怪的。我把完整的對話記錄傳給妳。");
+          }, 900);
+          setTimeout(() => {
+            pushZY("ch2_zy_msg3", "message-export.local/thread", "chat/thread.html");
+          }, 1500);
+        },
+      },
+      ch3_quickreply: {
+        onSend() {
+          jhSet("ch3_done", true);
+          pushZY("ch3_zy_msg1", "……回覆間隔都卡在 8 到 12 分鐘?這也太規律了吧。");
+          setTimeout(() => {
+            pushZY("ch3_zy_msg2", "我們把 8/14 那天,一件一件重新弄清楚。");
+          }, 900);
+          setTimeout(() => {
+            pushZY("ch3_zy_msg3", "xun-lin-xi.github.io/xunren/rebuild-0814", "xunren/rebuild-0814.html");
+          }, 1500);
+        },
+      },
+    };
+
     // ── 手機狀態列 ──
     const statusBar = document.createElement("div");
     statusBar.className = "jh-status-bar";
@@ -652,6 +684,44 @@
       if (handler && typeof handler.onCorrect === "function") handler.onCorrect();
     }
 
+    // 快捷回覆卡片:內容頁被動拿到線索的當下,已經幫玩家把要回給周妤的話編輯
+    // 好了,訊息串裡只用一張卡片預覽這句話 + 一顆「傳送」按鈕,不需要像
+    // CLUE_REQUESTS 那樣挑選/可能選錯——按下去才會真的變成一則"me"的訊息。
+    function mountQuickReplyWidget(entry) {
+      const wrap = document.createElement("div");
+      wrap.className = "jh-messages__quickreply";
+      const label = document.createElement("div");
+      label.className = "jh-messages__quickreply-label";
+      label.textContent = "已編輯好回覆,傳送給周妤:";
+      const draft = document.createElement("div");
+      draft.className = "jh-messages__quickreply-draft";
+      draft.textContent = entry.text;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "jh-messages__quickreply-send";
+      btn.textContent = "傳送";
+      wrap.appendChild(label);
+      wrap.appendChild(draft);
+      wrap.appendChild(btn);
+      threadBodyEl.appendChild(wrap);
+      btn.addEventListener("click", () => resolveQuickReply(entry, wrap));
+    }
+
+    function resolveQuickReply(entry, wrap) {
+      // 標記成已傳送——重開對話串就不會再看到可以互動的卡片,只留下送出後
+      // 那則真正的"me"訊息(下面用另一個 id 記錄,跟草稿卡片本身分開)。
+      const log = phoneLog();
+      const found = log.find((m) => m.id === entry.id);
+      if (found && found.quickReply) found.quickReply.resolved = true;
+      jhSet("phone_log", log);
+      wrap.remove();
+
+      deliverPhoneEntry({ id: entry.id + "_sent", text: entry.text, from: "me" });
+
+      const handler = QUICK_REPLIES[entry.id];
+      if (handler && typeof handler.onSend === "function") handler.onSend();
+    }
+
     function appendThreadEntry(entry) {
       if (entry.clue) {
         // 中性提示,不是任何一方的發言——不套 .jh-messages__bubble,才不會
@@ -661,6 +731,12 @@
         note.textContent = entry.text;
         threadBodyEl.appendChild(note);
         if (!entry.clue.resolved) mountClueWidget(entry);
+        return;
+      }
+      if (entry.quickReply) {
+        // 已經傳送過的草稿不用再畫出來——送出當下已經另外記錄成一則真正的
+        // "me"訊息(entry.id + "_sent"),重開對話串會看到那則,不是這張卡片。
+        if (!entry.quickReply.resolved) mountQuickReplyWidget(entry);
         return;
       }
       threadBodyEl.appendChild(bubble(entry.text, entry.from || "them", entry.href));
@@ -756,6 +832,14 @@
         return;
       }
 
+      // 快捷回覆卡片是幫玩家編輯好、等玩家自己按傳送的草稿,不是周妤傳來的
+      // 訊息——同樣不跳她名字的通知橫幅,只更新角標,玩家自己找時間去看。
+      if (entry.quickReply) {
+        renderBadge();
+        renderContacts();
+        return;
+      }
+
       renderBadge();
       messageNotif.show(entry.text);
     }
@@ -769,6 +853,15 @@
         href: null,
         from: "them",
         clue: { expectedId, wrongMessage, resolved: false },
+      });
+    };
+    window.jhReceiveQuickReply = function jhReceiveQuickReply(id, draftText) {
+      deliverPhoneEntry({
+        id,
+        text: draftText,
+        href: null,
+        from: "them",
+        quickReply: { resolved: false },
       });
     };
     // 玩家在她的訊息帳號頁(xunren/correction.html)點「加好友」時呼叫——

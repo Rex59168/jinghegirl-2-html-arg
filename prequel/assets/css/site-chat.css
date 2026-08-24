@@ -104,27 +104,6 @@ body.site-chat {
   box-shadow: 0 0 0 2px rgba(217,102,29,.2);
 }
 
-.chat-note {
-  background: #222;
-  color: #eee;
-  margin: 14px 12px;
-  padding: 12px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  line-height: 1.7;
-}
-
-.chat-continue-btn {
-  display: block;
-  margin: 14px auto;
-  background: #2b4d7e;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
 /* 第五章:標註工具 */
 .chat-msg.taggable { cursor: pointer; }
 .chat-msg .tag-chip {
@@ -238,7 +217,6 @@ body.site-chat {
   .site-chat > p,
   .site-chat .chat-thread,
   .site-chat .reorder-box,
-  .site-chat .chat-note,
   .site-chat .tag-legend,
   .site-chat .tag-check-bar,
   .site-chat .reveal-block {

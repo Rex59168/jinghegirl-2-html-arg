@@ -32,4 +32,12 @@ const JHPhone = {
   addZYFriend() {
     this._call("jhAddZYFriend");
   },
+  // pushQuickReply — 內容頁被動拿到線索的當下(不用玩家自己按確認鈕),
+  // 已經幫玩家把要回給周妤的那句話編輯好了,訊息串裡只會出現一張草稿卡片
+  // + 一顆傳送鈕,玩家自己決定什麼時候按下傳送。跟 pushClue 不一樣的地方
+  // 是這裡沒有「答錯」這回事,只有送出/還沒送出兩種狀態,送出之後的效果
+  // (周妤看到這句話的反應)定義在殼層的 QUICK_REPLIES 裡。
+  pushQuickReply(id, draftText) {
+    this._call("jhReceiveQuickReply", id, draftText);
+  },
 };

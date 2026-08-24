@@ -382,6 +382,41 @@
 .jh-messages .clue-picker { z-index: 1650; }
 .jh-messages .clue-picker__backdrop { z-index: 1649; }
 
+/* ── 快捷回覆卡片:內容頁被動拿到線索時,已經幫玩家把要回給周妤的話編輯
+   好了,訊息串裡只是預覽這句話 + 一顆傳送鈕,不用像線索確認題那樣挑選。
+   刻意做成「草稿」的樣子(虛線框、跟"me"泡泡一樣靠右對齊但不是實心藍底),
+   跟已經送出的訊息泡泡明顯不同,玩家才不會分不清楚這句話到底送出去了沒。 ── */
+.jh-messages__quickreply {
+  align-self: flex-end;
+  max-width: 85%;
+  background: #eef5fc;
+  border: 1px dashed #9cbde0;
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.jh-messages__quickreply-label {
+  font-size: 11px;
+  color: #6a86a3;
+  margin-bottom: 4px;
+}
+.jh-messages__quickreply-draft {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1a3a5c;
+  white-space: pre-wrap;
+}
+.jh-messages__quickreply-send {
+  display: block;
+  margin: 8px 0 0 auto;
+  background: #4a90d9;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
 /* ── 頂部通知橫幅:iframe 裡任何一頁呼叫 JHPhone.push(...) 都會冒出這個,
    不受 .jh-boot 的顯示狀態限制——不管玩家當下在瀏覽哪一頁都看得到,點一下
    直接跳進周妤的對話串。z-index 比訊息 App、主畫面都高,是最上層。 ── */

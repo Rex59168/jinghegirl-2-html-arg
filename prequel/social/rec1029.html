@@ -48,10 +48,7 @@
     <p id="mutual-friend-note" style="display:none;font-size:12px;color:#999;margin-top:4px;"></p>
   </div>
 
-  <div class="card" style="text-align:center;">
-    <p style="font-size:13px;color:#666;">你已經看完他的貼文了。三年份,日常得不能再日常。</p>
-    <button type="button" class="btn" id="confirm-ok" style="background:#333;color:#fff;border:none;padding:10px 20px;border-radius:8px;">回訊息給周妤:這個帳號看起來沒問題</button>
-  </div>
+  <p style="text-align:center;font-size:12px;color:#bbb;margin:20px 0 0;">三年份,日常得不能再日常。</p>
 </main>
 
 <div id="report-toast" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:100;">
@@ -98,21 +95,27 @@ document.getElementById("report-btn").addEventListener("click", () => {
   setTimeout(() => (toast.style.display = "none"), 2400);
 });
 
-if (JH.get("ch4_t3")) {
-  document.getElementById("confirm-ok").disabled = true;
-}
-
-document.getElementById("confirm-ok").addEventListener("click", () => {
-  document.getElementById("confirm-ok").disabled = true;
+// 玩家自己滑到底、把三年份貼文都看完,這件事本身就是發現——不需要另外
+// 按一顆「回報」鈕。改成周妤主動傳訊息過來:她看得到玩家看到哪裡(這是
+// 她自己的協尋站),滑到底之後她才主動提起自己也查過這個帳號。
+function onScrolledToEnd() {
+  if (JH.get("ch4_t3")) return;
   JH.set("ch4_t3", true);
   JHNotebook.add(
     "ch4_t3",
     "她查過他的帳號:三年歷史、生活照、共同好友——看起來沒問題",
     "social/rec1029.html"
   );
-  JHPhone.push("ch4_t3_me", "這個帳號看起來沒問題,三年貼文、共同好友都對得上。", null, "me");
-  JHPhone.push("ch4_t3_zy", "我那時候也點進去看過。三年的貼文、共同好友,看起來就是個普通的收藏圈同好。如果是我先看到,我大概也會跟她說「應該沒問題吧」。");
-});
+  JHPhone.push("ch4_t3_zy", "欸,妳把他的貼文全滑完了嗎?我之前也點進去看過,三年貼文、共同好友都對得上,看起來就是個普通的收藏圈同好。如果是我先看到,我大概也會跟妳說「應該沒問題吧」。");
+}
+
+if (!JH.get("ch4_t3")) {
+  window.addEventListener("scroll", () => {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 40) {
+      onScrolledToEnd();
+    }
+  });
+}
 </script>
 </body>
 </html>
