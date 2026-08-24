@@ -114,7 +114,13 @@
 
   function phoneLog() { return jhGet("phone_log", []); }
   function readIds() { return jhGet("phone_read_ids", []); }
+  // 周妤不是一開始就在通訊錄裡——玩家要先在協尋站上加她好友(xunren/
+  // correction.html,她的訊息帳號頁),她才會出現在訊息 App 的聯絡人清單裡。
+  // 在那之前就先在別的頁面發現的線索,還是會照樣存進 phone_log(等加了好友
+  // 一次看到),只是不會計進未讀角標、不會出現在清單上。
+  function zyFriended() { return jhGet("zy_friend_added", false); }
   function unreadCount() {
+    if (!zyFriended()) return 0;
     const read = readIds();
     return phoneLog().filter((m) => !read.includes(m.id)).length;
   }
@@ -129,8 +135,9 @@
 
     // 各個提交型謎題「答對之後要做的事」——原本寫在各自的內容頁裡,現在確認
     // 這個動作整個搬進跟周妤的訊息串完成,所以「答對」的後續效果也一起搬過來
-    // 這裡執行,key 對應的是 JHPhone.pushClue(...) 傳進來、周妤問問題那則訊息
-    // 的 id。
+    // 這裡執行,key 對應的是 JHPhone.pushClue(...) 傳進來、那則中性系統提示的
+    // id。答對之後的回覆才是周妤真正在講話(她是在回應玩家剛剛傳給她的東西,
+    // 不是無中生有地已經知道答案)。
     const CLUE_REQUESTS = {
       ch0_ask: {
         onCorrect() {
@@ -526,11 +533,12 @@
     function renderContacts() {
       contactsEl.innerHTML = "";
       const unread = unreadCount();
-      // 周妤在玩家傳出更正時間、她第一次回訊息之前不會出現在聯絡人清單裡——
-      // 開頭手機裡本來就有的家人朋友不受影響,周妤要等真的傳來第一則訊息才會
-      // 「加進」通訊錄,跟真實手機認識新朋友的順序一樣。
+      // 周妤在玩家去她的訊息帳號頁(xunren/correction.html)加她好友之前,
+      // 不會出現在聯絡人清單裡——開頭手機裡本來就有的家人朋友不受影響,
+      // 周妤要玩家自己主動加過好友才會「加進」通訊錄,跟真實手機認識新
+      // 朋友的順序一樣,不是她單方面知道要來找你。
       const rows = [
-        ...(phoneLog().length > 0 ? [{ id: ZY_ID, name: ZY_NAME, color: "#4a6fa5", unread }] : []),
+        ...(zyFriended() ? [{ id: ZY_ID, name: ZY_NAME, color: "#4a6fa5", unread }] : []),
         ...FILLER_CONTACTS.map((c) => ({ id: c.id, name: c.name, color: c.color, unread: 0 })),
       ];
       rows.forEach((r) => {
@@ -566,10 +574,12 @@
       return el;
     }
 
-    // 線索確認題:周妤在訊息裡直接問「妳看到的是不是這個」,底下接一塊線索
-    // 選擇器(重用內容頁那套 JHClueSystem,靠上面補的 window.JHNotebook 讀到
-    // 已蒐集的線索)。玩家從自己蒐集到的線索裡挑一則回覆她,答對才會真的推進
-    // 劇情——這樣「確認」這件事完全發生在私訊裡,不在任何一頁網頁上。
+    // 線索確認題:不是周妤主動傳訊息問「妳看到的是不是這個」——她沒有理由
+    // 已經知道玩家剛剛在哪頁發現了什麼。這裡改成中性的系統提示(置中、灰字,
+    // 不套訊息泡泡樣式,不算任何一方講的話),底下接一塊線索選擇器(重用內容頁
+    // 那套 JHClueSystem,靠上面補的 window.JHNotebook 讀到已蒐集的線索)。玩家
+    // 從自己蒐集到的線索裡挑一則,自己選擇要不要傳給她確認——「確認」這件事
+    // 發生在私訊裡,但發起的人是玩家,不是周妤。
     function mountClueWidget(entry) {
       const wrap = document.createElement("div");
       wrap.className = "jh-messages__clue-widget";
@@ -598,8 +608,17 @@
     }
 
     function appendThreadEntry(entry) {
+      if (entry.clue) {
+        // 中性提示,不是任何一方的發言——不套 .jh-messages__bubble,才不會
+        // 讓人以為是周妤自己說的話。
+        const note = document.createElement("div");
+        note.className = "jh-messages__system-note";
+        note.textContent = entry.text;
+        threadBodyEl.appendChild(note);
+        if (!entry.clue.resolved) mountClueWidget(entry);
+        return;
+      }
       threadBodyEl.appendChild(bubble(entry.text, entry.from || "them", entry.href));
-      if (entry.clue && !entry.clue.resolved) mountClueWidget(entry);
     }
 
     let currentThreadContactId = null;
@@ -684,6 +703,15 @@
         return;
       }
 
+      // 線索確認題是中性的系統提示,不是周妤講的話——不跳這個掛她名字、她
+      // 頭像的「周妤傳訊息給你」橫幅(會誤導成是她在講話),但訊息 App 角標
+      // 還是照樣增加(不標成已讀),玩家自己找時間去訊息裡看就好。
+      if (entry.clue) {
+        renderBadge();
+        renderContacts();
+        return;
+      }
+
       renderBadge();
       document.getElementById("jh-notif-body").textContent = entry.text;
       notif.classList.add("jh-notif--visible");
@@ -701,6 +729,16 @@
         from: "them",
         clue: { expectedId, wrongMessage, resolved: false },
       });
+    };
+    // 玩家在她的訊息帳號頁(xunren/correction.html)點「加好友」時呼叫——
+    // 只是把她加進通訊錄,不會生出任何一則訊息(不然又會變成「莫名其妙就
+    // 有一句她的話」)。之前在別的頁面已經存進 phone_log 的內容(如果有)
+    // 這時候會一起冒出來,角標也會反映出來。
+    window.jhAddZYFriend = function jhAddZYFriend() {
+      if (zyFriended()) return;
+      jhSet("zy_friend_added", true);
+      renderBadge();
+      renderContacts();
     };
     notif.addEventListener("click", () => {
       notif.classList.remove("jh-notif--visible");

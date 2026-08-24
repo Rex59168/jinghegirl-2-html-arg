@@ -339,6 +339,17 @@
   margin-top: 24px;
   font-size: 14px;
 }
+/* 線索確認題前面的提示文字——中性的系統提示,不是周妤講的話,所以特意跟
+   .jh-messages__bubble 的訊息泡泡樣式區分開來(置中、灰字、無底色),不會
+   讓人誤以為是她自己傳來的訊息。 */
+.jh-messages__system-note {
+  align-self: center;
+  color: #999;
+  font-size: 12px;
+  text-align: center;
+  max-width: 90%;
+  margin: 2px 0;
+}
 
 /* ── 線索確認題:提交型謎題的「確認線索」步驟不再各自寫在內容頁上,而是
    在跟周妤的訊息串裡,重用內容頁那套線索模組(clue-system.js/css)。這裡的

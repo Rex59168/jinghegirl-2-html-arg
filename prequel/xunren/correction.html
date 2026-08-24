@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <base href="../">
-<title>更正資訊 | 協尋林晞</title>
+<title>聯絡站長 | 協尋林晞</title>
 <link rel="stylesheet" href="assets/css/base.css">
 <link rel="stylesheet" href="assets/css/browser-chrome.css">
 <link rel="stylesheet" href="assets/css/widgets.css">
@@ -13,14 +13,18 @@
 <body class="site-xunren">
 
 <header class="xunren-head">
-  <h1>更正資訊</h1>
-  <div class="sub">協尋林晞・回報管道</div>
+  <h1>聯絡站長</h1>
+  <div class="sub">協尋林晞・站長訊息帳號</div>
 </header>
 
 <main class="container">
-  <section class="panel">
-    <h2>發現公告哪裡怪怪的?</h2>
-    <p>直接私訊周妤,把妳看到的線索傳給她確認就好——她已經在訊息裡問妳了,不用在這頁填表單。</p>
+  <section class="panel" style="text-align:center;">
+    <div style="width:64px;height:64px;border-radius:50%;background:#2b4d7e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 12px;font-weight:600;">周</div>
+    <p style="font-weight:600;font-size:16px;margin:0;">周妤</p>
+    <p style="font-size:13px;color:#666;margin:4px 0 0;">本站站長・林晞同班同學</p>
+    <p style="font-size:14px;margin-top:16px;line-height:1.7;">公告如果哪裡寫錯了,或你有任何相關線索,加我好友直接傳訊息告訴我,我看到會盡快確認、回覆。</p>
+    <button type="button" class="btn" id="add-friend-btn" style="margin-top:16px;">加好友</button>
+    <p id="add-friend-done" style="display:none;color:#2c5b3f;font-size:13px;margin-top:12px;">已加入好友,之後可以在訊息裡找到她。</p>
   </section>
 
   <p style="text-align:center;margin-top:20px;">
@@ -39,17 +43,22 @@
 <script src="assets/js/hint.js"></script>
 <script src="assets/js/ambient.js"></script>
 <script>
-// 這裡不再是文字輸入表單,也不在頁面上做確認——周妤直接在訊息裡問妳看到
-// 了什麼,確認的動作整個發生在私訊裡(見 shell.js 的 CLUE_REQUESTS.ch0_ask)。
-// expectedId 對應的是 social/lin-xi.html 看完限時動態最後一則時,
-// JHNotebook.add("ch0_story4_seen", ...) 記下的那筆線索,玩家得先真的去看過
-// 那則動態、蒐集到這則線索,才回得出正確答案。
-JHPhone.pushClue(
-  "ch0_ask",
-  "欸,妳是不是也覺得公告上的時間怪怪的?把妳看到的線索傳給我確認一下。",
-  "ch0_story4_seen",
-  "這則線索好像跟她最後上線的時間沒有關係。"
-);
+const addBtn = document.getElementById("add-friend-btn");
+const addDone = document.getElementById("add-friend-done");
+
+function showAdded() {
+  addBtn.style.display = "none";
+  addDone.style.display = "block";
+}
+
+// 重新整理/重訪這頁,如果之前已經加過好友,直接顯示已完成狀態,不用
+// 再點一次。
+if (JH.get("zy_friend_added")) showAdded();
+
+addBtn.addEventListener("click", () => {
+  JHPhone.addZYFriend();
+  showAdded();
+});
 </script>
 </body>
 </html>

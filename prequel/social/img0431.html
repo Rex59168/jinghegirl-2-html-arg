@@ -96,8 +96,9 @@ document.querySelectorAll(".cell").forEach((cell) => {
         <p style="font-size:12px;color:#8b8f96;">最後一位被裁掉了,看不到。</p>
       `);
       // 這裡只負責「發現線索」,記進備忘錄——不直接完成這一章。要不要真的
-      // 採信這則線索、往下一步推進,交給周妤在訊息裡問妳、妳自己回覆確認
-      // (見 shell.js 的 CLUE_REQUESTS.ch1_ask)。
+      // 採信這則線索、往下一步推進,是玩家自己在訊息裡選擇要不要傳給周妤
+      // 確認(見 shell.js 的 CLUE_REQUESTS.ch1_ask),不是她主動跳出來問
+      // (她沒有理由已經知道玩家剛剛在這張照片裡發現了什麼)。
       JHNotebook.add(
         "ch1_code",
         "她在找一張光碟,編號只讀到 #18_(末位被裁掉)",
@@ -105,7 +106,7 @@ document.querySelectorAll(".cell").forEach((cell) => {
       );
       JHPhone.pushClue(
         "ch1_ask",
-        "妳剛剛在照片裡看到的東西,傳給我確認一下。",
+        "把妳發現的線索傳給周妤,讓她確認一下。",
         "ch1_code",
         "這則線索好像跟這張照片裡藏的東西沒有關係。"
       );
