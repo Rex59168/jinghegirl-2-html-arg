@@ -142,7 +142,7 @@
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
 }
 .jh-boot__app--browser .jh-boot__app-icon { background: linear-gradient(160deg, #4a90d9, #1e5fa8); }
-.jh-boot__app--photos .jh-boot__app-icon { background: linear-gradient(160deg, #f2b84b, #d9633b); }
+.jh-boot__app--social .jh-boot__app-icon { background: linear-gradient(160deg, #f27ab8, #c94f8e); }
 .jh-boot__app--messages .jh-boot__app-icon { background: linear-gradient(160deg, #59d16a, #2fa244); }
 .jh-boot__app--notes .jh-boot__app-icon { background: linear-gradient(160deg, #d9c34b, #b89323); }
 

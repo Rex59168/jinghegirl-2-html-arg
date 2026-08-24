@@ -317,9 +317,9 @@
           <div class="jh-boot__widget-weather">${WEATHER_LABEL}</div>
         </div>
         <div class="jh-boot__grid">
-          <button type="button" class="jh-boot__app jh-boot__app--photos" data-inert="1">
-            <span class="jh-boot__app-icon">🖼️</span>
-            <span class="jh-boot__app-label">相簿</span>
+          <button type="button" class="jh-boot__app jh-boot__app--social" id="jh-boot-social">
+            <span class="jh-boot__app-icon">📱</span>
+            <span class="jh-boot__app-label">社交媒體</span>
           </button>
           <button type="button" class="jh-boot__app jh-boot__app--messages" id="jh-boot-messages">
             <span class="jh-boot__app-icon">💬</span>
@@ -391,6 +391,11 @@
     }
 
     document.getElementById("jh-boot-browser").addEventListener("click", enterApp);
+    // 主畫面「社交媒體」圖示是真正能點的入口(取代原本只會抖動的裝飾用
+    // 「相簿」圖示)——跟多工畫面的社交媒體分頁卡片共用同一個 openAppTab,
+    // 平常點進去預設看到動態牆(social/feed.html),逛過之後點回來則是
+    // 跳回上次逛到的那一頁。
+    document.getElementById("jh-boot-social").addEventListener("click", () => openAppTab("social", "social/feed.html"));
     document.getElementById("jh-nav-home").addEventListener("click", () => {
       // Home 鍵除了叫出主畫面,也要把訊息/備忘錄面板收起來——不然它們的
       // z-index 比主畫面高,玩家會看到面板卡住不動,以為 Home 鍵沒反應。

@@ -52,8 +52,6 @@
     <p style="font-size:13px;color:#666;">你已經看完他的貼文了。三年份,日常得不能再日常。</p>
     <button type="button" class="btn" id="confirm-ok" style="background:#333;color:#fff;border:none;padding:10px 20px;border-radius:8px;">回訊息給周妤:這個帳號看起來沒問題</button>
   </div>
-
-  <p style="text-align:center;margin-top:14px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
 </main>
 
 <div id="report-toast" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:100;">
@@ -101,12 +99,10 @@ document.getElementById("report-btn").addEventListener("click", () => {
 });
 
 if (JH.get("ch4_t3")) {
-  document.getElementById("back-link").style.display = "block";
   document.getElementById("confirm-ok").disabled = true;
 }
 
 document.getElementById("confirm-ok").addEventListener("click", () => {
-  document.getElementById("back-link").style.display = "block";
   document.getElementById("confirm-ok").disabled = true;
   JH.set("ch4_t3", true);
   JHNotebook.add(

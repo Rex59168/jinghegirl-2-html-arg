@@ -28,8 +28,6 @@
     <p style="font-size:13px;color:#666;">你們約好的地點是文昌站 2 號出口。點下面清單中你覺得有問題的那一列。</p>
   </div>
 
-  <p style="text-align:center;margin-top:18px;display:none;" id="back-link"><a href="xunren/rebuild-0814.html">← 回去看其他線索</a></p>
-
 </main>
 
 <script src="assets/js/state.js"></script>
@@ -74,11 +72,9 @@ RECORDS.forEach((r) => {
 
 if (JH.get("ch4_t2")) {
   document.querySelectorAll(".record-row")[3].classList.add("flagged");
-  document.getElementById("back-link").style.display = "block";
 }
 
 function complete() {
-  document.getElementById("back-link").style.display = "block";
   JH.set("ch4_t2", true);
   JHNotebook.add(
     "ch4_t2",

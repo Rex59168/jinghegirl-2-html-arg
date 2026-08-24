@@ -64,27 +64,6 @@ if (JH.get("ch3_done") && !JH.get("ch4_done")) {
   list.appendChild(div);
 }
 
-if (JH.get("ch4_done") && !JH.get("ch5_done")) {
-  const div = document.createElement("div");
-  div.className = "update-item";
-  div.innerHTML = '<span class="date"></span><a href="chat/thread-review.html">→ 繼續:再讀一次那份對話</a>';
-  list.appendChild(div);
-}
-
-if (JH.get("ch5_done") && !JH.get("ch6_done")) {
-  const div = document.createElement("div");
-  div.className = "update-item";
-  div.innerHTML = '<span class="date"></span><a href="files/collection.html">→ 繼續:他的收藏資料夾</a>';
-  list.appendChild(div);
-}
-
-if (JH.get("ch6_done") && !JH.get("news_done")) {
-  const div = document.createElement("div");
-  div.className = "update-item";
-  div.innerHTML = '<span class="date"></span><a href="news/report.html">→ 看一則新聞</a>';
-  list.appendChild(div);
-}
-
 if (JH.get("news_done")) {
   const div = document.createElement("div");
   div.className = "update-item";
