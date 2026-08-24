@@ -78,12 +78,17 @@ document.getElementById("correction-form").addEventListener("submit", async (e) 
   document.getElementById("success-view").style.display = "block";
   JHPhone.push("ch0_zy_msg1", "……妳說得對,我剛剛又去看了一次,真的是 19:41。我已經把公告改了。");
   setTimeout(() => {
+    // 密碼本身是純文字,不能整則都點得進去——不然玩家會分不清楚這則訊息是
+    // 「告訴你密碼」還是「點這裡進去」。連結另外用下一則訊息傳,才是真正
+    // 點進雲端相簿的入口。
     JHPhone.push(
       "ch0_zy_msg2",
-      "對了——我把她雲端相簿的密碼傳給妳了:linxi0417。我一直沒敢自己點進去看,妳能不能幫我看看裡面有沒有什麼?",
-      "editor/album.html"
+      "對了——我把她雲端相簿的密碼傳給妳了:linxi0417。我一直沒敢自己點進去看,妳能不能幫我看看裡面有沒有什麼?"
     );
   }, 900);
+  setTimeout(() => {
+    JHPhone.push("ch0_zy_msg3", "連結我也傳給妳了,妳自己點進去看。", "editor/album.html");
+  }, 1500);
 });
 </script>
 </body>

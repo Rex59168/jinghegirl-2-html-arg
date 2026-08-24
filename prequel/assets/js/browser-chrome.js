@@ -117,8 +117,28 @@
   window.jhGoBackInSite = goBackInSite;
   window.jhGoForwardInSite = goForwardInSite;
 
+  // 多工切換畫面(殼層 shell.js)原本只有固定的「訊息/備忘錄/網站」三張卡片,
+  // 玩家實際逛過雲端相簿/社交媒體/二手平台之後,這幾個板塊也該像獨立 App 一樣
+  // 出現在多工畫面裡,點下去直接跳回上次逛到的那一頁——跟一般手機的多工畫面
+  // 只列出「玩家實際開過的 App」是同一個道理。用跟 state.js 一樣的前綴直接寫
+  // localStorage(這頁本來就有載入 state.js,JH 物件可以直接用)。
+  const APP_TAB_MAP = { editor: "album", social: "social", market: "market" };
+  function trackAppTabVisit() {
+    const parts = location.pathname.split("/").filter(Boolean);
+    const topDir = parts.find((seg) => KNOWN_DIRS.includes(seg)) || "";
+    const kind = APP_TAB_MAP[topDir];
+    if (!kind) return;
+    const topDirIndex = parts.indexOf(topDir);
+    const relativeUrl = parts.slice(topDirIndex).join("/");
+    try {
+      JH.set("app_" + kind + "_unlocked", true);
+      JH.set("app_" + kind + "_last_url", relativeUrl);
+    } catch (e) {}
+  }
+
   function mount() {
     recordNavVisit();
+    trackAppTabVisit();
     const { text, isLocal } = computeUrl();
 
     const bar = document.createElement("div");

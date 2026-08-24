@@ -180,7 +180,10 @@
     document.getElementById("jh-nav-recents").addEventListener("click", openRecents);
 
     // ── 多工切換畫面:點方塊鍵不再只是「沒有其他使用中的頁面」的提示 toast,
-    // 改成跟一般 Android 一樣列出可以切換的幾個畫面卡片,點哪張就直接切過去。──
+    // 改成跟一般 Android 一樣列出可以切換的幾個畫面卡片,點哪張就直接切過去。
+    // 雲端相簿/社交媒體/二手平台這三張是動態的——跟真正手機的多工畫面一樣,
+    // 只列出玩家實際開過的 App,一開始不存在,玩家逛過對應板塊之後才會出現
+    // (由 browser-chrome.js 每次進那個板塊時寫 jh1f_app_*_unlocked 旗標)。──
     const recents = document.createElement("div");
     recents.className = "jh-recents";
     recents.id = "jh-recents";
@@ -199,11 +202,28 @@
           <span class="jh-recents__icon">🧭</span>
           <span class="jh-recents__label">網站</span>
         </button>
+        <button type="button" class="jh-recents__card jh-recents__card--album" id="jh-recents-album" hidden>
+          <span class="jh-recents__icon">☁️</span>
+          <span class="jh-recents__label">雲端相簿</span>
+        </button>
+        <button type="button" class="jh-recents__card jh-recents__card--social" id="jh-recents-social" hidden>
+          <span class="jh-recents__icon">📱</span>
+          <span class="jh-recents__label">社交媒體</span>
+        </button>
+        <button type="button" class="jh-recents__card jh-recents__card--market" id="jh-recents-market" hidden>
+          <span class="jh-recents__icon">🛒</span>
+          <span class="jh-recents__label">購物網</span>
+        </button>
       </div>
     `;
     document.body.appendChild(recents);
 
     function openRecents() {
+      // 每次打開才重新檢查——玩家可能是這次瀏覽期間才第一次逛到雲端相簿/
+      // 社交媒體/二手平台,卡片要跟著即時出現,不是進站當下就定死。
+      document.getElementById("jh-recents-album").hidden = !jhGet("app_album_unlocked", false);
+      document.getElementById("jh-recents-social").hidden = !jhGet("app_social_unlocked", false);
+      document.getElementById("jh-recents-market").hidden = !jhGet("app_market_unlocked", false);
       recents.classList.add("jh-recents--open");
     }
     function closeRecents() {
@@ -255,6 +275,18 @@
       closeAllPanelsForSwitch();
       enterApp();
     });
+    // 雲端相簿/社交媒體/二手平台這三張卡片,點下去要跳回玩家上次逛到的那一頁
+    // (不是每次都回到最起始頁),才符合「多工切換」的直覺——跟切回訊息/備忘錄
+    // 保留原本畫面是同一個道理。
+    function openAppTab(kind, defaultUrl) {
+      closeAllPanelsForSwitch();
+      enterApp();
+      const url = jhGet("app_" + kind + "_last_url", defaultUrl);
+      try { frame.contentWindow.location.href = url; } catch (e) {}
+    }
+    document.getElementById("jh-recents-album").addEventListener("click", () => openAppTab("album", "editor/album.html"));
+    document.getElementById("jh-recents-social").addEventListener("click", () => openAppTab("social", "social/lin-xi.html"));
+    document.getElementById("jh-recents-market").addEventListener("click", () => openAppTab("market", "market/listing.html"));
 
     // ── 鎖定畫面 / 主畫面覆蓋層(第一次是開機動畫,之後按 Home 鍵可以隨時再叫出來)──
     const boot = document.createElement("div");

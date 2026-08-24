@@ -98,6 +98,9 @@
   text-align: left;
 }
 .jh-recents__card:active { opacity: 0.8; }
+/* display:flex 的優先度跟瀏覽器內建的 [hidden]{display:none} 打平手,兩邊都是
+   author 層級規則時看誰後宣告,不會自動照 hidden 屬性隱藏,要另外明講一次。 */
+.jh-recents__card[hidden] { display: none; }
 .jh-recents__icon {
   width: 40px;
   height: 40px;
@@ -111,6 +114,9 @@
 .jh-recents__card--messages .jh-recents__icon { background: linear-gradient(160deg, #59d16a, #2fa244); }
 .jh-recents__card--notes .jh-recents__icon { background: linear-gradient(160deg, #d9c34b, #b89323); }
 .jh-recents__card--browser .jh-recents__icon { background: linear-gradient(160deg, #4a90d9, #1e5fa8); }
+.jh-recents__card--album .jh-recents__icon { background: linear-gradient(160deg, #8ac6f2, #4a90d9); }
+.jh-recents__card--social .jh-recents__icon { background: linear-gradient(160deg, #f27ab8, #c94f8e); }
+.jh-recents__card--market .jh-recents__icon { background: linear-gradient(160deg, #f2a24b, #d97a1e); }
 .jh-recents__label { font-size: 15px; font-weight: 600; color: #222; }
 
 body.jh-has-chrome { padding-top: 40px; }
