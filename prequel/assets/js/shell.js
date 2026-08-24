@@ -199,16 +199,30 @@
     recents.addEventListener("click", (e) => {
       if (e.target === recents) closeRecents();
     });
+    // 訊息面板跟備忘錄面板的 z-index 是同一個數字(疊放順序打平手),同時掛著
+    // open class 的話,誰排在後面出現在畫面上完全看 DOM 順序、不是看誰最近被
+    // 選——玩家在多工畫面連續選了兩個不同分頁,才會踩到這個情況(從其他入口
+    // 點進來的話,前一個面板一定是整片蓋住畫面,不會漏出縫隙讓玩家點到別的
+    // 入口)。所以在這裡開新的之前,要先把其他面板的 open class 拿掉,確保
+    // 玩家選哪個,哪個才會真的疊到最上層。
+    function closeAllPanelsForSwitch() {
+      messagesEl.classList.remove("jh-messages--open", "jh-messages--thread-open");
+      currentThreadContactId = null;
+      notesEl.classList.remove("jh-notes--open");
+    }
     document.getElementById("jh-recents-messages").addEventListener("click", () => {
       closeRecents();
+      closeAllPanelsForSwitch();
       openMessages();
     });
     document.getElementById("jh-recents-notes").addEventListener("click", () => {
       closeRecents();
+      closeAllPanelsForSwitch();
       openNotes();
     });
     document.getElementById("jh-recents-browser").addEventListener("click", () => {
       closeRecents();
+      closeAllPanelsForSwitch();
       enterApp();
     });
 
@@ -299,13 +313,12 @@
     document.getElementById("jh-nav-home").addEventListener("click", () => {
       // Home 鍵除了叫出主畫面,也要把訊息/備忘錄面板收起來——不然它們的
       // z-index 比主畫面高,玩家會看到面板卡住不動,以為 Home 鍵沒反應。
-      // 這裡直接拿掉 class,不呼叫 closeMessages()/closeNotes() 本身,是因為
-      // 那兩個函式在「從瀏覽器內容被打斷跳進來看」的情境下會連帶呼叫
-      // hideHomeScreen()(關閉後要回到原本在讀的頁面),那個副作用不適用在
-      // 這裡——玩家主動按 Home 鍵,就是要去主畫面,不是要回瀏覽器內容。
-      messagesEl.classList.remove("jh-messages--open", "jh-messages--thread-open");
-      currentThreadContactId = null;
-      notesEl.classList.remove("jh-notes--open");
+      // 這裡直接拿掉 class(用跟多工切換畫面共用的 closeAllPanelsForSwitch()),
+      // 不呼叫 closeMessages()/closeNotes() 本身,是因為那兩個函式在「從瀏覽器
+      // 內容被打斷跳進來看」的情境下會連帶呼叫 hideHomeScreen()(關閉後要回到
+      // 原本在讀的頁面),那個副作用不適用在這裡——玩家主動按 Home 鍵,就是要
+      // 去主畫面,不是要回瀏覽器內容。
+      closeAllPanelsForSwitch();
       showHomeScreen();
     });
 

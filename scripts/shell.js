@@ -130,12 +130,21 @@ import { MAIL_UI } from './labels.js';
     recents.addEventListener("click", (e) => {
       if (e.target === recents) closeRecents();
     });
+    // 信件面板停留在殼層這一層(z-index 1600),蓋在整個 iframe 上面——玩家在
+    // 多工畫面連續選了兩個不同分頁的話,如果前一個面板沒有先關掉,即使選了別的
+    // 分頁,信件面板還是會繼續蓋著、讓玩家覺得選了跟沒選一樣。所以在這裡開新的
+    // 之前,要先把信件面板收起來,確保玩家選哪個,哪個才會真的疊到最上層。
+    function closeAllPanelsForSwitch() {
+      mailEl.classList.remove("jh-mail--open");
+    }
     document.getElementById("jh-recents-messages").addEventListener("click", () => {
       closeRecents();
+      closeAllPanelsForSwitch();
       openMail();
     });
     document.getElementById("jh-recents-notes").addEventListener("click", () => {
       closeRecents();
+      closeAllPanelsForSwitch();
       hideHomeScreen();
       try {
         if (typeof frame.contentWindow.jhOpenNotebook === "function") frame.contentWindow.jhOpenNotebook();
@@ -143,6 +152,7 @@ import { MAIL_UI } from './labels.js';
     });
     document.getElementById("jh-recents-browser").addEventListener("click", () => {
       closeRecents();
+      closeAllPanelsForSwitch();
       enterApp();
     });
 
@@ -221,7 +231,7 @@ import { MAIL_UI } from './labels.js';
       // class,不呼叫 closeMail() 本身,是因為它在「從瀏覽器內容被打斷跳進來
       // 看」的情境下會連帶呼叫 hideHomeScreen()(關閉後要回到原本在讀的頁面),
       // 那個副作用不適用在這裡——玩家主動按 Home 鍵,就是要去主畫面。
-      mailEl.classList.remove("jh-mail--open");
+      closeAllPanelsForSwitch();
       showHomeScreen();
     });
 
