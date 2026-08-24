@@ -1,0 +1,114 @@
+/* clue-system.css — 線索模組:提交型謎題共用的「從已蒐集線索裡挑一個提交」介面,
+   取代原本一頁一份的文字輸入表單。桌面版支援真的拖曳,手機(觸控)版原生不支援
+   HTML5 拖放,所以點選永遠是主要、一定能用的操作方式,拖曳只是額外的加分體驗。*/
+
+.clue-slot {
+  min-height: 64px;
+  border: 2px dashed #bbb;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  margin: 14px 0;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.clue-slot--dragover {
+  border-color: #4a90d9;
+  background: #eef5fc;
+}
+.clue-slot--filled {
+  border-style: solid;
+  border-color: #4a90d9;
+}
+.clue-slot__placeholder {
+  color: #999;
+  font-size: 13px;
+  text-align: center;
+}
+
+.clue-chip {
+  background: #fff3d6;
+  border: 1px solid #e0c589;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.clue-chip--slotted {
+  cursor: default;
+  background: #eaf3fc;
+  border-color: #4a90d9;
+  width: 100%;
+  text-align: center;
+}
+
+.clue-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.clue-actions .btn--secondary {
+  background: #eee;
+  color: #333;
+}
+
+.clue-picker {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 60vh;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(100%);
+  transition: transform 0.25s ease;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+}
+.clue-picker--open {
+  transform: translateY(0);
+}
+.clue-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+}
+.clue-picker__close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #666;
+  padding: 4px 8px;
+}
+.clue-picker__list {
+  padding: 12px 16px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.clue-picker__empty {
+  color: #999;
+  font-size: 13px;
+}
+.clue-picker__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  z-index: 1099;
+}
+.clue-picker__backdrop--open {
+  opacity: 1;
+  pointer-events: auto;
+}

@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="assets/css/browser-chrome.css">
 <link rel="stylesheet" href="assets/css/widgets.css">
 <link rel="stylesheet" href="assets/css/site-xunren.css">
+<link rel="stylesheet" href="assets/css/clue-system.css">
 </head>
 <body class="site-xunren">
 
@@ -21,13 +22,8 @@
   <div id="form-view">
     <section class="panel">
       <h2>更正時間戳</h2>
-      <form id="correction-form">
-        <label for="answer">正確的最後動態時間(24小時制,例如 12:00)</label>
-        <input type="text" id="answer" required maxlength="10" placeholder="12:00">
-
-        <p class="err" id="err"></p>
-        <p><button type="submit" class="btn">送出更正</button></p>
-      </form>
+      <p>請提供妳認為和「她最後一次上線的正確時間」有關的線索。</p>
+      <div id="clue-root"></div>
     </section>
   </div>
 
@@ -51,44 +47,41 @@
 <script src="assets/js/notebook.js"></script>
 <script src="assets/js/hint.js"></script>
 <script src="assets/js/ambient.js"></script>
+<script src="assets/js/clue-system.js"></script>
 <script>
-const ANSWER_HASH = "d5f915e54b6d7737c3d9a036dfe547944879b65b3b72e0e6a44f21ba62dac1ef";
+// 這裡不再用文字輸入+雜湊比對的方式驗證答案——玩家要從自己已經蒐集到的
+// 線索裡挑出正確的那一則交出來。expectedId 對應的是 social/lin-xi.html
+// 看完限時動態最後一則時,JHNotebook.add("ch0_story4_seen", ...) 記下的那筆
+// 線索,玩家得先真的去看過那則動態、蒐集到這則線索,才交得出來。
+JHClueSystem.mount({
+  root: document.getElementById("clue-root"),
+  expectedId: "ch0_story4_seen",
+  wrongMessage: "這則線索好像跟她最後上線的時間沒有關係。",
+  onCorrect: () => {
+    JH.set("ch0_done", true);
 
-document.getElementById("correction-form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const answer = document.getElementById("answer").value;
-  const errEl = document.getElementById("err");
-
-  const ok = await JH.checkAnswer(answer, ANSWER_HASH);
-  if (!ok) {
-    errEl.textContent = "時間好像不太對,你再確認一次她最後一則動態的時間戳。";
-    return;
-  }
-  errEl.textContent = "";
-
-  JH.set("ch0_done", true);
-
-  JHNotebook.add(
-    "ch0_answer",
-    "最後訊號其實是 19:41(原公告寫 17:32)",
-    "xunren/correction.html"
-  );
-
-  document.getElementById("form-view").style.display = "none";
-  document.getElementById("success-view").style.display = "block";
-  JHPhone.push("ch0_zy_msg1", "……妳說得對,我剛剛又去看了一次,真的是 19:41。我已經把公告改了。");
-  setTimeout(() => {
-    // 密碼本身是純文字,不能整則都點得進去——不然玩家會分不清楚這則訊息是
-    // 「告訴你密碼」還是「點這裡進去」。連結另外用下一則訊息傳,才是真正
-    // 點進雲端相簿的入口。
-    JHPhone.push(
-      "ch0_zy_msg2",
-      "對了——我把她雲端相簿的密碼傳給妳了:linxi0417。我一直沒敢自己點進去看,妳能不能幫我看看裡面有沒有什麼?"
+    JHNotebook.add(
+      "ch0_answer",
+      "最後訊號其實是 19:41(原公告寫 17:32)",
+      "xunren/correction.html"
     );
-  }, 900);
-  setTimeout(() => {
-    JHPhone.push("ch0_zy_msg3", "連結我也傳給妳了,妳自己點進去看。", "editor/album.html");
-  }, 1500);
+
+    document.getElementById("form-view").style.display = "none";
+    document.getElementById("success-view").style.display = "block";
+    JHPhone.push("ch0_zy_msg1", "……妳說得對,我剛剛又去看了一次,真的是 19:41。我已經把公告改了。");
+    setTimeout(() => {
+      // 密碼本身是純文字,不能整則都點得進去——不然玩家會分不清楚這則訊息是
+      // 「告訴你密碼」還是「點這裡進去」。連結另外用下一則訊息傳,才是真正
+      // 點進雲端相簿的入口。
+      JHPhone.push(
+        "ch0_zy_msg2",
+        "對了——我把她雲端相簿的密碼傳給妳了:linxi0417。我一直沒敢自己點進去看,妳能不能幫我看看裡面有沒有什麼?"
+      );
+    }, 900);
+    setTimeout(() => {
+      JHPhone.push("ch0_zy_msg3", "連結我也傳給妳了,妳自己點進去看。", "editor/album.html");
+    }, 1500);
+  },
 });
 </script>
 </body>
