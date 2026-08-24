@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="assets/css/browser-chrome.css">
 <link rel="stylesheet" href="assets/css/widgets.css">
 <link rel="stylesheet" href="assets/css/site-editor.css">
-<link rel="stylesheet" href="assets/css/clue-system.css">
 </head>
 <body class="site-editor" data-requires="album_unlocked">
 <!-- C1 -->
@@ -47,16 +46,6 @@
     </div>
   </section>
 
-  <section class="panel">
-    <h2>確認妳看到的線索</h2>
-    <p style="font-size:14px;">從妳蒐集到的線索裡,選出妳剛剛在這張照片裡發現的那一則,交給周妤確認。</p>
-    <div id="clue-root"></div>
-  </section>
-
-  <section class="panel" id="next-panel" style="display:none;">
-    <h2>下一步</h2>
-    <p id="next-text"></p>
-  </section>
 
 </main>
 
@@ -74,7 +63,6 @@
 <script src="assets/js/notebook.js"></script>
 <script src="assets/js/hint.js"></script>
 <script src="assets/js/ambient.js"></script>
-<script src="assets/js/clue-system.js"></script>
 <script>
 const lightbox = document.getElementById("lightbox");
 const lbInner = document.getElementById("lightbox-inner");
@@ -108,11 +96,18 @@ document.querySelectorAll(".cell").forEach((cell) => {
         <p style="font-size:12px;color:#8b8f96;">最後一位被裁掉了,看不到。</p>
       `);
       // 這裡只負責「發現線索」,記進備忘錄——不直接完成這一章。要不要真的
-      // 採信這則線索、往下一步推進,交給下面的線索模組確認送出。
+      // 採信這則線索、往下一步推進,交給周妤在訊息裡問妳、妳自己回覆確認
+      // (見 shell.js 的 CLUE_REQUESTS.ch1_ask)。
       JHNotebook.add(
         "ch1_code",
         "她在找一張光碟,編號只讀到 #18_(末位被裁掉)",
         "social/img0431.html"
+      );
+      JHPhone.pushClue(
+        "ch1_ask",
+        "妳剛剛在照片裡看到的東西,傳給我確認一下。",
+        "ch1_code",
+        "這則線索好像跟這張照片裡藏的東西沒有關係。"
       );
     } else if (cell.classList.contains("touched")) {
       openLightbox(`<p>這一格依編輯紀錄比對,已被修過。</p>`);
@@ -120,19 +115,6 @@ document.querySelectorAll(".cell").forEach((cell) => {
       openLightbox(`<p>看起來只是桌面,沒有異常。</p>`);
     }
   });
-});
-
-JHClueSystem.mount({
-  root: document.getElementById("clue-root"),
-  expectedId: "ch1_code",
-  wrongMessage: "這則線索好像跟這張照片裡藏的東西沒有關係。",
-  onCorrect: () => {
-    JH.set("ch1_done", true);
-    JHPhone.push("nudge_ch2", "編號只到 #18_,去二手平台查查看。", "market/listing.html");
-    document.getElementById("next-panel").style.display = "block";
-    document.getElementById("next-text").textContent =
-      "編號末位看不到。要知道完整編號,得去別的地方查證了。";
-  },
 });
 </script>
 </body>

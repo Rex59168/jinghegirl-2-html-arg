@@ -9,28 +9,19 @@
 <link rel="stylesheet" href="assets/css/browser-chrome.css">
 <link rel="stylesheet" href="assets/css/widgets.css">
 <link rel="stylesheet" href="assets/css/site-xunren.css">
-<link rel="stylesheet" href="assets/css/clue-system.css">
 </head>
 <body class="site-xunren">
 
 <header class="xunren-head">
   <h1>更正資訊</h1>
-  <div class="sub">協尋林晞・回報表單</div>
+  <div class="sub">協尋林晞・回報管道</div>
 </header>
 
 <main class="container">
-  <div id="form-view">
-    <section class="panel">
-      <h2>更正時間戳</h2>
-      <p>請提供妳認為和「她最後一次上線的正確時間」有關的線索。</p>
-      <div id="clue-root"></div>
-    </section>
-  </div>
-
-  <div id="success-view" class="panel" style="display:none;">
-    <h2>已收到,謝謝你</h2>
-    <p>我們已經收到你提供的更正資訊,協尋公告會盡快更新。</p>
-  </div>
+  <section class="panel">
+    <h2>發現公告哪裡怪怪的?</h2>
+    <p>直接私訊周妤,把妳看到的線索傳給她確認就好——她已經在訊息裡問妳了,不用在這頁填表單。</p>
+  </section>
 
   <p style="text-align:center;margin-top:20px;">
     <a href="home.html">← 回協尋站首頁</a>
@@ -47,42 +38,18 @@
 <script src="assets/js/notebook.js"></script>
 <script src="assets/js/hint.js"></script>
 <script src="assets/js/ambient.js"></script>
-<script src="assets/js/clue-system.js"></script>
 <script>
-// 這裡不再用文字輸入+雜湊比對的方式驗證答案——玩家要從自己已經蒐集到的
-// 線索裡挑出正確的那一則交出來。expectedId 對應的是 social/lin-xi.html
-// 看完限時動態最後一則時,JHNotebook.add("ch0_story4_seen", ...) 記下的那筆
-// 線索,玩家得先真的去看過那則動態、蒐集到這則線索,才交得出來。
-JHClueSystem.mount({
-  root: document.getElementById("clue-root"),
-  expectedId: "ch0_story4_seen",
-  wrongMessage: "這則線索好像跟她最後上線的時間沒有關係。",
-  onCorrect: () => {
-    JH.set("ch0_done", true);
-
-    JHNotebook.add(
-      "ch0_answer",
-      "最後訊號其實是 19:41(原公告寫 17:32)",
-      "xunren/correction.html"
-    );
-
-    document.getElementById("form-view").style.display = "none";
-    document.getElementById("success-view").style.display = "block";
-    JHPhone.push("ch0_zy_msg1", "……妳說得對,我剛剛又去看了一次,真的是 19:41。我已經把公告改了。");
-    setTimeout(() => {
-      // 密碼本身是純文字,不能整則都點得進去——不然玩家會分不清楚這則訊息是
-      // 「告訴你密碼」還是「點這裡進去」。連結另外用下一則訊息傳,才是真正
-      // 點進她帳號私人限定相簿的入口。
-      JHPhone.push(
-        "ch0_zy_msg2",
-        "對了——她的帳號有一組私人限定相簿要密碼才看得到,我把密碼傳給妳了:linxi0417。我一直沒敢自己點進去看,妳能不能幫我看看裡面有沒有什麼?"
-      );
-    }, 900);
-    setTimeout(() => {
-      JHPhone.push("ch0_zy_msg3", "連結我也傳給妳了,妳自己點進去看。", "social/lin-xi.html");
-    }, 1500);
-  },
-});
+// 這裡不再是文字輸入表單,也不在頁面上做確認——周妤直接在訊息裡問妳看到
+// 了什麼,確認的動作整個發生在私訊裡(見 shell.js 的 CLUE_REQUESTS.ch0_ask)。
+// expectedId 對應的是 social/lin-xi.html 看完限時動態最後一則時,
+// JHNotebook.add("ch0_story4_seen", ...) 記下的那筆線索,玩家得先真的去看過
+// 那則動態、蒐集到這則線索,才回得出正確答案。
+JHPhone.pushClue(
+  "ch0_ask",
+  "欸,妳是不是也覺得公告上的時間怪怪的?把妳看到的線索傳給我確認一下。",
+  "ch0_story4_seen",
+  "這則線索好像跟她最後上線的時間沒有關係。"
+);
 </script>
 </body>
 </html>

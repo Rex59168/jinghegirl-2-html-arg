@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="assets/css/shell.css">
 <link rel="stylesheet" href="assets/css/browser-chrome.css">
 <link rel="stylesheet" href="assets/css/phone-boot.css">
+<link rel="stylesheet" href="assets/css/clue-system.css">
 </head>
 <body>
 <!-- 這是整個第一章唯一真正會被瀏覽器導航的頁面(殼層)。實際內容都在下面這個
@@ -29,6 +30,9 @@
      assets/js/shell.js 負責掛載。 -->
 <iframe id="jh-app-frame" class="jh-app-frame" src="home.html" title="協尋林晞"></iframe>
 
+<!-- clue-system.js 現在也在殼層這邊用:提交型謎題的「確認線索」步驟整個搬進
+     跟周妤的訊息串裡完成(見 shell.js 的 CLUE_REQUESTS),不再各自寫在內容頁上。 -->
+<script src="assets/js/clue-system.js"></script>
 <script src="assets/js/shell.js"></script>
 </body>
 </html>

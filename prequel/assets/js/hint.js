@@ -11,4 +11,15 @@ const JHPhone = {
       }
     } catch (e) {}
   },
+  // pushClue — 提交型謎題現在不在網頁上做確認,而是由周妤在私訊裡直接問「妳
+  // 看到的是不是這個」,玩家從自己蒐集到的線索裡挑一則回覆她。這裡只負責把
+  // 「周妤要問這件事了」轉交給殼層,實際的選擇器 UI 跟答對/答錯的判斷都在
+  // 殼層的訊息串裡完成(見 shell.js 的 CLUE_REQUESTS)。
+  pushClue(id, text, expectedId, wrongMessage) {
+    try {
+      if (window.top && typeof window.top.jhReceiveClueRequest === "function") {
+        window.top.jhReceiveClueRequest(id, text, expectedId, wrongMessage);
+      }
+    } catch (e) {}
+  },
 };

@@ -2,8 +2,11 @@
 // 可以拖曳/點選提交的「線索模組」,取代原本每個提交型謎題各自寫一份文字輸入
 // 表單的做法。玩家從已蒐集的線索裡挑出自己覺得相關的那一個交出去,系統只
 // 判斷「是不是那個對的線索」——答錯有十秒冷卻,不能無限亂猜答案。
-// 以後其他提交型謎題(不只是這一頁的更正時間戳)都應該重複使用這一套結構,
-// 呼叫 JHClueSystem.mount({...}) 而不是各自再寫一份表單。
+// 「確認」這個動作本身不發生在任何一頁內容頁上——只在殼層(prequel/index.html)
+// 跟周妤的訊息串裡掛載(見 shell.js 的 CLUE_REQUESTS/mountClueWidget),靠
+// window.JHNotebook 這個殼層補的同名全域物件讀到已蒐集的線索。以後新的
+// 提交型謎題也都應該走這一套:內容頁只負責用 JHNotebook.add(...) 記下發現、
+// 用 JHPhone.pushClue(...) 請周妤在訊息裡發問,不用再各自做一塊面板。
 const JHClueSystem = (() => {
   const COOLDOWN_MS = 10000;
   const DEFAULT_WRONG_MESSAGE = "這則線索好像不太對。";

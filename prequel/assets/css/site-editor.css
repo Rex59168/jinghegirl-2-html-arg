@@ -121,18 +121,3 @@ body.site-editor {
   font-size: 15px;
 }
 .site-editor .err { color: #d9756b; font-size: 13px; min-height: 18px; }
-
-/* 線索模組(clue-system.js/css)在這頁是深色 monospace 主題,插槽/線索卡片
-   跟著改深色配色,才不會在暗底上突兀地浮出一塊亮白色。跳出來的線索選單
-   本身是 position: fixed 的獨立浮層,不受頁面主題影響,不用另外處理。 */
-.site-editor .clue-slot { border-color: #3a3d42; }
-.site-editor .clue-slot--dragover { border-color: #4a90d9; background: #1e2023; }
-.site-editor .clue-slot--filled { border-color: #9fd88a; }
-.site-editor .clue-slot__placeholder { color: #6b6f76; }
-.site-editor .clue-chip {
-  background: #232527;
-  border-color: #3a3d42;
-  color: #d8dadd;
-}
-.site-editor .clue-chip--slotted { background: #1e2023; border-color: #9fd88a; }
-.site-editor .clue-actions .btn--secondary { background: #2c2e31; color: #d8dadd; }

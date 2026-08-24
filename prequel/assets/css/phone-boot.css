@@ -340,6 +340,37 @@
   font-size: 14px;
 }
 
+/* ── 線索確認題:提交型謎題的「確認線索」步驟不再各自寫在內容頁上,而是
+   在跟周妤的訊息串裡,重用內容頁那套線索模組(clue-system.js/css)。這裡的
+   規則只負責讓它嵌進聊天泡泡的視覺脈絡裡——本身的抽屜/卡片樣式都來自
+   clue-system.css,不重複定義。 ── */
+.jh-messages__clue-widget {
+  align-self: stretch;
+  background: #f7f7f8;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.jh-messages__clue-widget .btn {
+  background: #4a90d9;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.jh-messages__clue-widget .btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+/* clue-picker/backdrop 原本是設計給內容頁 iframe 用的獨立文件、獨立疊層
+   (z-index 1099/1100),搬進殼層的訊息面板(1600)之後要蓋過它才不會被
+   悶住點不到——這兩個元素實際上是線索模組掛載進 .jh-messages__clue-widget
+   時寫進去的子節點,選擇器才吃得到。 */
+.jh-messages .clue-picker { z-index: 1650; }
+.jh-messages .clue-picker__backdrop { z-index: 1649; }
+
 /* ── 頂部通知橫幅:iframe 裡任何一頁呼叫 JHPhone.push(...) 都會冒出這個,
    不受 .jh-boot 的顯示狀態限制——不管玩家當下在瀏覽哪一頁都看得到,點一下
    直接跳進周妤的對話串。z-index 比訊息 App、主畫面都高,是最上層。 ── */

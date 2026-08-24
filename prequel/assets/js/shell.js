@@ -122,6 +122,39 @@
   function mount() {
     const frame = document.getElementById("jh-app-frame");
 
+    // 周妤傳來的一句話,快捷寫法(from 固定是 they)。
+    function pushZY(id, text, href) {
+      deliverPhoneEntry({ id, text, href, from: "them" });
+    }
+
+    // 各個提交型謎題「答對之後要做的事」——原本寫在各自的內容頁裡,現在確認
+    // 這個動作整個搬進跟周妤的訊息串完成,所以「答對」的後續效果也一起搬過來
+    // 這裡執行,key 對應的是 JHPhone.pushClue(...) 傳進來、周妤問問題那則訊息
+    // 的 id。
+    const CLUE_REQUESTS = {
+      ch0_ask: {
+        onCorrect() {
+          jhSet("ch0_done", true);
+          notebookAdd("ch0_answer", "最後訊號其實是 19:41(原公告寫 17:32)", "xunren/correction.html");
+          pushZY("ch0_zy_msg1", "……妳說得對,我剛剛又去看了一次,真的是 19:41。我已經把公告改了。");
+          setTimeout(() => {
+            // 密碼本身是純文字,不能整則都點得進去——不然玩家會分不清楚這則訊息是
+            // 「告訴你密碼」還是「點這裡進去」。連結另外用下一則訊息傳。
+            pushZY("ch0_zy_msg2", "對了——她的帳號有一組私人限定相簿要密碼才看得到,我把密碼傳給妳了:linxi0417。我一直沒敢自己點進去看,妳能不能幫我看看裡面有沒有什麼?");
+          }, 900);
+          setTimeout(() => {
+            pushZY("ch0_zy_msg3", "連結我也傳給妳了,妳自己點進去看。", "social/lin-xi.html");
+          }, 1500);
+        },
+      },
+      ch1_ask: {
+        onCorrect() {
+          jhSet("ch1_done", true);
+          pushZY("nudge_ch2", "編號只到 #18_,去二手平台查查看。", "market/listing.html");
+        },
+      },
+    };
+
     // ── 手機狀態列 ──
     const statusBar = document.createElement("div");
     statusBar.className = "jh-status-bar";
@@ -533,6 +566,42 @@
       return el;
     }
 
+    // 線索確認題:周妤在訊息裡直接問「妳看到的是不是這個」,底下接一塊線索
+    // 選擇器(重用內容頁那套 JHClueSystem,靠上面補的 window.JHNotebook 讀到
+    // 已蒐集的線索)。玩家從自己蒐集到的線索裡挑一則回覆她,答對才會真的推進
+    // 劇情——這樣「確認」這件事完全發生在私訊裡,不在任何一頁網頁上。
+    function mountClueWidget(entry) {
+      const wrap = document.createElement("div");
+      wrap.className = "jh-messages__clue-widget";
+      threadBodyEl.appendChild(wrap);
+      JHClueSystem.mount({
+        root: wrap,
+        expectedId: entry.clue.expectedId,
+        wrongMessage: entry.clue.wrongMessage,
+        onCorrect: (clue) => resolveClueRequest(entry, clue, wrap),
+      });
+    }
+
+    function resolveClueRequest(entry, clue, wrap) {
+      // 這則訊息裡的線索題標記成已回答——重開對話串就不會再看到可以互動的
+      // 選擇器,只留下當初送出的那句回覆(下面用一則普通的"me"訊息記錄)。
+      const log = phoneLog();
+      const found = log.find((m) => m.id === entry.id);
+      if (found && found.clue) found.clue.resolved = true;
+      jhSet("phone_log", log);
+      wrap.remove();
+
+      deliverPhoneEntry({ id: entry.id + "_me", text: clue.text, from: "me" });
+
+      const handler = CLUE_REQUESTS[entry.id];
+      if (handler && typeof handler.onCorrect === "function") handler.onCorrect();
+    }
+
+    function appendThreadEntry(entry) {
+      threadBodyEl.appendChild(bubble(entry.text, entry.from || "them", entry.href));
+      if (entry.clue && !entry.clue.resolved) mountClueWidget(entry);
+    }
+
     let currentThreadContactId = null;
     function openThread(contactId) {
       currentThreadContactId = contactId;
@@ -546,7 +615,7 @@
           p.textContent = "還沒有新訊息。";
           threadBodyEl.appendChild(p);
         } else {
-          log.forEach((m) => threadBodyEl.appendChild(bubble(m.text, m.from || "them", m.href)));
+          log.forEach((m) => appendThreadEntry(m));
         }
         jhSet("phone_read_ids", log.map((m) => m.id));
         renderBadge();
@@ -584,14 +653,15 @@
       currentThreadContactId = null;
     });
 
-    // ── 通知橫幅:iframe 裡任何一頁呼叫 window.top.jhReceiveMessage(...) 都會進來這裡。
-    // from 預設是"them"(周妤傳來的,會跳通知橫幅);玩家自己回覆的"me"訊息不用
-    // 跳通知打斷自己,直接視為已讀就好。 ──
+    // ── 通知橫幅:iframe 裡任何一頁呼叫 window.top.jhReceiveMessage(...)/
+    // jhReceiveClueRequest(...) 都會進來這裡。from 預設是"them"(周妤傳來的,
+    // 會跳通知橫幅);玩家自己回覆的"me"訊息不用跳通知打斷自己,直接視為已讀
+    // 就好。兩種訊息共用同一套「存進 log→即時顯示或跳通知」邏輯,差別只在
+    // entry 有沒有帶 clue 欄位。 ──
     let notifTimer = null;
-    window.jhReceiveMessage = function jhReceiveMessage(id, text, href, from) {
+    function deliverPhoneEntry(entry) {
       const log = phoneLog();
-      if (log.some((m) => m.id === id)) return;
-      const entry = { id, text, href, from: from === "me" ? "me" : "them" };
+      if (log.some((m) => m.id === entry.id)) return;
       log.push(entry);
       jhSet("phone_log", log);
 
@@ -599,26 +669,38 @@
       // 重新打開才看得到,也不用為了自己正在看的對話跳通知橫幅打斷自己。
       const threadIsOpenOnZY = currentThreadContactId === ZY_ID && messagesEl.classList.contains("jh-messages--open");
       if (threadIsOpenOnZY) {
-        jhSet("phone_read_ids", [...readIds(), id]);
+        jhSet("phone_read_ids", [...readIds(), entry.id]);
         renderBadge();
         renderContacts();
-        threadBodyEl.appendChild(bubble(entry.text, entry.from, entry.href));
+        appendThreadEntry(entry);
         threadBodyEl.scrollTop = threadBodyEl.scrollHeight;
         return;
       }
 
       if (entry.from === "me") {
-        jhSet("phone_read_ids", [...readIds(), id]);
+        jhSet("phone_read_ids", [...readIds(), entry.id]);
         renderBadge();
         renderContacts();
         return;
       }
 
       renderBadge();
-      document.getElementById("jh-notif-body").textContent = text;
+      document.getElementById("jh-notif-body").textContent = entry.text;
       notif.classList.add("jh-notif--visible");
       clearTimeout(notifTimer);
       notifTimer = setTimeout(() => notif.classList.remove("jh-notif--visible"), 5000);
+    }
+    window.jhReceiveMessage = function jhReceiveMessage(id, text, href, from) {
+      deliverPhoneEntry({ id, text, href, from: from === "me" ? "me" : "them" });
+    };
+    window.jhReceiveClueRequest = function jhReceiveClueRequest(id, text, expectedId, wrongMessage) {
+      deliverPhoneEntry({
+        id,
+        text,
+        href: null,
+        from: "them",
+        clue: { expectedId, wrongMessage, resolved: false },
+      });
     };
     notif.addEventListener("click", () => {
       notif.classList.remove("jh-notif--visible");
@@ -653,6 +735,19 @@
     const notesBadgeEl = document.getElementById("jh-boot-notes-badge");
 
     function notebookList() { return jhGet("notebook", []); }
+
+    // 讓搬進訊息串裡的線索模組(見下面的 CLUE_REQUESTS/JHClueSystem)可以直接
+    // 讀到已蒐集的線索——殼層本身不是走 iframe 那一套 notebook.js,補一個同
+    // 名的全域物件給 clue-system.js 用,介面跟內容頁那份完全一樣。
+    window.JHNotebook = { all: () => notebookList() };
+
+    function notebookAdd(id, text, href) {
+      const list = notebookList();
+      if (list.some((e) => e.id === id)) return;
+      list.push({ id, text, href, t: Date.now() });
+      jhSet("notebook", list);
+      renderNotesBadge();
+    }
 
     function renderNotesBadge() {
       const n = notebookList().length;
