@@ -124,6 +124,14 @@
   // localStorage(這頁本來就有載入 state.js,JH 物件可以直接用)。
   const APP_TAB_MAP = { editor: "album", social: "social", market: "market" };
   function trackAppTabVisit() {
+    // chapter-guard.js 比這支腳本先載入,如果這頁還沒解鎖,它會呼叫
+    // location.href 把玩家導回 home.html——但那個導頁不是立刻生效,同一份文件
+    // 剩下的 <script> 標籤(包括這支)還是會照樣跑完。不在這裡重新檢查一次同一個
+    // data-requires 條件的話,玩家其實被彈開了、根本沒看到內容,這個板塊還是會
+    // 被誤判成「已經逛過」,多工畫面就會出現不該出現的卡片。
+    const need = document.body.dataset.requires;
+    if (need && !JH.get(need)) return;
+
     const parts = location.pathname.split("/").filter(Boolean);
     const topDir = parts.find((seg) => KNOWN_DIRS.includes(seg)) || "";
     const kind = APP_TAB_MAP[topDir];
