@@ -271,8 +271,24 @@
       closeAllPanelsForSwitch();
       openNotes();
     });
+    // 雲端相簿/社交媒體/購物網現在各自有自己專屬的分頁卡片、各記各的「上次逛到
+    // 哪裡」,所以「網站」這張卡片不該再停在那三個板塊裡——玩家如果正在雲端相簿
+    // (或社交媒體、購物網)裡面,點「網站」應該要回到協尋網站本身(home.html),
+    // 而不是留在原地什麼都沒變。如果本來就在協尋網站的其他一般頁面,點「網站」
+    // 維持原樣、只是收起多工畫面而已,不用被迫跳回首頁。
+    function isOnAppTabPage() {
+      try {
+        const parts = frame.contentWindow.location.pathname.split("/").filter(Boolean);
+        return parts.some((seg) => seg === "editor" || seg === "social" || seg === "market");
+      } catch (e) {
+        return false;
+      }
+    }
     document.getElementById("jh-recents-browser").addEventListener("click", () => {
       closeAllPanelsForSwitch();
+      if (isOnAppTabPage()) {
+        try { frame.contentWindow.location.href = "home.html"; } catch (e) {}
+      }
       enterApp();
     });
     // 雲端相簿/社交媒體/二手平台這三張卡片,點下去要跳回玩家上次逛到的那一頁
