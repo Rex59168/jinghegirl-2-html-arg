@@ -149,12 +149,25 @@
         closeRecents();
         return;
       }
-      if (messagesEl.classList.contains("jh-messages--open")) {
-        closeMessages();
-        return;
-      }
-      if (notesEl.classList.contains("jh-notes--open")) {
-        closeNotes();
+      const current = currentOpenPanel();
+      if (current) {
+        // 如果是從別的面板切過來的(例如訊息 → 多工切去備忘錄),返回鍵要退回
+        // 上一個開著的面板,而不是直接整個關掉——只記一層,不是完整的瀏覽紀錄。
+        if (lastPanel && lastPanel !== current) {
+          const toReopen = lastPanel;
+          lastPanel = null;
+          if (current === "messages") {
+            messagesEl.classList.remove("jh-messages--open", "jh-messages--thread-open");
+            currentThreadContactId = null;
+          } else {
+            notesEl.classList.remove("jh-notes--open");
+          }
+          if (toReopen === "messages") openMessages();
+          else openNotes();
+          return;
+        }
+        if (current === "messages") closeMessages();
+        else closeNotes();
         return;
       }
       // 交給 iframe 自己那頁的站內導覽紀錄處理(browser-chrome.js 掛的
@@ -199,29 +212,46 @@
     recents.addEventListener("click", (e) => {
       if (e.target === recents) closeRecents();
     });
-    // 訊息面板跟備忘錄面板的 z-index 是同一個數字(疊放順序打平手),同時掛著
-    // open class 的話,誰排在後面出現在畫面上完全看 DOM 順序、不是看誰最近被
-    // 選——玩家在多工畫面連續選了兩個不同分頁,才會踩到這個情況(從其他入口
-    // 點進來的話,前一個面板一定是整片蓋住畫面,不會漏出縫隙讓玩家點到別的
-    // 入口)。所以在這裡開新的之前,要先把其他面板的 open class 拿掉,確保
-    // 玩家選哪個,哪個才會真的疊到最上層。
+    // 記住返回鍵按下前,上一個開著的面板是哪一個——讓「訊息 → 多工切去備忘錄 →
+    // 按返回鍵」可以退回訊息,而不是直接整個關掉。只記一層(不是完整堆疊),
+    // 符合「回到上一個開啟的分頁」這個需求,不用做到多層瀏覽器式的返回歷史。
+    let lastPanel = null; // 'messages' | 'notes' | null
+    function currentOpenPanel() {
+      if (messagesEl.classList.contains("jh-messages--open")) return "messages";
+      if (notesEl.classList.contains("jh-notes--open")) return "notes";
+      return null;
+    }
+
+    // 切到別的畫面之前,要先把其他所有蓋在上面的東西收乾淨——不只是多工畫面用
+    // 得到,任何「跳過多工畫面、直接開某個面板」的入口(例如訊息通知橫幅點擊)
+    // 也一定要走這條路。不然的話,假設備忘錄還開著時跳出新訊息通知,點通知只
+    // 會在備忘錄底下默默打開訊息面板——備忘錄的 z-index 比訊息面板高,畫面上
+    // 完全看不出任何變化,玩家會以為點了沒反應、被卡在備忘錄出不去。
     function closeAllPanelsForSwitch() {
+      lastPanel = currentOpenPanel();
+      recents.classList.remove("jh-recents--open");
+      messagesEl.classList.remove("jh-messages--open", "jh-messages--thread-open");
+      currentThreadContactId = null;
+      notesEl.classList.remove("jh-notes--open");
+    }
+    // Home 鍵是徹底離開、回主畫面,不需要「記得等一下退回去」,跟切分頁用的
+    // closeAllPanelsForSwitch() 分開一份,呼叫處在下面主畫面覆蓋層那一段。
+    function closeAllPanelsForHome() {
+      lastPanel = null;
+      recents.classList.remove("jh-recents--open");
       messagesEl.classList.remove("jh-messages--open", "jh-messages--thread-open");
       currentThreadContactId = null;
       notesEl.classList.remove("jh-notes--open");
     }
     document.getElementById("jh-recents-messages").addEventListener("click", () => {
-      closeRecents();
       closeAllPanelsForSwitch();
       openMessages();
     });
     document.getElementById("jh-recents-notes").addEventListener("click", () => {
-      closeRecents();
       closeAllPanelsForSwitch();
       openNotes();
     });
     document.getElementById("jh-recents-browser").addEventListener("click", () => {
-      closeRecents();
       closeAllPanelsForSwitch();
       enterApp();
     });
@@ -313,12 +343,13 @@
     document.getElementById("jh-nav-home").addEventListener("click", () => {
       // Home 鍵除了叫出主畫面,也要把訊息/備忘錄面板收起來——不然它們的
       // z-index 比主畫面高,玩家會看到面板卡住不動,以為 Home 鍵沒反應。
-      // 這裡直接拿掉 class(用跟多工切換畫面共用的 closeAllPanelsForSwitch()),
-      // 不呼叫 closeMessages()/closeNotes() 本身,是因為那兩個函式在「從瀏覽器
-      // 內容被打斷跳進來看」的情境下會連帶呼叫 hideHomeScreen()(關閉後要回到
-      // 原本在讀的頁面),那個副作用不適用在這裡——玩家主動按 Home 鍵,就是要
-      // 去主畫面,不是要回瀏覽器內容。
-      closeAllPanelsForSwitch();
+      // 這裡直接拿掉 class(用徹底離開專用的 closeAllPanelsForHome(),不是切
+      // 分頁用的 closeAllPanelsForSwitch()——按 Home 鍵不用記得等一下要退回
+      // 剛剛那個面板),不呼叫 closeMessages()/closeNotes() 本身,是因為那兩個
+      // 函式在「從瀏覽器內容被打斷跳進來看」的情境下會連帶呼叫 hideHomeScreen()
+      // (關閉後要回到原本在讀的頁面),那個副作用不適用在這裡——玩家主動按
+      // Home 鍵,就是要去主畫面,不是要回瀏覽器內容。
+      closeAllPanelsForHome();
       showHomeScreen();
     });
 
@@ -532,6 +563,11 @@
     notif.addEventListener("click", () => {
       notif.classList.remove("jh-notif--visible");
       clearTimeout(notifTimer);
+      // 通知橫幅是唯一一個「跳過多工畫面、直接開訊息面板」的入口(z-index 2000,
+      // 不管背後開著什麼都點得到)——如果備忘錄當時剛好開著,不先收乾淨的話,
+      // 訊息面板會在備忘錄底下默默打開,備忘錄 z-index 比較高會繼續蓋著,畫面上
+      // 完全看不出點了有反應,玩家會以為卡住了。
+      closeAllPanelsForSwitch();
       openMessages(ZY_ID);
     });
 

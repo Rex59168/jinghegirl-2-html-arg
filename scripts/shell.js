@@ -133,17 +133,19 @@ import { MAIL_UI } from './labels.js';
     // 信件面板停留在殼層這一層(z-index 1600),蓋在整個 iframe 上面——玩家在
     // 多工畫面連續選了兩個不同分頁的話,如果前一個面板沒有先關掉,即使選了別的
     // 分頁,信件面板還是會繼續蓋著、讓玩家覺得選了跟沒選一樣。所以在這裡開新的
-    // 之前,要先把信件面板收起來,確保玩家選哪個,哪個才會真的疊到最上層。
+    // 之前,要先把信件面板收起來,確保玩家選哪個,哪個才會真的疊到最上層。也要
+    // 把多工畫面自己收起來——通知橫幅(z-index 2000)是唯一一個跳過多工畫面、
+    // 直接開信件面板的入口,如果多工畫面當時剛好開著,不先收乾淨的話,信件面板
+    // 會在多工畫面底下默默打開,畫面上完全看不出點了有反應。
     function closeAllPanelsForSwitch() {
+      recents.classList.remove("jh-recents--open");
       mailEl.classList.remove("jh-mail--open");
     }
     document.getElementById("jh-recents-messages").addEventListener("click", () => {
-      closeRecents();
       closeAllPanelsForSwitch();
       openMail();
     });
     document.getElementById("jh-recents-notes").addEventListener("click", () => {
-      closeRecents();
       closeAllPanelsForSwitch();
       hideHomeScreen();
       try {
@@ -151,7 +153,6 @@ import { MAIL_UI } from './labels.js';
       } catch (e) {}
     });
     document.getElementById("jh-recents-browser").addEventListener("click", () => {
-      closeRecents();
       closeAllPanelsForSwitch();
       enterApp();
     });
@@ -346,6 +347,7 @@ import { MAIL_UI } from './labels.js';
     notif.addEventListener("click", () => {
       notif.classList.remove("jh-notif--visible");
       clearTimeout(notifTimer);
+      closeAllPanelsForSwitch();
       openMail();
     });
 
