@@ -27,7 +27,7 @@
     <span class="story-ring">🐱</span>
     <span class="ts">tiny.catcat</span>
   </button>
-  <a class="story-item" href="social/lin-xi.html" style="text-decoration:none;color:inherit;">
+  <a class="story-item" href="social/lin-xi.html" id="story-linxi" style="text-decoration:none;color:inherit;">
     <span class="story-ring">🌑</span>
     <span class="ts">linxi_0417</span>
   </a>
@@ -72,13 +72,14 @@
 <script src="assets/js/ambient.js"></script>
 <script>
 // 社交媒體 App 平常點進來的樣子——別人的動態牆,跟這起案件完全無關,單純
-// 營造「這是一個真的有人在用的社群平台」的日常感。林晞的帳號只是牆上會
-// 混到的其中一則貼文,不用另外特別強調她,跟真的追蹤名單裡混著陌生帳號
-// 是一樣的感覺。
+// 營造「這是一個真的有人在用的社群平台」的日常感。林晞的帳號不該平白無故
+// 出現在這裡:正常進入是不追蹤任何人的陌生帳號,要先從協尋站的連結點進
+// 她的個人頁、按下追蹤,動態牆才會混進她這一則貼文——跟真的追蹤名單裡
+// 混著陌生帳號是一樣的感覺,不是「反正她跟這案件有關就先讓玩家看到」。
 const FEED_POSTS = [
   { handle: "tea.ling_", color: "#c98b4b", photo: "tea", emoji: "🧋", caption: "貢茶買一送一衝了,今天決定波霸半糖", likes: 89, time: "2 小時前" },
   { handle: "tiny.catcat", color: "#a97c50", photo: "cat", emoji: "🐱", caption: "皮蛋今天在紙箱裡睡了一整天,家裡最忙的就是牠", likes: 152, time: "3 小時前" },
-  { handle: "linxi_0417", color: "#555", photo: "exam", emoji: "📖", caption: "模擬考終於考完啦啦啦啦啦", likes: 52, time: "5 小時前", link: "social/lin-xi.html" },
+  { handle: "linxi_0417", color: "#555", photo: "exam", emoji: "📖", caption: "模擬考終於考完啦啦啦啦啦", likes: 52, time: "5 小時前", link: "social/lin-xi.html", requiresFollow: true },
   { handle: "noctis_fan_tw", color: "#8f5fae", photo: "idol", emoji: "🎤", caption: "巡演周邊到貨,今晚拆團開箱,已經緊張到手抖", likes: 210, time: "6 小時前" },
   { handle: "kevin.b07", color: "#e2762f", photo: "sport", emoji: "🏀", caption: "校隊晉級啦!!下禮拜決賽,大家記得幫我加油", likes: 76, time: "8 小時前" },
   { handle: "rain.diary_north", color: "#5c7186", photo: "rain", emoji: "🌧️", caption: "靖河這幾天雨一直下,傘都快壞了,好想放晴", likes: 45, time: "昨天" },
@@ -86,8 +87,15 @@ const FEED_POSTS = [
   { handle: "jh_study_diary", color: "#7f97b8", photo: "study", emoji: "📚", caption: "暑輔第一天,教室冷氣壞掉,想哭", likes: 29, time: "3 天前" },
 ];
 
+// 沒追蹤她之前,動態牆上不該出現她這一則貼文、限動列上也不該有她——
+// 上面直接拿掉一個 id="story-linxi" 的元素,這裡濾掉整篇貼文。
+if (!JH.get("linxi_followed")) {
+  document.getElementById("story-linxi").remove();
+}
+const visiblePosts = FEED_POSTS.filter((p) => !p.requiresFollow || JH.get("linxi_followed"));
+
 const feedList = document.getElementById("feed-list");
-FEED_POSTS.forEach((p) => {
+visiblePosts.forEach((p) => {
   const post = document.createElement("article");
   post.className = "ig-post";
   const handleHtml = p.link ? `<a href="${p.link}">${p.handle}</a>` : p.handle;

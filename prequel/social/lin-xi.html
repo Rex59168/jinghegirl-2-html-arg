@@ -22,6 +22,10 @@
   <span><b>198</b>追蹤中</span>
 </div>
 <div class="ig-bio">靖河高中 高二 🎒 平凡的每一天而已</div>
+<div class="ig-follow-row">
+  <button type="button" class="ig-follow-btn" id="follow-btn">追蹤</button>
+  <div class="ig-follow-done" id="follow-done" style="display:none;">✓ 追蹤中</div>
+</div>
 
 <div class="story-rail ig-storyrail" id="story-rail">
   <button class="story-item" data-story="1">
@@ -194,6 +198,25 @@
 <script src="assets/js/hint.js"></script>
 <script src="assets/js/ambient.js"></script>
 <script>
+// 平常從動態牆(social/feed.html)逛進來的話,不會直接看到她——正常進入
+// 是不追蹤任何人的陌生帳號,要先點過協尋站上那則「她的社群帳號」連結、
+// 進來這頁按下追蹤,動態牆之後才會出現她。這裡只負責存旗標,動態牆那邊
+// 自己讀 linxi_followed 決定要不要顯示她。
+const followBtn = document.getElementById("follow-btn");
+const followDone = document.getElementById("follow-done");
+
+function showFollowed() {
+  followBtn.style.display = "none";
+  followDone.style.display = "block";
+}
+
+if (JH.get("linxi_followed")) showFollowed();
+
+followBtn.addEventListener("click", () => {
+  JH.set("linxi_followed", true);
+  showFollowed();
+});
+
 const STORIES = {
   1: { ts: "07:52", caption: "〔上學路上〕", text: "又快遲到了。" },
   2: { ts: "15:02", caption: "〔教室窗外〕", text: "終於放學。" },

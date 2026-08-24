@@ -43,7 +43,17 @@ body.site-social {
   font-size: 11px;
   color: #999;
 }
-.site-social .story-item .ts { display: block; margin-top: 2px; color: #aaa; }
+.site-social .story-item .ts {
+  display: block;
+  margin-top: 2px;
+  color: #aaa;
+  /* 帳號長一點(例如 rain.diary_north)原本會直接撐出 .story-item 74px的
+     寬度框外——限動列本來就是橫向排一排固定寬度的頭像,長帳號就該裁掉
+     顯示省略號,不是讓文字溢出去疊到隔壁那顆頭像上面。 */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 .site-social .card {
   background: #fff;
@@ -59,14 +69,22 @@ body.site-social {
   position: fixed; inset: 0;
   background: #111;
   color: #fff;
-  z-index: 200;
+  /* 假瀏覽器網址列(.jh-browser-chrome,同一份文件裡,z-index:1000)本來
+     蓋在這層上面,左上角的帳號名稱會被蓋住看不到——限動本來就是全螢幕
+     沉浸式的檢視,蓋過網址列才是對的行為(跟真的 IG/Snapchat 打開限動
+     會暫時看不到瀏覽器網址列是一樣的體驗),不是要另外把內容往下推。 */
+  z-index: 1050;
   display: none;
   flex-direction: column;
 }
 .site-social .story-viewer.open { display: flex; }
 .site-social .story-viewer .sv-top {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 14px 16px;
+  /* 上面/左邊都比原本多留一點點空間,單純視覺呼吸感——真正讓名字不被蓋住
+     的是上面 .story-viewer 的 z-index,不是這裡的 padding。刻意不留太多:
+     殼層那邊訊息/線索/加好友三個通知橫幅疊在一起佔掉的範圍一路頂到螢幕
+     220px 高,留太多反而會把關閉鈕推進通知橫幅的範圍,擋住點擊。 */
+  padding: 18px 16px 14px 20px;
 }
 .site-social .story-viewer .sv-body {
   flex: 1;
@@ -109,6 +127,27 @@ body.site-social {
 }
 .site-social .ig-stats b { display: block; font-size: 15px; }
 .site-social .ig-bio { padding: 0 16px 12px; font-size: 13px; color: #555; line-height: 1.6; }
+.site-social .ig-follow-row { padding: 0 16px 14px; }
+.site-social .ig-follow-btn {
+  width: 100%;
+  background: #0095f6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.site-social .ig-follow-btn:active { opacity: .85; }
+.site-social .ig-follow-done {
+  text-align: center;
+  background: #efefef;
+  color: #333;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
 
 .site-social .ig-avatar-sm {
   width: 44px; height: 44px; border-radius: 50%;
