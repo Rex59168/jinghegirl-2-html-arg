@@ -25,8 +25,6 @@
   <button type="button" id="check-btn">檢查標註</button>
 </div>
 
-<div class="reveal-block" id="reveal-block" style="display:none;"></div>
-
 <script src="assets/js/state.js"></script>
 <script src="assets/js/entry-warning.js"></script>
 <script src="assets/js/chapter-guard.js"></script>
@@ -144,32 +142,27 @@ function updateCount() {
 
 document.getElementById("check-btn").addEventListener("click", () => {
   const correct = updateCount();
-  if (correct >= 9) {
-    completeChapter(correct);
+  if (correct === 12) {
+    completeChapter();
   } else {
     document.getElementById("tag-count").textContent += "・再想想看";
   }
 });
 
-function completeChapter(correct) {
-  JH.set("ch5_done", true);
-  JHNotebook.add("ch5_tags", `重讀對話,標對 ${correct}/12 句誘導語句`, "chat/thread-review.html");
+function completeChapter() {
+  if (JH.get("ch5_done")) return;
+  // 12 句全部標對本身就是發現——不再另外用一段話把答案直接攤在頁面上。
+  // 被動記下線索,回到周妤的聊天可以直接把這個發現傳給她(幫玩家編輯好
+  // 訊息了,玩家只需要按下傳送),ch5_done跟給下一章連結的動作都要等玩家
+  // 真的送出才會發生。
+  JHNotebook.add("ch5_tags", "重讀對話,12/12 句誘導語句全部標對", "chat/thread-review.html");
   JHNotebook.add("ch5_mutual", "那兩個共同好友帳號,標點習慣跟錯字模式都跟 @rec_1029 一致——是同一個人", "chat/thread-review.html");
   JHNotebook.add("ch5_delay", "他每次回覆間隔 8–12 分鐘,不是在忙,是刻意延遲,製造他不是隨時在等妳的錯覺", "chat/thread-review.html");
-  JHPhone.push("nudge_ch6", "這次妳應該看懂了。我這邊還有一個東西給妳看。", "files/collection.html");
-
-  const block = document.getElementById("reveal-block");
-  block.style.display = "block";
-  block.innerHTML = `
-    <p>你標對了 ${correct}/12 句。</p>
-    <p>那兩個「共同好友」帳號,發文時間、標點習慣(全形驚嘆號)、錯字模式,跟 @rec_1029 完全一致——是同一個人。</p>
-    <p>你有沒有發現,他每次回覆的間隔,幾乎都精準落在 8 到 12 分鐘之間?他不是在忙。他是在刻意延遲,製造「他不是隨時在等妳」的錯覺。</p>
-  `;
-  block.scrollIntoView({ behavior: "smooth" });
+  JHPhone.pushQuickReply("ch5_quickreply", "那兩個「共同好友」帳號,標點習慣跟錯字模式都跟 @rec_1029 一致——是同一個人。而且他每次回覆間隔都卡在 8 到 12 分鐘之間,感覺像是刻意在拖時間。");
 }
 
 if (JH.get("ch5_done")) {
-  setTimeout(() => completeChapter(updateCount()), 300);
+  updateCount();
 }
 </script>
 </body>

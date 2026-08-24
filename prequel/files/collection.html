@@ -62,11 +62,6 @@
     </dl>
   </div>
 
-  <div id="closing" style="display:none;padding:14px;font-size:14px;line-height:1.9;">
-    他不是遇到她。<br>
-    他掛了一張她這輩子唯一無法拒絕的餌,掛了兩年,等她自己走過來。
-  </div>
-
   <p style="color:#fff;font-size:12px;margin-top:60px;user-select:text;">013 不是最後一個號碼。</p>
 </main>
 
@@ -137,17 +132,19 @@ FILES.forEach((f) => {
 function openFile(name) {
   if (name === "007.txt") {
     document.getElementById("detail-007").classList.add("open");
-    JHNotebook.add("ch6_007", "林昭的檔案(007.txt)最後更新:2024/03/11——她 2022 年就失蹤了", "files/collection.html");
   }
   if (name === "012.txt") {
     document.getElementById("detail-012").classList.add("open");
     JHNotebook.add("ch6_012", "林晞的檔案(012.txt)建檔日期:2023/11/06", "files/collection.html");
     if (!JH.get("ch6_done")) {
       JH.set("ch6_done", true);
-      document.getElementById("closing").style.display = "block";
-      document.getElementById("closing").scrollIntoView({ behavior: "smooth" });
       JHPhone.push("ch6_zy_reflection", "我不知道該說什麼。");
-      setTimeout(() => JHPhone.push("nudge_news", "我……傳一則新聞給妳,妳自己看。", "news/report.html"), 1800);
+      setTimeout(() => {
+        JHPhone.push("nudge_news_1", "我……傳一則新聞給妳,妳自己看。");
+      }, 1800);
+      setTimeout(() => {
+        JHPhone.push("nudge_news_2", "jinghedaily.tw/report", "news/report.html");
+      }, 2400);
     }
   }
 }
@@ -155,6 +152,5 @@ function openFile(name) {
 if (JH.get("ch6_done")) {
   document.getElementById("detail-007").classList.add("open");
   document.getElementById("detail-012").classList.add("open");
-  document.getElementById("closing").style.display = "block";
 }
 </script>

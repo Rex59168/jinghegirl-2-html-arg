@@ -191,16 +191,12 @@
         onCorrect() {
           jhSet("ch1_done", true);
           // 這是玩家剛剛主動告訴她的新發現(她根本不知道那張照片裡藏著東西),
-          // 第一反應該是驚訝,不是像系統提示一樣直接下指令。連結另外用一則
-          // 「本身就是網址」的訊息傳,點下去才會真的跳轉,不要塞在句子中間
-          // 讓玩家分不清楚哪裡是連結。
+          // 第一反應該是驚訝,不是像系統提示一樣直接下指令。二手交易區玩家
+          // 本來就找得到(多工畫面/首頁都有入口),不用另外遞一則連結。
           pushZY("ch1_zy_msg1", "等等——照片裡真的藏著這個?");
           setTimeout(() => {
             pushZY("ch1_zy_msg2", "編號只到 #18_……她該不會一直在找一張光碟吧。去二手交易那邊查查看,說不定能對到完整編號。");
           }, 900);
-          setTimeout(() => {
-            pushZY("ch1_zy_msg3", "market.tw/listing", "market/listing.html");
-          }, 1500);
         },
       },
     };
@@ -232,6 +228,18 @@
           }, 900);
           setTimeout(() => {
             pushZY("ch3_zy_msg3", "xun-lin-xi.github.io/xunren/rebuild-0814", "xunren/rebuild-0814.html");
+          }, 1500);
+        },
+      },
+      ch5_quickreply: {
+        onSend() {
+          jhSet("ch5_done", true);
+          pushZY("ch5_zy_msg1", "……同一個人?這種細節妳都能抓出來。");
+          setTimeout(() => {
+            pushZY("ch5_zy_msg2", "我這邊還有一個東西給妳看,是我從他那邊拿到的。");
+          }, 900);
+          setTimeout(() => {
+            pushZY("ch5_zy_msg3", "file:///C:/Users/rec_1029/收藏/", "files/collection.html");
           }, 1500);
         },
       },
@@ -279,6 +287,14 @@
           }
           if (toReopen === "messages") openMessages();
           else openNotes();
+          return;
+        }
+        // 訊息 App 如果正開著某一則對話串,返回鍵要先退回聯絡人清單(跟點
+        // 左上角的←是一樣的行為),不能直接整個關掉——不然玩家會覺得按一下
+        // 返回鍵就直接被彈回主畫面,而不是回到上一層清單。
+        if (current === "messages" && messagesEl.classList.contains("jh-messages--thread-open")) {
+          messagesEl.classList.remove("jh-messages--thread-open");
+          currentThreadContactId = null;
           return;
         }
         if (current === "messages") closeMessages();
@@ -505,7 +521,17 @@
       hideHomeScreen();
     }
 
-    document.getElementById("jh-boot-browser").addEventListener("click", enterApp);
+    // 主畫面的「瀏覽器」圖示原本只有 enterApp(),沒有跟多工畫面的「網站」卡片
+    // 一樣先檢查 isOnAppTabPage()——玩家如果先逛過社交媒體/二手平台,iframe
+    // 還停在那個板塊,直接點「瀏覽器」會看到上次逛到的社交媒體畫面,而不是
+    // 協尋網站本身。跟多工畫面那顆卡片一樣,在社交媒體/二手平台板塊裡的話
+    // 先導回 home.html,才是玩家點「瀏覽器」真正期待看到的畫面。
+    document.getElementById("jh-boot-browser").addEventListener("click", () => {
+      if (isOnAppTabPage()) {
+        try { frame.contentWindow.location.href = "home.html"; } catch (e) {}
+      }
+      enterApp();
+    });
     // 主畫面「社交媒體」圖示是真正能點的入口(取代原本只會抖動的裝飾用
     // 「相簿」圖示)——跟多工畫面的社交媒體分頁卡片共用同一個 openAppTab,
     // 平常點進去預設看到動態牆(social/feed.html),逛過之後點回來則是
@@ -646,6 +672,14 @@
           e.preventDefault();
           try { frame.contentWindow.location.href = href; } catch (err) {}
           closeMessages();
+          // closeMessages() 只有在「訊息面板本來就是被瀏覽器內容打斷跳出來的」
+          // 情境下才會連帶 hideHomeScreen()——如果玩家是從主畫面點進訊息 App
+          // 看到這則連結,messagesOpenedFromBrowser 是 false,單靠 closeMessages()
+          // 關閉面板後畫面會停在主畫面,看不到剛剛其實已經在背後導頁完成的
+          // iframe 內容。點連結訊息的動作本身就是「去看這個網頁」,不管訊息
+          // App 是怎麼打開的,都該直接進到瀏覽器畫面,所以這裡不管前面的狀態,
+          // 直接強制收起主畫面。
+          hideHomeScreen();
         });
       }
       return el;
@@ -945,6 +979,9 @@
           ev.preventDefault();
           try { frame.contentWindow.location.href = e.href; } catch (err) {}
           closeNotes();
+          // 跟訊息串裡點連結訊息同樣的道理——不管備忘錄是怎麼打開的,點一則
+          // 事項就是要去看那個頁面,不能停在主畫面看不到已經導頁完成的內容。
+          hideHomeScreen();
         });
         notesBodyEl.appendChild(a);
       });

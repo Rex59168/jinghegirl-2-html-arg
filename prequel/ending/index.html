@@ -18,8 +18,6 @@
 </header>
 
 <main class="container">
-  <div class="notice-box" id="zy-final" style="white-space:pre-wrap;"></div>
-
   <section class="panel">
     <h2>/收藏</h2>
     <p style="font-size:13px;color:#888;">資料夾多了一個新檔案</p>
@@ -27,7 +25,7 @@
   </section>
 
   <section class="panel" style="text-align:center;">
-    <button type="button" class="btn" id="continue-btn">繼續</button>
+    <button type="button" class="btn" id="continue-btn">進入下一章</button>
   </section>
 </main>
 
@@ -103,8 +101,9 @@ const ZY_FINAL_NEWS = `…我不知道還能做什麼。這個網站我本來是
 晞晞呢?我不敢往下想。這個網站我會留著。
 如果妳看到這裡了,謝謝妳陪我走完這一段。`;
 
+// 這段獨白不在頁面上重複顯示——已經用訊息傳給玩家了(見下面 JHPhone.push),
+// 頁面上再貼一次同樣的話,會變成「同一段話講兩次」的重複敘事。
 const zyFinalText = JH.get("news_done") ? ZY_FINAL_NEWS : ZY_FINAL_DEFAULT;
-document.getElementById("zy-final").textContent = zyFinalText;
 if (typeof JHPhone !== "undefined") {
   JHPhone.push("ending_final", zyFinalText.replace(/\n+/g, " "));
 }

@@ -89,7 +89,12 @@ function showAllDone() {
     panel.style.opacity = "1";
   });
   JHPhone.push("ch4_reflection_zy", REFLECTION.replace(/\n+/g, " "));
-  JHPhone.push("nudge_ch5", "五件事都查完了,我們再讀一次那份對話。", "chat/thread-review.html");
+  setTimeout(() => {
+    JHPhone.push("nudge_ch5_1", "五件事都查完了,我們再讀一次那份對話。");
+  }, 900);
+  setTimeout(() => {
+    JHPhone.push("nudge_ch5_2", "message-export.local/thread-review", "chat/thread-review.html");
+  }, 1500);
 }
 
 renderList();
