@@ -4,12 +4,18 @@
 // 來的),頁面也可以送出玩家自己回覆的"me"訊息(例如確認找到某個東西時,做成
 // 「回訊息給周妤」而不是單純的系統按鈕)。
 const JHPhone = {
-  push(id, text, href, from) {
+  // 三個 API 都是同一種薄橋接:轉交給殼層上對應名稱的函式處理(同源,可以
+  // 直接跨框呼叫 window.top),殼層還沒掛載好(呼叫時機太早)就靜默失敗,
+  // 不影響劇情閱讀。
+  _call(name, ...args) {
     try {
-      if (window.top && typeof window.top.jhReceiveMessage === "function") {
-        window.top.jhReceiveMessage(id, text, href, from);
+      if (window.top && typeof window.top[name] === "function") {
+        window.top[name](...args);
       }
     } catch (e) {}
+  },
+  push(id, text, href, from) {
+    this._call("jhReceiveMessage", id, text, href, from);
   },
   // pushClue — 提交型謎題現在不在網頁上做確認,而是搬進跟周妤的私訊裡:
   // 訊息串裡只會出現一句中性提示(不是她主動問——她沒理由已經知道玩家剛剛
@@ -17,21 +23,13 @@ const JHPhone = {
   // 負責把「有這件事可以做了」轉交給殼層,實際的選擇器 UI 跟答對/答錯的
   // 判斷都在殼層的訊息串裡完成(見 shell.js 的 CLUE_REQUESTS)。
   pushClue(id, text, expectedId, wrongMessage) {
-    try {
-      if (window.top && typeof window.top.jhReceiveClueRequest === "function") {
-        window.top.jhReceiveClueRequest(id, text, expectedId, wrongMessage);
-      }
-    } catch (e) {}
+    this._call("jhReceiveClueRequest", id, text, expectedId, wrongMessage);
   },
   // addZYFriend — 周妤不是一開始就在通訊錄裡:玩家要先在她的訊息帳號頁
   // (xunren/correction.html)主動加她好友,她才會出現在訊息 App 的聯絡人
   // 清單裡。在那之前任何一頁記下的線索確認提示都還是會存進訊息紀錄,只是
   // 要等加了好友才看得到。
   addZYFriend() {
-    try {
-      if (window.top && typeof window.top.jhAddZYFriend === "function") {
-        window.top.jhAddZYFriend();
-      }
-    } catch (e) {}
+    this._call("jhAddZYFriend");
   },
 };

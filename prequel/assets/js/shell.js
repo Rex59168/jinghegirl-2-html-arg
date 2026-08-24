@@ -128,6 +128,41 @@
   function mount() {
     const frame = document.getElementById("jh-app-frame");
 
+    // 頂部通知橫幅共用的建構函式——訊息/線索/加好友三種通知外觀完全一樣
+    // (圖示+標題+內文,點下去消失並觸發對應動作),只有圖示、標題、位置
+    // (className 決定,見 phone-boot.css 的 .jh-notif--visible 位移量)、
+    // 點擊後的行為不一樣,不用各自重複一份建立 DOM + 計時器的邏輯。
+    function createNotifBanner({ id, className, icon, title, onClick }) {
+      const el = document.createElement("div");
+      el.id = id;
+      el.className = className ? "jh-notif " + className : "jh-notif";
+      el.innerHTML = `
+        <div class="jh-notif__icon">${icon}</div>
+        <div class="jh-notif__text">
+          <div class="jh-notif__title">${title}</div>
+          <div class="jh-notif__body" id="${id}-body"></div>
+        </div>
+      `;
+      document.body.appendChild(el);
+      const bodyEl = el.querySelector(".jh-notif__body");
+      let timer = null;
+      function hide() {
+        el.classList.remove("jh-notif--visible");
+        clearTimeout(timer);
+      }
+      function show(bodyText) {
+        bodyEl.textContent = bodyText;
+        el.classList.add("jh-notif--visible");
+        clearTimeout(timer);
+        timer = setTimeout(hide, 5000);
+      }
+      el.addEventListener("click", () => {
+        hide();
+        onClick();
+      });
+      return { show };
+    }
+
     // 周妤傳來的一句話,快捷寫法(from 固定是 they)。
     function pushZY(id, text, href) {
       deliverPhoneEntry({ id, text, href, from: "them" });
@@ -491,17 +526,19 @@
     `;
     document.body.appendChild(messagesEl);
 
-    const notif = document.createElement("div");
-    notif.className = "jh-notif";
-    notif.id = "jh-notif";
-    notif.innerHTML = `
-      <div class="jh-notif__icon">💬</div>
-      <div class="jh-notif__text">
-        <div class="jh-notif__title">${ZY_NAME}</div>
-        <div class="jh-notif__body" id="jh-notif-body"></div>
-      </div>
-    `;
-    document.body.appendChild(notif);
+    // 通知橫幅是唯一一個「跳過多工畫面、直接開訊息面板」的入口(z-index
+    // 2000,不管背後開著什麼都點得到)——如果備忘錄當時剛好開著,不先收
+    // 乾淨的話,訊息面板會在備忘錄底下默默打開,備忘錄 z-index 比較高會
+    // 繼續蓋著,畫面上完全看不出點了有反應,玩家會以為卡住了。
+    const messageNotif = createNotifBanner({
+      id: "jh-notif",
+      icon: "💬",
+      title: ZY_NAME,
+      onClick: () => {
+        closeAllPanelsForSwitch();
+        openMessages(ZY_ID);
+      },
+    });
 
     const contactsEl = document.getElementById("jh-messages-contacts");
     const threadNameEl = document.getElementById("jh-messages-thread-name");
@@ -672,12 +709,11 @@
       currentThreadContactId = null;
     });
 
-    // ── 通知橫幅:iframe 裡任何一頁呼叫 window.top.jhReceiveMessage(...)/
+    // ── iframe 裡任何一頁呼叫 window.top.jhReceiveMessage(...)/
     // jhReceiveClueRequest(...) 都會進來這裡。from 預設是"them"(周妤傳來的,
     // 會跳通知橫幅);玩家自己回覆的"me"訊息不用跳通知打斷自己,直接視為已讀
     // 就好。兩種訊息共用同一套「存進 log→即時顯示或跳通知」邏輯,差別只在
     // entry 有沒有帶 clue 欄位。 ──
-    let notifTimer = null;
     function deliverPhoneEntry(entry) {
       const log = phoneLog();
       if (log.some((m) => m.id === entry.id)) return;
@@ -713,10 +749,7 @@
       }
 
       renderBadge();
-      document.getElementById("jh-notif-body").textContent = entry.text;
-      notif.classList.add("jh-notif--visible");
-      clearTimeout(notifTimer);
-      notifTimer = setTimeout(() => notif.classList.remove("jh-notif--visible"), 5000);
+      messageNotif.show(entry.text);
     }
     window.jhReceiveMessage = function jhReceiveMessage(id, text, href, from) {
       deliverPhoneEntry({ id, text, href, from: from === "me" ? "me" : "them" });
@@ -733,23 +766,18 @@
     // 玩家在她的訊息帳號頁(xunren/correction.html)點「加好友」時呼叫——
     // 只是把她加進通訊錄,不會生出任何一則訊息(不然又會變成「莫名其妙就
     // 有一句她的話」)。之前在別的頁面已經存進 phone_log 的內容(如果有)
-    // 這時候會一起冒出來,角標也會反映出來。
+    // 這時候會一起冒出來,角標也會反映出來,再跳一個通知橫幅引導玩家去看
+    // 訊息(friendNotif 定義在下面,但這裡呼叫得到——同一個 mount() 函式裡,
+    // 變數宣告雖然不會提升,但這個函式本身只在點擊「加好友」按鈕時才會被
+    // 呼叫,那一定是在 mount() 整個執行完、頁面已經可以互動之後,所以沒有
+    // 「還沒定義就用到」的問題)。
     window.jhAddZYFriend = function jhAddZYFriend() {
       if (zyFriended()) return;
       jhSet("zy_friend_added", true);
       renderBadge();
       renderContacts();
+      friendNotif.show("周妤・點一下前往訊息");
     };
-    notif.addEventListener("click", () => {
-      notif.classList.remove("jh-notif--visible");
-      clearTimeout(notifTimer);
-      // 通知橫幅是唯一一個「跳過多工畫面、直接開訊息面板」的入口(z-index 2000,
-      // 不管背後開著什麼都點得到)——如果備忘錄當時剛好開著,不先收乾淨的話,
-      // 訊息面板會在備忘錄底下默默打開,備忘錄 z-index 比較高會繼續蓋著,畫面上
-      // 完全看不出點了有反應,玩家會以為卡住了。
-      closeAllPanelsForSwitch();
-      openMessages(ZY_ID);
-    });
 
     renderBadge();
 
@@ -836,34 +864,35 @@
     document.getElementById("jh-boot-notes").addEventListener("click", openNotes);
     document.getElementById("jh-notes-close").addEventListener("click", closeNotes);
 
-    // ── 線索通知橫幅:iframe 裡任何一頁呼叫 JHNotebook.add(...) 新增一筆
-    // *還沒記錄過* 的線索時,會跳出這個橫幅(跟訊息通知同一套視覺,錯開位置
-    // 避免疊在一起),點一下直接開備忘錄查看剛蒐集到的那則線索。 ──
-    const clueNotif = document.createElement("div");
-    clueNotif.className = "jh-notif jh-clue-notif";
-    clueNotif.id = "jh-clue-notif";
-    clueNotif.innerHTML = `
-      <div class="jh-notif__icon">📝</div>
-      <div class="jh-notif__text">
-        <div class="jh-notif__title">已記錄新線索</div>
-        <div class="jh-notif__body" id="jh-clue-notif-body"></div>
-      </div>
-    `;
-    document.body.appendChild(clueNotif);
-
-    let clueNotifTimer = null;
+    // 線索通知橫幅:iframe 裡任何一頁呼叫 JHNotebook.add(...) 新增一筆
+    // *還沒記錄過* 的線索時,會跳出這個橫幅(跟其他通知錯開位置,不會疊在
+    // 一起),點一下直接開備忘錄查看剛蒐集到的那則線索。
+    const clueNotif = createNotifBanner({
+      id: "jh-clue-notif",
+      className: "jh-clue-notif",
+      icon: "📝",
+      title: "已記錄新線索",
+      onClick: () => {
+        closeAllPanelsForSwitch();
+        openNotes();
+      },
+    });
     window.jhClueNotify = function jhClueNotify(text) {
       renderNotesBadge();
-      document.getElementById("jh-clue-notif-body").textContent = text;
-      clueNotif.classList.add("jh-notif--visible");
-      clearTimeout(clueNotifTimer);
-      clueNotifTimer = setTimeout(() => clueNotif.classList.remove("jh-notif--visible"), 5000);
+      clueNotif.show(text);
     };
-    clueNotif.addEventListener("click", () => {
-      clueNotif.classList.remove("jh-notif--visible");
-      clearTimeout(clueNotifTimer);
-      closeAllPanelsForSwitch();
-      openNotes();
+
+    // 加好友通知橫幅:玩家在她的訊息帳號頁(xunren/correction.html)點
+    // 「加好友」之後,跳這個橫幅引導去看訊息,點一下直接開她的對話串。
+    const friendNotif = createNotifBanner({
+      id: "jh-friend-notif",
+      className: "jh-friend-notif",
+      icon: "👥",
+      title: "已加入好友",
+      onClick: () => {
+        closeAllPanelsForSwitch();
+        openMessages(ZY_ID);
+      },
     });
 
     // iframe 裡任何一頁呼叫 JHNotebook.add(...) 都會透過這個跨框呼叫通知殼層

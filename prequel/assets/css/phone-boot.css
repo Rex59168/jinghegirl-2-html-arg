@@ -438,6 +438,17 @@
   background: linear-gradient(160deg, #f0a742, #d97706);
 }
 
+/* 加好友通知橫幅:再錯開一排(跟訊息/線索通知同一套視覺),避免三則同時
+   跳出來時疊在一起。 */
+.jh-friend-notif {
+  top: 164px;
+  transform: translateY(-268px);
+}
+.jh-friend-notif.jh-notif--visible { transform: translateY(6px); }
+.jh-friend-notif .jh-notif__icon {
+  background: linear-gradient(160deg, #8a7ee0, #5c4bc4);
+}
+
 /* ══════════════════ 備忘錄 App(已知事項清單) ══════════════════
    跟 .jh-messages / .jh-mail 佔一樣的範圍,從主畫面「備忘錄」圖示點進來。純粹是
    一份事實清單,不用聯絡人/對話串那層,面板是單一列表。z-index 特意設得比訊息
