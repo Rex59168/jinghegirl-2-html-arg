@@ -670,7 +670,6 @@ const JH_I18N_EN = {
   "進入下一章": "Next Chapter",
   "這裡不對勁 — 周妤": "Something's off here — Zhouyu",
   "終於把頭髮燙了個大波浪,還在適應中,大家覺得好看嗎": "Finally got my hair permed into big waves, still getting used to it — does it look good?",
-  "三年份,日常得不能再日常。": "Three years of posts. As mundane as it gets.",
   "把妳發現的線索傳給周妤,讓她確認一下。": "Send what you found to Zhouyu so she can confirm it.",
   "她的限時動態最後一則,時間戳是 19:41": "The timestamp on her last story is 19:41",
   "等等——照片裡真的藏著這個?": "Wait — that's really hidden in the photo?",
@@ -850,6 +849,12 @@ const JH_I18N_EN = {
   "還在的話麻煩回覆一下,真的很想收": "If it's still available please reply, I really want this one",
   "還有 36 則類似的詢問,大多石沉大海。": "36 more messages like this, most of them never answered.",
   "面交地點方便約在哪?": "Where would be a convenient meeting spot?",
+  "有的,晚點傳實拍照給你": "Sure, I'll send you real photos later",
+  "可以宅配,運費補一下就好": "Can ship it, just cover the extra shipping",
+  "訂金先不用,約好時間再面交就好": "No deposit needed, just set a time to meet up",
+  "這款目前只剩這張了": "This is the last one of this item left",
+  "站內訊息回你囉,看一下": "Replied through the site's messages, take a look",
+  "可以啊,方便的話約假日": "Sure, weekends work better if that's fine",
 
   // 按讚按鈕(aria-label,不是畫面上看得到的文字,但 i18n.js 也會處理這個屬性)
   "讚": "Like",
