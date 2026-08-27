@@ -663,6 +663,139 @@ const JH_I18N_EN = {
   "喔好啊": "Oh okay",
   "我車停興安那邊，走過去五分鐘就好": "My car's parked over by Xing'an, it's just a five minute walk",
   "好": "Okay",
+
+  // ── 快捷回覆機制 + 第四/五/六章訊息補完(先前缺英文翻譯) ──
+  "已編輯好回覆,傳送給周妤:": "Reply drafted — send to Zhouyu:",
+  "傳送": "Send",
+  "進入下一章": "Next Chapter",
+  "這裡不對勁 — 周妤": "Something's off here — Zhouyu",
+  "終於把頭髮燙了個大波浪,還在適應中,大家覺得好看嗎": "Finally got my hair permed into big waves, still getting used to it — does it look good?",
+  "三年份,日常得不能再日常。": "Three years of posts. As mundane as it gets.",
+  "把妳發現的線索傳給周妤,讓她確認一下。": "Send what you found to Zhouyu so she can confirm it.",
+  "她的限時動態最後一則,時間戳是 19:41": "The timestamp on her last story is 19:41",
+  "等等——照片裡真的藏著這個?": "Wait — that's really hidden in the photo?",
+  "編號只到 #18_……她該不會一直在找一張光碟吧。去二手交易那邊查查看,說不定能對到完整編號。":
+    "The serial number only goes to #18_... don't tell me she's been looking for a disc this whole time. Check the resale site — maybe you can match the full number.",
+  "好,我們來確認她到底在找哪一張。": "Okay, let's figure out exactly which one she was looking for.",
+  "我記得晞晞提過,林昭 2019 年抽中限定盤的時候,好像有在自己帳號上曬過開箱。去她姐姐的舊帳號看看?":
+    "I remember Xi mentioning that when Lin Zhao won the limited pressing back in 2019, she posted an unboxing on her own account. Want to check her sister's old account?",
+  "晞晞的手機瀏覽器裡有一個叫「找碟」的書籤資料夾,存了快兩年的搜尋紀錄,妳要不要看看她都存了什麼。":
+    "There's a bookmark folder called \"Finding the Disc\" in Xi's phone browser — almost two years of search history saved in it. Want to see what she kept?",
+  "周妤,就是這份——#188。": "Zhouyu, this is the one — #188.",
+  "……#188?兩年都沒人接手喔。": "...#188? Nobody's picked it up in two years.",
+  "上架這麼久都沒降價、沒下架,留言也沒人回——這帳號本來就怪怪的。我把完整的對話記錄傳給妳。":
+    "Listed this long with no price drop, never taken down, and none of the comments got a reply — something's off about this account. I'll send you the full chat log.",
+  "這是我拿到的完整對話記錄,妳自己看。": "This is the full chat log I got. Take a look yourself.",
+  "妳有沒有發現——他每次回覆的間隔,幾乎都精準落在 8 到 12 分鐘之間。一個半月來,從無例外。":
+    "Have you noticed — his replies always land almost exactly 8 to 12 minutes apart. Not once in a month and a half.",
+  "……回覆間隔都卡在 8 到 12 分鐘?這也太規律了吧。": "...his replies always land 8 to 12 minutes apart? That's way too regular.",
+  "我們把 8/14 那天,一件一件重新弄清楚。": "Let's go through 8/14 again, one thing at a time.",
+  "好,我們現在要弄清楚一件事——她那天到底幾點還活著。我把我這邊有的資料都整理出來了,妳一個一個看,看完跟我說。":
+    "Okay, there's one thing we need to nail down — what time she was still alive that day. I've organized everything I have. Go through it one by one and tell me when you're done.",
+  "他改時間的藉口——說明天會塞車,但那個時段路況根本正常。": "His excuse for changing the time — said traffic would be bad tomorrow, but that time slot was completely normal.",
+  "這則訊息我看過不知道幾次了。「明天好像會塞車」——聽起來就是很普通的一句抱歉,普通到我當初轉貼給大家看的時候,根本沒人多想。可是查了路況才發現,那個時段根本沒塞車。他是提前一整天,就先想好要這樣說了。":
+    "I've looked at this message more times than I can count. \"Traffic might be bad tomorrow\" — it sounds like such an ordinary little apology, so ordinary that when I first shared it with everyone, nobody thought twice. But when I checked the traffic, there was no jam at all in that window. He'd planned to say that a full day ahead.",
+  "她 17:22 進站,19:38 出站的卻是興安站,不是約好的文昌站。": "She tapped in at 17:22, but tapped out at 19:38 at Xing'an Station — not Wenchang, where you agreed to meet.",
+  "……文昌站 2 號出口誒,她真的有到,可是根本沒進咖啡廳。卡不會騙人啦,只是它不會告訴我們她那時候在想什麼。":
+    "...Wenchang Station, exit 2. She really did get there — she just never went into the café. The card doesn't lie, it just can't tell us what she was thinking.",
+  "欸,妳把他的貼文全滑完了嗎?我之前也點進去看過,三年貼文、共同好友都對得上,看起來就是個普通的收藏圈同好。如果是我先看到,我大概也會跟妳說「應該沒問題吧」。":
+    "Hey, did you scroll through all of his posts? I looked into it before too — three years of posts, mutual friends, it all checks out. Looks like just an ordinary collector. If I'd seen it first, I probably would've told you \"it's probably fine\" too.",
+  "她有跟妳說要出門,只是說得很含糊——「跟同學去買東西」。": "She did tell you she was going out, she just kept it vague — \"going shopping with a classmate.\"",
+  "她說得很含糊,但不是騙我。她只是不想被攔下來。早知道我就多問一句「哪個同學」——現在想想,她連名字都沒提。":
+    "She was vague, but she wasn't lying to me. She just didn't want to be stopped. I should've asked one more question — \"which classmate\" — now that I think about it, she never even said a name.",
+  "她有開定位分享給媽,但只設定 17:00 到 19:00,時間到就自動關閉了。": "She had location sharing on for her mom, but only set from 17:00 to 19:00 — it turned itself off once the time was up.",
+  "這件事是她媽媽後來跟我說的。她有開分享位置,兩個小時,17:00 到 19:00。她大概覺得,兩小時,見個面、喝杯咖啡,怎麼樣都夠了。":
+    "Her mom told me about this afterward. She'd turned on location sharing — two hours, 17:00 to 19:00. She probably figured two hours was plenty for meeting up and grabbing a coffee.",
+  "我們再讀一次,這次試著看懂他在做什麼。": "Let's read it again — this time, try to see what he was actually doing.",
+  "重讀對話,12/12 句誘導語句全部標對": "Re-read the conversation, correctly tagged all 12/12 manipulative lines",
+  "那兩個「共同好友」帳號,標點習慣跟錯字模式都跟 @rec_1029 一致——是同一個人。而且他每次回覆間隔都卡在 8 到 12 分鐘之間,感覺像是刻意在拖時間。":
+    "Those two \"mutual friend\" accounts — the punctuation habits, the typos — all match @rec_1029. Same person. And his replies always land 8 to 12 minutes apart, like he's deliberately dragging it out.",
+  "……同一個人?這種細節妳都能抓出來。": "...the same person? You caught that from a detail like this.",
+  "我這邊還有一個東西給妳看,是我從他那邊拿到的。": "There's something else I want to show you — I got it from him.",
+  "這是我從他那邊——不知道該怎麼形容——拿到的東西。": "This is something I got from him — I don't even know how to describe it.",
+  "我不知道該說什麼。": "I don't know what to say.",
+  "我……傳一則新聞給妳,妳自己看。": "I'm... sending you a news article. See for yourself.",
+  "我一直在想,如果我早一點意識到晞晞在做什麼就好了。": "I keep thinking — if only I'd realized what Xi was doing sooner.",
+  "沒事了,妳回來吧。": "It's over. Come back.",
+
+  // ── 補完先前缺英文翻譯的靜態頁面文字 ──
+  "已搬移,請至": "Moved to",
+  "iWIN 網路內容防護機構": "iWIN (Taiwan's Internet Content Safety Association)",
+  "晴語": "SkyTalk",
+  "五件事都確認完了。": "All five things are confirmed.",
+  "→ 加站長好友,回報你發現的線索": "→ Add the site owner as a friend, report what you've found",
+
+  // xunren/correction.html — 周妤的訊息帳號頁
+  "聯絡站長": "Contact the Site Owner",
+  "協尋林晞・站長訊息帳號": "Find Lin Xi · Site Owner's Message Account",
+  "本站站長・林晞同班同學": "Site owner · Lin Xi's classmate",
+  "公告如果哪裡寫錯了,或你有任何相關線索,加我好友直接傳訊息告訴我,我看到會盡快確認、回覆。":
+    "If anything in the notice is wrong, or you have any related leads, add me as a friend and message me directly — I'll check and reply as soon as I see it.",
+  "加好友": "Add Friend",
+  "已加入好友。": "Added as a friend.",
+
+  // social/lin-xi.html — 林晞的個人頁
+  "貼文": "Posts",
+  "粉絲": "Followers",
+  "追蹤中": "Following",
+  "靖河高中 高二 🎒 平凡的每一天而已": "Jinghe High School, Junior 🎒 Just an ordinary day-to-day",
+  "追蹤": "Follow",
+  "✓ 追蹤中": "✓ Following",
+  "63 個讚": "63 likes",
+  "21 個讚": "21 likes",
+  "38 個讚": "38 likes",
+  "颱風終於走了,悶在家三天快發霉😩": "Typhoon's finally gone, been cooped up inside for three days going moldy😩",
+  "47 個讚": "47 likes",
+  "新耳機到了新耳機到了!!音質差超多,早知道就先換了😭": "New headphones are here new headphones are here!! Sound quality's SO much better, wish I'd switched sooner😭",
+  "55 個讚": "55 likes",
+  "補習班下課整個餓死,晚餐決定鹽酥雞": "Starving after cram school, dinner's decided: fried chicken",
+  "29 個讚": "29 likes",
+  "暑輔第一天,教室冷氣壞掉,想哭😭": "First day of summer classes and the AC's broken, want to cry😭",
+  "44 個讚": "44 likes",
+  "跟雋去唱歌尬歌尬到喉嚨痛哈哈哈": "Went singing with Jun, sang so hard my throat hurts hahaha",
+  "67 個讚": "67 likes",
+  "52 個讚": "52 likes",
+  "期末考終於考完啦啦啦啦啦": "Finals are finally over yayyyyy",
+
+  // social/lin-zhao-2019.html — 姐姐的舊帳號
+  "明天約朋友一起聽,期待到睡不著": "Meeting a friend to listen to it tomorrow, too excited to sleep",
+  "2019/11/25・98 個讚": "2019/11/25 · 98 likes",
+  "收藏區又多了一格,要重新想怎麼擺了": "One more slot filled in the collection, gotta rearrange the display again",
+  "2019/12/02・61 個讚": "2019/12/02 · 61 likes",
+  "跟社團的朋友約好寒假一起去簽名會,超期待": "Made plans with club friends to go to the signing event over winter break, so excited",
+  "2019/12/15・73 個讚": "2019/12/15 · 73 likes",
+  "存錢存了三個月,終於可以入手心心念念那張了": "Saved up for three months, finally getting the one I've been dying for",
+  "2019/12/28・91 個讚": "2019/12/28 · 91 likes",
+
+  // social/rec1029.html — 賣家帳號
+  "唱片交流・靖河": "Record Exchange · Jinghe",
+  "檢舉": "Report",
+  "帳號建立於 2022/09・貼文 340 則・追蹤者 612": "Account created 2022/09 · 340 posts · 612 followers",
+  "黑膠 / 藍光 / 演唱會週邊交流。誠信交易,學生也歡迎聊。": "Vinyl / Blu-ray / concert merch exchange. Honest deals, students welcome to chat too.",
+  "入手一批日版黑膠,整理中": "Got a batch of Japanese-press vinyl, sorting through them",
+  "3 天前・18 個讚": "3 days ago · 18 likes",
+  "今天去的那間二手店老闆人很好,推薦": "The owner at the secondhand shop I went to today was really nice, recommend it",
+  "1 週前・24 個讚": "1 week ago · 24 likes",
+  "NOCTIS 新專輯首賣排隊實錄,排了 4 小時值得": "NOCTIS new album launch queue log — waited 4 hours, worth it",
+  "2 週前・61 個讚": "2 weeks ago · 61 likes",
+  "幫朋友問,有人有多的演唱會應援燈嗎": "Asking for a friend, does anyone have a spare concert light stick?",
+  "3 週前・9 個讚": "3 weeks ago · 9 likes",
+  "收藏櫃整理到一半,發現好幾張忘記自己有": "Halfway through organizing my collection shelf, found a bunch I forgot I even had",
+  "1 個月前・33 個讚": "1 month ago · 33 likes",
+  "上次那批黑膠已經全部出清,謝謝大家": "That last batch of vinyl is all sold out now, thanks everyone",
+  "2 個月前・15 個讚": "2 months ago · 15 likes",
+  "有人在找 NOCTIS 的舊場刊嗎,我這邊應該還有,可以問": "Anyone looking for old NOCTIS event programs? I might still have some, feel free to ask",
+  "3 個月前・27 個讚": "3 months ago · 27 likes",
+  "學生真的別加太多群組,詐騙訊息一堆,大家小心": "Students, seriously don't join too many groups, so many scam messages going around, be careful",
+  "4 個月前・42 個讚": "4 months ago · 42 likes",
+  "想收的場刊終於補齊了,滿足": "Finally completed the set of event programs I wanted, so satisfied",
+  "5 個月前・19 個讚": "5 months ago · 19 likes",
+  "常有人問黑膠保養方式,晚點統一整理一篇": "People keep asking about vinyl care, I'll put together a post about it later",
+  "6 個月前・11 個讚": "6 months ago · 11 likes",
+  "感謝這幾年一路支持,交流群還是開著,有興趣歡迎加": "Thanks for the support over the years, the exchange group's still open, feel free to join if interested",
+  "8 個月前・53 個讚": "8 months ago · 53 likes",
+  "共同好友": "Mutual Friends",
+  "感謝您的檢舉。我們會在 3–5 個工作天內完成審核。": "Thank you for your report. We'll complete the review within 3–5 business days.",
 };
 
 // ── regex fallback:固定文字 + 動態內容(日期/數字/玩家輸入)拼在同一節點 ──
