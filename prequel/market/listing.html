@@ -156,10 +156,30 @@ function render() {
   document.getElementById("next-page").addEventListener("click", () => { page++; render(); window.scrollTo(0,0); });
 }
 
+function escapeHtml(s) {
+  return String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+}
+
+function renderCommentThread(r) {
+  if (!r.commentList || !r.commentList.length) return "";
+  const items = r.commentList
+    .map((c) => {
+      const whoLabel = c.who === "seller" ? escapeHtml(r.seller) : "買家";
+      return `<div class="comment-item ${c.who}"><span class="who">${whoLabel}</span>${escapeHtml(c.text)}<span class="c-date">${c.date}</span></div>`;
+    })
+    .join("");
+  const note = r.commentNote ? `<p class="comment-note">${escapeHtml(r.commentNote)}</p>` : "";
+  return `
+    <button type="button" class="comments-toggle">查看留言</button>
+    <div class="comment-thread">${items}${note}</div>
+  `;
+}
+
 function renderRow(r) {
   const row = document.createElement("div");
   row.className = "listing-row";
   const isTarget = r.serial === "#188";
+  const lastOnline = isTarget ? `${1 + Math.floor(Math.random() * 12)} 分鐘前` : r.lastOnline;
 
   row.innerHTML = `
     <div class="listing-summary">
@@ -172,10 +192,9 @@ function renderRow(r) {
         <div class="field"><dt>上架日</dt><dd>${r.listedDate}</dd></div>
         <div class="field"><dt>最後更新</dt><dd>${r.updatedDate}</dd></div>
         <div class="field"><dt>留言</dt><dd>${r.comments} 則${r.sellerReplies !== undefined ? "・賣家回覆 " + r.sellerReplies + " 則" : ""}</dd></div>
-        ${r.sellerAccountCreated ? `<div class="field"><dt>帳號建立</dt><dd>${r.sellerAccountCreated}</dd></div>` : ""}
-        ${isTarget ? `<div class="field"><dt>上次上線</dt><dd>${1 + Math.floor(Math.random() * 12)} 分鐘前</dd></div>` : ""}
+        ${lastOnline ? `<div class="field"><dt>上次上線</dt><dd>${lastOnline}</dd></div>` : ""}
       </dl>
-      ${isTarget ? '<p id="confirm-note" style="margin-top:8px;color:#7a4a20;">兩年,沒有降價,沒有下架,沒有回覆任何人。<br>直到 2025 年 7 月,他回了第一則訊息。</p>' : ""}
+      ${renderCommentThread(r)}
     </div>
   `;
 
@@ -187,10 +206,18 @@ function renderRow(r) {
     if (isTarget && row.classList.contains("open") && !JH.get("ch2_seen")) {
       JH.set("ch2_seen", true);
       JHNotebook.add("ch2_number", "光碟編號確認是 #188", "market/listing.html");
-      JHNotebook.add("ch2_date", "#188 於 2023/11/06 上架,兩年沒動過,留言 47 則賣家一則都沒回", "market/listing.html");
+      JHNotebook.add("ch2_date", "#188 於 2023/11/06 上架,兩年沒動過,47 則留言只回過一次,而且是最近的事", "market/listing.html");
       JHPhone.pushQuickReply("ch2_quickreply", "周妤,就是這份——#188。");
     }
   });
+
+  const commentsToggle = row.querySelector(".comments-toggle");
+  if (commentsToggle) {
+    commentsToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      row.querySelector(".comment-thread").classList.toggle("open");
+    });
+  }
 
   return row;
 }

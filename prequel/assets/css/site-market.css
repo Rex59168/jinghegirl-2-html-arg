@@ -104,3 +104,34 @@ body.site-market {
   border-radius: 6px;
 }
 .site-market .pager button:disabled { opacity: .4; }
+
+/* 留言串:原本只顯示則數,現在點下去真的看得到內容——買家的詢問、賣家
+   偶爾的回覆,都是真的排在時間軸上的訊息,不是純數字裝飾。 */
+.site-market .comments-toggle {
+  margin-top: 8px;
+  background: none;
+  border: 1px solid #d9661d;
+  color: #d9661d;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.site-market .comment-thread {
+  display: none;
+  margin-top: 10px;
+  border-top: 1px dashed #eee0d0;
+  padding-top: 4px;
+}
+.site-market .comment-thread.open { display: block; }
+.site-market .comment-item {
+  padding: 6px 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  border-bottom: 1px solid #f5ede2;
+}
+.site-market .comment-item:last-child { border-bottom: none; }
+.site-market .comment-item .who { font-weight: 600; margin-right: 6px; }
+.site-market .comment-item.seller .who { color: #d9661d; }
+.site-market .comment-item .c-date { color: #a07a50; font-size: 11px; margin-left: 6px; }
+.site-market .comment-note { font-size: 11.5px; color: #a07a50; margin-top: 8px; font-style: italic; }

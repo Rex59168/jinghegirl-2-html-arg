@@ -44,17 +44,7 @@
   <section class="panel">
     <h2>相關連結</h2>
     <p><a href="social/lin-xi.html">→ 她的社群帳號(留言區已關閉,動態還在)</a></p>
-    <p><a href="xunren/updates.html">→ 已釐清事項(隨時更新)</a></p>
     <p><a href="xunren/correction.html">→ 加站長好友,回報你發現的線索</a></p>
-  </section>
-
-  <section class="panel">
-    <h2>已釐清事項(最新)</h2>
-    <div class="update-item" id="latest-update">
-      <span class="date">8/15 建站</span>
-      官方公告最後聯繫時間為 17:32。目前仍在確認中。
-    </div>
-    <p><a href="xunren/updates.html">看全部公告 →</a></p>
   </section>
 </main>
 
@@ -78,22 +68,6 @@ JH_STATS.trackEntered();
 
 if (JH.get("ch0_done")) {
   document.getElementById("last-contact-fact").textContent = "2025/8/14 19:41(已更正,原公告 17:32)";
-}
-
-const LATEST_UPDATES = [
-  { key: "news_done", date: "8/31", html: '河堤那具遺骸,確認是林昭。<br><a href="ending/index.html">→ 最新進度</a>' },
-  { key: "ch6_done", date: "8/28", html: "看到他的收藏資料夾了。" },
-  { key: "ch5_done", date: "8/26", html: "重讀了一次對話,這次看懂了。那兩個共同好友帳號其實是同一個人假扮的。" },
-  { key: "ch4_done", date: "8/24", html: "重建了 8/14 那一天。她做對了五件事,還是出事了。" },
-  { key: "ch3_done", date: "8/21", html: "拿到完整對話記錄。他們約在 8/14 文昌站見面,原本 16:00,後來改成 17:30。" },
-  { key: "ch2_done", date: "8/19", html: "確認編號是 #188。這份光碟從 2023/11/06 掛在二手平台上,兩年沒人動過。" },
-  { key: "ch1_done", date: "8/17", html: "晞晞在找一張光碟,只知道編號開頭是 #18_。" },
-  { key: "ch0_done", date: "8/16", html: "已確認最後聯繫時間其實是 19:41,非先前公告之 17:32。" },
-];
-const latest = LATEST_UPDATES.find((u) => JH.get(u.key));
-if (latest) {
-  document.getElementById("latest-update").innerHTML =
-    `<span class="date">${latest.date} 更新</span>${latest.html}`;
 }
 </script>
 </body>

@@ -216,11 +216,14 @@
           jhSet("ch2_done", true);
           pushZY("ch2_zy_msg1", "……#188?兩年都沒人接手喔。");
           setTimeout(() => {
-            pushZY("ch2_zy_msg2", "上架這麼久都沒降價、沒下架,留言也沒人回——這帳號本來就怪怪的。我把完整的對話記錄傳給妳。");
+            pushZY("ch2_zy_msg2", "等我一下,我去翻一下晞晞手機裡的訊息記錄,看她是不是也跟這個賣家聊過。");
           }, 900);
           setTimeout(() => {
+            pushZY("ch2_zy_msg2b", "……真的有,他們兩個聊過。我把對話記錄整理出來傳給妳。");
+          }, 1800);
+          setTimeout(() => {
             pushZY("ch2_zy_msg3", "message-export.local/thread", "chat/thread.html");
-          }, 1500);
+          }, 2400);
         },
       },
       ch3_quickreply: {
