@@ -39,15 +39,30 @@
     要求不要告訴家人朋友——這些都是需要提高警覺的訊號。
   </p>
 
-  <p style="margin-top:30px;"><a href="home.html">← 回協尋站首頁</a></p>
+  <p style="margin-top:30px;"><a href="home.html" id="back-home-link">← 回協尋站首頁</a></p>
 </main>
 <script src="assets/js/state.js"></script>
-<script src="assets/js/entry-warning.js"></script>
 <script src="assets/js/chapter-guard.js"></script>
 <script src="assets/js/t2s-map.js"></script>
 <script src="assets/js/i18n-en.js"></script>
 <script src="assets/js/i18n.js"></script>
 <script>
+// 這頁有兩種抵達方式:一種是從 entry.html(進站同意書+暱稱表單,整個殼層
+// 都還沒開始)直接連過來的,這時候是頂層文件、不在 iframe 裡面;另一種是
+// 從殼層內某個內容頁的一次性警語彈窗(entry-warning.js)點進來的,那時候
+// 已經在 iframe 裡面、殼層正常運作中。「回協尋站首頁」這個連結原本固定寫
+// home.html,在第一種情況下會直接跳去頂層的 home.html——整個略過殼層的
+// 開機動畫、暱稱表單,暱稱/怎麼知道這件事的都不會被記錄下來。這裡改成:
+// 是頂層文件的話,交給 index.html 自己判斷該去 entry.html 還是進正式流程
+// (不在這裡重複那份判斷邏輯);已經在 iframe 裡面的話维持原本的 home.html,
+// 那就是正常流程裡「回首頁」該去的地方。
+(function () {
+  var backLink = document.getElementById("back-home-link");
+  if (window.top === window) {
+    backLink.href = "index.html";
+  }
+})();
+
 // 這頁刻意不掛假瀏覽器外框(要跳出敘事之外,呈現真實求助管道),但玩家還是
 // 可能在這裡按 Esc 跳出全螢幕,下一次點擊一樣要能請殼層重新嘗試接回來。
 (function () {
