@@ -78,7 +78,18 @@ body.site-social {
   flex-direction: column;
 }
 .site-social .story-viewer.open { display: flex; }
+/* 點畫面左右半邊切換上一則/下一則限動,跟 IG 一樣——兩個透明區塊蓋住
+   整個畫面,但 z-index 比下面的 sv-progress/sv-top/sv-bottom 低,所以
+   關閉鈕、讚按鈕這些真正的控制項還是點得到,只有中間空白區域(sv-body
+   本身沒有另外設 z-index,預設就疊在 sv-tap 下面)會被拿去判斷左右點擊。 */
+.site-social .story-viewer .sv-tap {
+  position: absolute; top: 0; bottom: 0; width: 50%;
+  z-index: 1;
+}
+.site-social .story-viewer .sv-tap--left { left: 0; }
+.site-social .story-viewer .sv-tap--right { right: 0; }
 .site-social .story-viewer .sv-top {
+  position: relative; z-index: 2;
   display: flex; justify-content: space-between; align-items: center;
   /* 上面/左邊都比原本多留一點點空間,單純視覺呼吸感——真正讓名字不被蓋住
      的是上面 .story-viewer 的 z-index,不是這裡的 padding。刻意不留太多:
@@ -95,6 +106,7 @@ body.site-social {
 }
 .site-social .story-viewer .sv-close { background: none; border: none; color: #fff; font-size: 20px; }
 .site-social .story-viewer .sv-progress {
+  position: relative; z-index: 2;
   display: flex; gap: 4px; padding: 8px 16px 0;
 }
 .site-social .story-viewer .sv-progress span {
@@ -102,6 +114,12 @@ body.site-social {
 }
 .site-social .story-viewer .sv-progress span.active { background: #fff; }
 .site-social .story-viewer .sv-caption { font-size: 13px; opacity: .7; margin-top: 10px; }
+.site-social .story-viewer .sv-bottom {
+  position: relative; z-index: 2;
+  display: flex; justify-content: flex-end;
+  padding: 10px 20px calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.site-social .story-viewer .sv-like-btn { font-size: 26px; }
 
 /* ══════════════════ IG 風格新元件 ══════════════════
    這個環境對外連線有網域白名單,抓不到真的圖床(picsum/unsplash/pexels/
@@ -200,6 +218,43 @@ body.site-social {
 .site-social .ig-post__caption { padding: 4px 16px 0; font-size: 13px; line-height: 1.6; }
 .site-social .ig-post__caption b { margin-right: 6px; }
 .site-social .ig-post__comments { padding: 4px 16px 0; font-size: 12px; color: #999; }
+
+/* ── 按讚互動:貼文(.ig-post__actions 裡的愛心 / .card .meta 裡的愛心)
+   跟限動(story-viewer 底部的愛心)共用同一顆按鈕樣式+同一套動畫,顏色
+   繼承外層文字色(白底卡片是深色、全螢幕限動是白色),讚過之後統一變成
+   IG 那種紅色實心愛心。 ── */
+.site-social .ig-like-btn {
+  background: none; border: none; padding: 0; margin: 0;
+  font-size: inherit; line-height: 1; color: inherit;
+  cursor: pointer; vertical-align: middle;
+  display: inline-block;
+}
+.site-social .card .meta .ig-like-btn { font-size: 14px; margin-right: 2px; }
+.site-social .ig-like-btn.liked { color: #ed4956; }
+.site-social .ig-like-btn.ig-like-pop { animation: ig-like-pop .35s ease; }
+@keyframes ig-like-pop {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.4); }
+  55% { transform: scale(.9); }
+  100% { transform: scale(1); }
+}
+/* 雙擊貼文照片彈出的大愛心,蓋在照片正中央,跳一下就淡出——
+   .ig-photo 本身已經是 position:relative + overflow:hidden,直接疊上去。 */
+.site-social .ig-double-tap-heart {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  font-size: 64px; color: #fff;
+  text-shadow: 0 2px 10px rgba(0,0,0,.35);
+  pointer-events: none;
+  animation: ig-double-tap-heart .8s ease forwards;
+}
+@keyframes ig-double-tap-heart {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  15% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  30% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  75% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
 
 .site-social .ig-storyrail .story-ring {
   border-color: #e0995c;

@@ -52,12 +52,17 @@
 </div>
 
 <div class="story-viewer" id="story-viewer">
+  <div class="sv-tap sv-tap--left" id="sv-tap-left"></div>
+  <div class="sv-tap sv-tap--right" id="sv-tap-right"></div>
   <div class="sv-progress" id="sv-progress"><span class="active"></span></div>
   <div class="sv-top">
     <div class="handle" id="sv-handle"></div>
     <button type="button" class="sv-close" id="sv-close" aria-label="關閉">✕</button>
   </div>
   <div class="sv-body" id="sv-body"></div>
+  <div class="sv-bottom">
+    <button type="button" class="ig-like-btn sv-like-btn" id="sv-like-btn" aria-label="讚">♡</button>
+  </div>
 </div>
 
 <script src="assets/js/state.js"></script>
@@ -70,6 +75,7 @@
 <script src="assets/js/notebook.js"></script>
 <script src="assets/js/hint.js"></script>
 <script src="assets/js/ambient.js"></script>
+<script src="assets/js/social-likes.js"></script>
 <script>
 // 社交媒體 App 平常點進來的樣子——別人的動態牆,跟這起案件完全無關,單純
 // 營造「這是一個真的有人在用的社群平台」的日常感。林晞的帳號不該平白無故
@@ -108,8 +114,8 @@ visiblePosts.forEach((p) => {
       </div>
     </div>
     <div class="ig-photo ig-photo--${p.photo}">${p.emoji}</div>
-    <div class="ig-post__actions">♡ 💬 ➤</div>
-    <div class="ig-post__likes">${p.likes} 個讚</div>
+    <div class="ig-post__actions"><button type="button" class="ig-like-btn" aria-label="讚">♡</button> 💬 ➤</div>
+    <div class="ig-post__likes"><span class="ig-like-count">${p.likes}</span> 個讚</div>
     <div class="ig-post__caption"><b>${p.handle}</b>${p.caption}</div>
     <div class="ig-post__comments">查看全部留言</div>
   `;
@@ -129,15 +135,47 @@ const FILLER_STORIES = {
 const viewer = document.getElementById("story-viewer");
 const svHandle = document.getElementById("sv-handle");
 const svBody = document.getElementById("sv-body");
-document.querySelectorAll(".story-item[data-story]").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const key = btn.dataset.story;
-    svHandle.textContent = btn.querySelector(".ts").textContent;
-    svBody.innerHTML = `<div>${FILLER_STORIES[key] || ""}</div>`;
-    viewer.classList.add("open");
-  });
+const svLikeBtn = document.getElementById("sv-like-btn");
+
+// 限動列上林晞那一顆(#story-linxi)是真的連結,點下去直接離開這頁去她的
+// 個人頁——不算進這裡的瀏覽器內限動,querySelectorAll 用 [data-story] 篩選
+// 本來就會自動跳過它。順序照 DOM 順序來,跟畫面上排列的順序一致。
+const storyBtns = Array.from(document.querySelectorAll(".story-item[data-story]"));
+let currentStoryIdx = -1;
+
+function resetStoryLike() {
+  svLikeBtn.classList.remove("liked");
+  svLikeBtn.textContent = "♡";
+}
+
+function openStoryAt(idx) {
+  currentStoryIdx = idx;
+  const btn = storyBtns[idx];
+  const key = btn.dataset.story;
+  svHandle.textContent = btn.querySelector(".ts").textContent;
+  svBody.innerHTML = `<div>${FILLER_STORIES[key] || ""}</div>`;
+  resetStoryLike();
+  viewer.classList.add("open");
+}
+
+storyBtns.forEach((btn, idx) => {
+  btn.addEventListener("click", () => openStoryAt(idx));
 });
 document.getElementById("sv-close").addEventListener("click", () => viewer.classList.remove("open"));
+
+// 點畫面左右半邊切換上一則/下一則,跟 IG 一樣——已經是第一則時點左邊不做事,
+// 看完最後一則點右邊直接關閉(回到動態牆),不會繞回第一則重播。
+function navigateStory(delta) {
+  const nextIdx = currentStoryIdx + delta;
+  if (nextIdx < 0) return;
+  if (nextIdx >= storyBtns.length) {
+    viewer.classList.remove("open");
+    return;
+  }
+  openStoryAt(nextIdx);
+}
+document.getElementById("sv-tap-left").addEventListener("click", () => navigateStory(-1));
+document.getElementById("sv-tap-right").addEventListener("click", () => navigateStory(1));
 </script>
 </body>
 </html>

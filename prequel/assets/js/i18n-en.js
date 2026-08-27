@@ -796,10 +796,20 @@ const JH_I18N_EN = {
   "8 個月前・53 個讚": "8 months ago · 53 likes",
   "共同好友": "Mutual Friends",
   "感謝您的檢舉。我們會在 3–5 個工作天內完成審核。": "Thank you for your report. We'll complete the review within 3–5 business days.",
+
+  // 按讚按鈕(aria-label,不是畫面上看得到的文字,但 i18n.js 也會處理這個屬性)
+  "讚": "Like",
+  "昨天": "Yesterday",
 };
 
 // ── regex fallback:固定文字 + 動態內容(日期/數字/玩家輸入)拼在同一節點 ──
 const JH_I18N_EN_PATTERNS = [
+  // 貼文相對時間「N 小時/天/週/個月前」,後面可能還接著「・」再接讚數
+  // (讚數本身被拆進獨立的 .ig-like-count span,不會混進這個節點裡)
+  { re: /^(\d+) 小時前(・)?$/, build: (m) => `${m[1]} hour${m[1] === "1" ? "" : "s"} ago${m[2] ? " · " : ""}` },
+  { re: /^(\d+) 天前(・)?$/, build: (m) => `${m[1]} day${m[1] === "1" ? "" : "s"} ago${m[2] ? " · " : ""}` },
+  { re: /^(\d+) 週前(・)?$/, build: (m) => `${m[1]} week${m[1] === "1" ? "" : "s"} ago${m[2] ? " · " : ""}` },
+  { re: /^(\d+) 個月前(・)?$/, build: (m) => `${m[1]} month${m[1] === "1" ? "" : "s"} ago${m[2] ? " · " : ""}` },
   // 「日期 更新」公告時間戳(首頁、已釐清事項頁)
   { re: /^(\d{1,2}\/\d{1,2}) 更新$/, build: (m) => `Updated ${m[1]}` },
   // 「☑/☐ 任務名稱」重建 8/14 的核對清單
