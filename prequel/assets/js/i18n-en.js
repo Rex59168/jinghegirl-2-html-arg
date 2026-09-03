@@ -139,10 +139,9 @@ const JH_I18N_EN = {
   "清空所有進度(localStorage)": "Clear all progress (localStorage)",
   "快速跳轉": "Quick jump",
   "/index.html 首頁": "/index.html Home",
-  "/social/lin-xi.html 序章謎題": "/social/lin-xi.html Prologue puzzle",
+  "/social/lin-xi.html 序章謎題(含第一章密碼門)": "/social/lin-xi.html Prologue puzzle (incl. Ch.1 password gate)",
   "/xunren/correction.html 序章過關": "/xunren/correction.html Prologue cleared",
-  "/editor/album.html 第一章密碼門": "/editor/album.html Ch.1 password gate",
-  "/editor/img0431.html 第一章謎題": "/editor/img0431.html Ch.1 puzzle",
+  "/social/img0431.html 第一章謎題": "/social/img0431.html Ch.1 puzzle",
   "/market/listing.html 第二章二手平台": "/market/listing.html Ch.2 resale site",
   "/market/bookmarks.html 找碟書籤": "/market/bookmarks.html Disc-hunting bookmarks",
   "/news/2022-report.html 2022年舊聞": "/news/2022-report.html 2022 archived article",
@@ -160,7 +159,7 @@ const JH_I18N_EN = {
   "/news/identified.html 新聞:確認身分": "/news/identified.html News: identity confirmed",
   "/ending/index.html 終幕": "/ending/index.html Ending",
   "/ending/checkself.html 你留下了什麼": "/ending/checkself.html What you left behind",
-  "/xunren/updates.html 進度公告": "/xunren/updates.html Progress updates",
+  "→ 看看這個網站記錄了你什麼": "→ See what this site recorded about you",
 
   // ── social/lin-xi.html ────────────────────────────────────────
   "17歲・靖河高中二年級": "17 · 2nd year, Jinghe High School",
@@ -322,7 +321,7 @@ const JH_I18N_EN = {
   // ── news/identified.html ──────────────────────────────────────
   "社會・後續報導": "Society · Follow-up Report",
   "河堤遺骸身分確認 為 2022 年失蹤林姓女子": "Riverbank Remains Identified as Woman Surnamed Lin, Missing Since 2022",
-  "記者 綜合報導・8/31": "Staff Report · 8/31",
+  "記者 綜合報導・8/30": "Staff Report · 8/30",
   "警方今(30)日發布聲明,經法醫透過齒模比對確認,日前於河西段河堤尋獲的遺骸,身分為 2022 年 9 月失蹤的林姓女子(失蹤時 18 歲),死者家屬已於稍早獲得警方通知。":
     "Police issued a statement today (the 30th) confirming, via forensic dental comparison, that the remains recovered from the Hexi riverbank belong to a woman surnamed Lin who went missing in September 2022 at age 18. Her family was notified by police earlier today.",
   "警方表示,死者失蹤前最後出現地點,與此次尋獲遺骸地點有一定距離,不排除案發後遭人移動棄置,詳細案發經過與確切死亡時間仍待進一步調查釐清。":
