@@ -1,318 +1,186 @@
-# 《靖河市第四案》— 專案文件（PROJECT.md）
+# 《靖河市》ARG 專案文件（PROJECT.md）
 
-給 AI coding agent／未來維護者讀。這份文件取代並合併了原本的三份文件：`SPEC.md`（實作規格）、`DESIGN_BRIEF.md`（原本寫給 Gemini 的視覺規範）、`靖河市第四案_劇本.md`（完整劇本）。三份原始檔案已刪除，內容全部併入此處，並更新到符合目前實際做出來的網站。
-
-現況：全站由單一 AI 全權製作與維護（不再有「Claude 寫結構、Gemini 寫 CSS」的分工），視覺與規格文件因此合併成一份。
+給 AI coding agent／未來維護者讀。這份文件只記錄**架構與機制**（兩章各自怎麼運作、怎麼串接、檔案放在哪裡），不收錄劇本文字本身——劇本內容請直接讀對應頁面的原始碼，或翻 git 歷史（`PROJECT.md` 舊版曾經收錄過完整逐場劇本）。內容創作的硬性規則與已知技術踩坑另外寫在 [CLAUDE.md](CLAUDE.md)，兩份文件互補，改東西前建議都看一眼。
 
 ---
 
-## 0. 硬性規則（違反即重做）
+## 1. 這是什麼
 
-1. **全部內容為虛構。** 所有人名、地名、機構、案件編號、帳號、電話、日期皆為虛構作品設定。
-2. **永遠不得輸出任何形似真實地址的字串。** 沒有門牌、沒有巷弄號碼、沒有座標、沒有可貼進地圖的東西。第六幕只能用步行描述。
-3. **不得連向任何真實網站、真實二手平台、真實協尋機構。** 所有「外部頁面」都是本專案自己做的假頁面。
-4. **不得要求玩家去真實世界做任何事**（不查證、不搜尋、不聯絡任何人）。全部互動封閉在本站內。
-5. 首次進站顯示一次性告示：本作為虛構作品，含失蹤、死亡與暴力暗示。可跳過，不可省略。
-6. 玩家自填的暱稱與文字只存在 `localStorage`，不上傳、不外送。
-7. **「他」全劇沒有台詞、沒有帳號、沒有暱稱，一次都不出現。** 任何謎題的答案都不得是他的名字或身分。
-8. **周妤（前作角色）本作只出現一行**（`legacy.html` 的求助句）。不得移植前作的主動提示聊天機制。◆ 已知的刻意例外：徵信錄謎題現在會透過一封**不具名**的匿名信主動點出「這裡怪怪的」（見「8. 進度旗標與解鎖規則」的比對表機制）。這在精神上確實違反了本條「不主動遞提示」的原則——這是使用者明確要求、知情推翻的決定，不是疏忽。底線仍然守住：這封信不是周妤寫的、也不是他寫的，全程不具名、不建立新角色，避免變成「又一個主動提示的人」。
-9. **永遠不解釋的清單**（下方「永遠不解釋的清單」章節列出的九件事）不得被任何 UI、謎題、彩蛋解答。
+一個部署在 GitHub Pages 的純靜態 ARG（另類實境遊戲）網站，網域 `https://rex59168.github.io/jinghegirl-2-html-arg/`。現況是**兩章合併在同一個 repo**：
+
+| | 第一章 | 第二章 |
+|---|---|---|
+| 作品名 | 《靖河市協尋案》 | 《靖河市第四案》 |
+| 位置 | `prequel/` 資料夾 | repo 根目錄 |
+| 失蹤者 | 林晞 | 陳語安 |
+| 由來 | 原本是獨立 repo（`jinghegirl-HTML-ARG`），這次由雲端 Claude session 重製後直接併入本 repo | 本 repo 原有內容 |
+| 目前狀態 | 完整重製為「手機殼層模擬」介面 | 這次 merge 一併改成同樣視覺語言的手機殼層 |
+
+兩章共用同一個部署網域、視覺語言（假手機瀏覽器殼層），但**程式碼各自獨立維護**，沒有 import 關係，只共用兩把橋接旗標的命名（見下節）。
 
 ---
 
-## 1. 一句話真相
+## 2. 兩章銜接機制
 
-上一個女孩，他等了兩年。這一個，他只用了十二分鐘——因為她的朋友已經替他把事情做完了。
+- 玩家一律先進入第一章：根目錄 `index.html` 的 `<head>` 內有同步腳本，`localStorage` 沒有 `jh2bridge:prequel_done` 就 `location.replace('./prequel/index.html')`，搶在下面的 iframe 標籤被解析、開始預先載入內容之前先跳走。
+- 唯一設定這把旗標的地方：`prequel/ending/index.html` 玩家點擊終幕「尋人資料庫・新增案件通知」信件連結時（`localStorage.setItem("jh2bridge:prequel_done", "1")`），同時觸發轉場動畫（「一年後」字卡）銜接進第二章的故事設定。
+- 跨章節共用（不帶各自章節前綴）的旗標／鍵：
+  - `jh2bridge:prequel_done` — 第一章完成度，供第二章 `index.html` 判斷要不要導去 `prequel/`
+  - `jh2bridge:fullscreen_opt_in` — 全螢幕請求是否已取得玩家同意，兩章共用
+  - `jh2bridge:ch1_boot_seen` — 第一章開機動畫（鎖定畫面）是否已看過
+  - `sessionStorage` 的 `jh_nav_stack` / `jh_nav_controlled` — 站內導覽紀錄（取代原生瀏覽器歷史），兩章共用同一份
+  - `jhAdminUnlocked` — `admin.html` 密碼門解鎖狀態，不受任一章「清空進度」按鈕影響
+- **已知缺口**：根目錄 `home.html`、`intro.html` 等 iframe 內容頁本身不檢查 `jh2bridge:prequel_done`，只有殼層 `index.html` 檢查。理論上直接對 `home.html` 打網址可以繞過殼層與第一章直達第二章內容（沒有殼層包裝），但一般玩家不會知道要這樣做，目前未特別處理。
 
-## 2. 人物
+---
 
-| 角色 | 說明 |
+## 3. 第一章：《靖河市協尋案》(`prequel/`)
+
+### 3.1 遊戲流程與旗標對照
+
+依實際遊玩順序列出每一步對應的頁面與完成後設定的旗標（`jh1f_` 前綴，下同）：
+
+| 步驟 | 頁面 | 完成時設定的旗標 | 備註 |
+|---|---|---|---|
+| 進站同意書 | `entry.html` | `warning_seen`, `entry_done`, `nickname`, `how_known` | 全站入口，第一次點擊即開始請求全螢幕 |
+| 首頁 | `home.html` | — | `chapter-guard` 無限制，`ch0_done` 後更正「最後聯繫時間」顯示 |
+| 序章：追蹤帳號 | `social/lin-xi.html` | `linxi_followed`, `album_unlocked`（相簿密碼門） | 密碼 `linxi0417`，由周妤在序章過關後私訊給玩家 |
+| 序章：加好友 | `xunren/correction.html` | `zy_friend_added` | 周妤此後才出現在訊息聯絡人清單 |
+| 序章過關 | （訊息串內確認線索） | `ch0_done` | `CLUE_REQUESTS.ch0_ask` |
+| 第一章：相簿版本樹 | `social/img0431.html`（`data-requires="album_unlocked"`） | `ch1_done` | 找到光碟編號殘片 `#18_` |
+| 第二章：書籤/舊帳號/舊聞 | `market/bookmarks.html`、`social/lin-zhao-2019.html`、`news/2022-report.html`（皆 `data-requires="ch1_done"`） | — | 揭露關鍵編號 `#188` |
+| 第二章：黑膠列表 | `market/listing.html`（`data-requires="ch1_done"`） | `ch2_seen` → `ch2_done` | `#188` 那筆首次展開觸發，`QUICK_REPLIES.ch2_quickreply` |
+| 第三章：對話記錄還原 | `chat/thread.html`（`data-requires="ch2_done"`） | `ch3_done` | 訊息重排謎題，資料來自 `assets/data/chat-thread.json` |
+| 第四章：重建 8/14（5 個並行子任務） | `xunren/rebuild-0814.html` 及其連出的 `transit/query.html`、`transit/card-record.html`、`social/rec1029.html`、`xunren/zhouyu-chat.html`、`transit/location-share.html`（皆 `data-requires="ch3_done"`） | `ch4_t1`~`ch4_t5` → 全部完成後 `ch4_done` | 唯一由周妤主動傳訊息觸發的子任務是 `rec1029.html`（她能看到玩家在自己協尋站上的行為） |
+| 第五章：誘導語句標註 | `chat/thread-review.html`（`data-requires="ch4_done"`） | `ch5_tags`, `ch5_done` | 12 則訊息分類進 6 大誘導手法 |
+| 第六章：收藏清單 | `files/collection.html`（`data-requires="ch5_done"`） | `ch6_done` | `012.txt`（林晞）開啟時觸發 |
+| 新聞：遺骸新聞 | `news/report.html` → `news/identified.html`（皆 `data-requires="ch6_done"`） | `news_done` | 確認遺骸為林昭（非林晞） |
+| 終幕 | `ending/index.html`（`data-requires="news_done"`） | `jh2bridge:prequel_done` | 轉場「一年後」，銜接第二章案件通知信 |
+| 隱私報告 | `ending/checkself.html`（`data-requires="news_done"`） | — | 顯示裝置資訊、累計停留時間，呼應「這些資料任何網站都拿得到」主題 |
+| 求助資源 | `resources/help.html` | — | 不受章節限制，不掛假瀏覽器外框 |
+
+### 3.2 localStorage 狀態鍵（`jh1f_` 前綴，`state.js` 統一存取）
+
+| Key | 意義 |
 |---|---|
-| **陳語安** | 2010 年生。2026 年高二，16 歲。河東人。不追星，沒有經營任何帳號 |
-| **戴筠 / 黃品彤 / 廖恩瑜** | 同班。那個群組裡的三個人。**誰做了那張圖，全劇不揭露** |
-| **父親** | 那天早班，05:50 出門 |
-| **母親** | 那天早上在睡。全劇只出場一次 |
-| **周妤** | 前案角色。本作只出現一行 |
-| **協尋基金會** | 全名「社團法人臺灣失蹤兒少協尋關懷基金會」。網站叫「尋人資料庫」 |
-| **他** | 本作沒有台詞、沒有帳號、沒有暱稱。一次都不出現 |
+| `nickname` / `how_known` | 進站表單填寫內容 |
+| `warning_seen` / `entry_done` | 進站流程旗標 |
+| `linxi_followed` | 是否追蹤林晞帳號（決定動態牆是否顯示她） |
+| `album_unlocked` | 私人相簿密碼門是否解開 |
+| `ch0_done` ~ `ch6_done` | 各章節完成旗標 |
+| `ch4_t1` ~ `ch4_t5` | 第四章五個子任務個別完成旗標 |
+| `ch2_seen` | 二手平台 `#188` 列是否已首次展開 |
+| `ch5_tags` | 玩家對 12 則訊息的分類標註（物件，msgId→categoryId） |
+| `zy_friend_added` | 是否已加周妤好友 |
+| `phone_log` | 訊息 App 全部訊息紀錄 |
+| `phone_read_ids` | 已讀訊息 id 清單 |
+| `notebook` | 備忘錄（已蒐集線索）清單 |
+| `news_done` | 確認林昭身分後設定 |
+| `ending_seen` | 終幕是否已觸發轉場 |
+| `file013_date` | 終幕 `013.txt` 的「已存在」日期（回溯效果用） |
+| `survey_seen` | 假問卷是否已填 |
+| `app_social_unlocked` / `app_market_unlocked` | 是否逛過社交媒體／二手平台（決定多工畫面卡片是否出現） |
+| `app_social_last_url` / `app_market_last_url` | 該分頁上次停留頁面（多工切回時用） |
+| `active_ms` | 累計實際在畫面前的時間 |
+| `lang` | 目前語言（`zh-Hant`/`zh-Hans`/`en`） |
+| `stats_entered_sent` / `stats_ending_sent` | GoatCounter 事件是否已送出過 |
 
-## 3. 劇本全文（依真實時序）
+### 3.3 章節鎖定機制（`chapter-guard.js`）
 
-> 玩家在遊戲裡是倒著挖的，這份是實際發生的順序。承《靖河市協尋案》。同一座城市，同一個他，其餘全部不同。
+讀 `<body data-requires="xxx">`，若對應旗標未設定就導回 `home.html`。只擋「超前」存取——已解鎖的頁面永遠可以回頭複習。
 
-### 第一幕｜之間（2025.08 – 2026.07）
+### 3.4 手機殼層模擬機制（`prequel/assets/js/shell.js`，非 ES module 的 IIFE）
 
-**場 1　2025.09** — 周妤那個手工協尋網站，流量在第十一天到頂，然後掉光。
+只在 `prequel/index.html` 執行一次，負責：
+- 手機狀態列（時間、訊號/WiFi/電量裝飾圖示）
+- Android 三鍵導覽列（返回／主畫面／多工）
+- 多工切換畫面（固定卡片：訊息、備忘錄、網站；動態卡片：社交媒體、購物網，依是否逛過決定是否出現）
+- 鎖定畫面／主畫面開機動畫（含 App 圖示：社交媒體、訊息、備忘錄、瀏覽器；裝飾用「相簿」圖示 `data-inert="1"` 無實際功能）
+- 訊息 App（單一「周妤」聯絡人 + 4 個填充聯絡人；核心是 `CLUE_REQUESTS` 與 `QUICK_REPLIES` 兩套資料驅動的劇情推進表）
+- 備忘錄 App（掛在殼層層級，`window.JHNotebook = { all: () => notebookList() }` 供線索模組讀取）
+- 通知橫幅系統（`createNotifBanner()`，訊息／線索／加好友三種外觀相同、行為不同的橫幅）
+- 全螢幕請求橋接（`window.requestFullscreenNow` 供 iframe 內頁面跨框呼叫）
 
-**場 2　2025.11** — 基金會接手。林晞的資料匯進尋人資料庫，編號 JH-2025-003。周妤的網站被移到頁面最底下的「相關連結」，後面加了一個括號：（已停止更新）。她沒有反對。她把網域續了一年。◆ 她每年都會續。不解釋。
+假瀏覽器網址列邏輯獨立在 `assets/js/browser-chrome.js`。
 
-**場 3　2026.03.02　靖河下游** — 發現遺體。三週後比對完成：JH-2022-002　林昭。高度腐敗，長期浸泡；死因無法判定；死亡時間無法判定；隨身物品無。沒有 #188。沒有任何東西。◆ 屍體給出來了，答案一個都沒有。這是本作對待「真相」的態度示範。
+### 3.5 線索／謎題機制（`clue-system.js` + `hint.js`）
 
-**場 4　2026.05** — 林昭的案件狀態從「已尋獲」改成「已結案」。那張基金會做的年齡推估模擬圖——22 歲的林昭——在同一週悄悄下架。◆ 那張圖是假的，而且永遠不會有人比對得了。
+- `clue-system.js`（`JHClueSystem.mount(opts)`）：把玩家已蒐集線索渲染成可選的「線索晶片」清單，玩家選一個提交，答對呼叫 `onCorrect`，答錯進入 10 秒冷卻。只掛載在殼層訊息串裡。
+- `hint.js`（`JHPhone` 物件）：iframe 頁面呼叫的橋接層，三個 API（`push`／`pushClue`／`pushQuickReply`）都透過 `window.top[name](...)` 跨框呼叫殼層對應函式；`addZYFriend()` 用於加好友流程。
 
-**場 5　2026.06** — 尋人資料庫的狀態下拉選單，只有三個選項：協尋中／已尋獲／已結案。「已尋獲」不分死活。
+### 3.6 備忘錄與統計
 
-### 第二幕｜八月二十六日（2026.08.26　週三）
+- `notebook.js`（iframe 內純資料層）：`JHNotebook.add(id, text, href)` 寫入 localStorage，並跨框通知殼層更新角標/通知橫幅。與殼層自己補的 `window.JHNotebook`（`shell.js` 內）是兩份獨立實作、共用同一份資料、對外介面相容。
+- `stats.js`：GoatCounter 匿名統計，`trackEntered()`/`trackEnding()` 各自只送一次。
 
-**場 6　06:12** — 班群跳出一張截圖。教室、後排、黑板上有日期。牆上的時鐘指著六點多。戴筠：「我們已經到教室了，你怎麼還沒來」
+### 3.7 三語系統
 
-**場 7　06:16　她為什麼會信** — 因為那則公告是真的。學校確實在前一週發過返校通知——日期是 08/28。她信的東西，有一半是真的。◆ 每一個騙局都有一半是真的。這一句是本作的核心手法，不得寫死成台詞。
+`prequel/assets/js/i18n.js`、`i18n-en.js`、`t2s-map.js`，與第二章 `scripts/i18n.js` 完全獨立（機制差異見 CLAUDE.md）。走「遍歷 DOM 文字節點＋屬性、`MutationObserver` 監看動態內容」的運行時全頁翻譯模式，不需要每頁手動呼叫翻譯函式。
 
-**場 8　06:40　河東・出門** — 制服穿了一半，頭髮沒綁。書包裡沒有課本。只有手機和一張卡。父親 05:50 已經出門。母親在睡。
+### 3.8 Debug
 
-**場 9　06:47** — 巷口機車行的監視器，畫面右側，三秒。她在跑。
-
-**場 10　06:52　★** — `015.txt` 建檔。◆ 她出門後十二分鐘。◆ 前案：他做了餌，等了兩年。本案：他什麼都沒做。這座城市自己把女孩送出來了。
-
-**場 11　06:5x　近路** — 她沒有走平常那條。她抄了近路。◆ 全劇不解釋她怎麼知道那條路。
-
-**場 12　07:03　學校側門** — 鎖著。警衛室沒有人。停車場空的。那天沒有課。
-
-**場 13　07:14** — 她拍了一張照，傳進群組。鎖鏈、鐵門、後面空掉的操場。沒有配字。◆ 照片右下角有東西。全劇不判讀。
-
-**場 14　07:14 – 07:25　★ 全劇核心** — 十一分鐘。三個人在群組裡笑。貼圖、哭臉、「不是吧」、「她真的去了」。◆ 這十一分鐘是本作的「兩分鐘」。永遠不寫她們後來怎麼了。
-
-**場 15　07:25** — 廖恩瑜：「欸她怎麼沒回」
-
-**場 16　07:31** — 黃品彤：「語安？」之後全部未讀。
-
-### 第三幕｜九天（08.26 – 09.04）
-
-**場 17　08.26　下午** — 家人報案。警方問：她那天為什麼去學校。沒有人知道那天沒有課。
-
-**場 18　08.26　晚上** — 三個人把群組刪了。三支手機，同一個晚上。◆ 不寫她們是不是講好的。
-
-**場 19　08.27 – 09.03** — 初步研判：自行離家。協尋啟事上寫「當日 06:40 離家上學後失去聯繫」。九天。
-
-**場 20　09.04** — 其中一支手機的雲端備份，把那張截圖吐了出來。沒有人刪得掉自己沒設定過的東西。
-
-**場 21　09.05** — 基金會建檔 JH-2026-004。◆ 本市第四位。從林昭算起，四年，四個。18 歲、17 歲、16 歲——年齡一次比一次小。不特別指出。
-
-### 第四幕｜協尋（2026.09 – ）
-
-**場 22　現在** — 玩家進來。這次不是同學做的網站。是機構做的。有案件編號、有 PDF 下載、有「捐款支持我們」，那顆按鈕在每一頁的同一個位置。林晞在下拉選單裡，是一個選項。
-
-**場 23　中途　★ 網站會更新** — 玩家挖到一半，首頁換上公告：2026.08.17 靖河下游尋獲遺體，比對確認為 JH-2025-003 林晞，案件狀態已更新。同一條河，比林昭那次再往下游一點。高度腐敗，長期浸泡，另有魚類啃食痕；死因無法判定。狀態改成「已尋獲」。◆ 上一款遊戲玩家找了兩個小時的那個女孩，在這裡只是一則跑馬燈。
-
-**場 24　回頭** — `012.txt` 底部多了一行：最後更新 2026/08/17。就是新聞出來的那天。◆ 他也在看新聞。
-
-**場 25　再回頭** — `007.txt` 底部那一行，還是：最後更新 2024/03/11。她 2022 年不見，2026 年才浮上來。而 2024 年，有人動過她的檔案。◆ 我們甚至不知道那一年她還算不算活著。永遠不解釋。
-
-### 第五幕｜收藏
-
-**場 26　`/收藏`** — 001.txt…015.txt；007.txt 林　昭　建檔 2022/02/19　最後更新 2024/03/11；012.txt 林　晞　建檔 2023/08/14　最後更新 2026/08/17；013.txt〔上一個玩家填的暱稱〕；014.txt —；015.txt 陳語安　建檔 2026/08/26 06:52。◆ 014.txt 不解釋。◆ 013.txt 不解釋——但玩過前作的人會停在那一行很久。
-
-**場 27　黑幕** — 八秒。「上一次，你學會了不要跟陌生人出門。這一次她沒有跟任何人約。她只是相信了三個她認識的人。而他站在旁邊，什麼都沒做。」停兩秒。「你花了兩個小時，查出那三個人是誰、哪一班、住哪一區。她們今年十六歲。你現在想對她們做什麼？」◆ 這句問完，不給玩家回答的機會。畫面直接進入第六幕——遊戲替你換了一個目標。
-
-### 第六幕｜門
-
-> 本幕的每一步，用的都是前面已經放過的東西。玩家不會拿到新線索，只會發現自己一直看著它們。貫穿全幕的一句話：**他從來沒有藏過。只是沒有人去看。**
-
-**場 28　第一步｜徵信錄** — 基金會的歷年徵信錄，彙整了好幾年的匿名捐款紀錄。裡面有三筆金額一模一樣的匿名捐款（各 1,000），日期卻完全不同：2026/08/26、2025/08/14、2022/09/03。玩家看完徵信錄後，會收到一封不具名的訊息，點出「這份徵信錄有點奇怪」並附上一份比對表的連結（另開新分頁）——玩家要在比對表裡把這三個日期拿去跟資料庫裡的失蹤日期核對，才會發現：09/03 是林昭失蹤那天、08/14 是林晞失蹤那天、08/26 是陳語安失蹤那天。三筆、三個人、三個完全不同的日期，同一個金額。◆ 他不是每年固定捐一次錢。他是每次「拿到」一個人的那天捐錢。徵信錄本身不會有任何一句話告訴玩家這件事——連「金額相同」都不特別標出來，玩家得自己一行一行去對；那封信只點出「有問題」，不點破答案是什麼。匿名捐款仍會寄收據，徵信錄上留著郵遞區號。→ 縮到一個行政區。
-
-**場 29　第二步｜還沒改成匿名之前** — 基金會 2019 年的舊版網站是公開「感謝名單」的，後來才改匿名。舊版網站有存檔。那一筆上面有姓氏，和一個「里」。◆ 這一步就是全系列的主題本身：網路不會忘。她們的貼文不會，他的也不會。→ 縮到一個里。
-
-**場 30　第三步｜他懶得換的那個超商** — `@rec_1029` 那兩年不只掛過光碟。還有電風扇、書櫃、一台腳踏車，都是不可能寄的東西，全部寫「僅面交」。面交地點三年沒換過，同一間超商。◆ 他小心了兩年。他只是懶得換超商。大型物品只會約自己走得到的地方。→ 縮到幾條街。
-
-**場 31　第四步｜窗** — 那些雜物的照片，全在同一個房間拍的。同一片窗簾、同一個插座、窗外同一角屋頂。其中一張，商品只佔畫面的三分之一。右上角是窗。窗外有護岸，和一根橋墩。橋墩上有編號。◆ 他家看得到那條河。他從房間裡就看得到她們被放下去的地方。→ 樓層、朝向。
-
-**場 32　第五步｜不給地址** — 玩家不會拿到門牌。畫面上永遠不會出現一個地址。只有一段第一人稱的走路：巷子。機車。鐵門。樓梯間的聲控燈，走三階才亮。五樓。◆ 全劇最重要的克制。一旦印出一組像地址的東西，這個作品就變成它在批判的那個東西。
-
-**場 33　選擇** — 「你要殺了他嗎？〔是〕〔否〕」點「否」——按鈕不見了，剩下一顆。再點一次「否」——它變成：「你已經走到這裡了。」第三次，兩顆都是「是」。◆ 玩家會親眼看見自己的選擇被一顆一顆拿走。語安那天早上就是這樣被拿走的。這一段不要有任何文字說明。
-
-**場 34　開門** — 畫面全黑：門縫一道髮絲光線先明滅三次（3 秒，像鎖被轉動），接著那道光線裂開變寬（1 秒，像門被推開一道縫），然後畫面完全靜止（1 秒，★ 最重要的一秒）。◆ 不做音效，改用視覺的節奏：沒有台詞、沒有畫外音、沒有動畫特效。那一秒「什麼都不再動」，比任何聲音或動態效果都響。
-
-**場 35　紅** — 滿版紅。四秒，什麼都沒有。然後，很小，在角落：`016.txt　建檔　〔今天〕`。一秒後，全部結束。◆ 015 之後是 016。編號不分加害與被害。◆ 你是被建檔的那一個，還是建檔的那一個——不解釋。◆ 門後面有沒有人，永遠不揭露。紅色不代表任何東西。
-
-**場 36　之後** — ARG 結束。網站再打開，只剩一頁白底黑字：「社團法人臺灣失蹤兒少協尋關懷基金會／尋人資料庫　目前無法使用」。底下那顆捐款按鈕還在。
-
-## 4. 永遠不解釋的清單
-
-這九件事**全劇不得給出答案**：
-
-1. 那三個人裡，誰做了那張圖
-2. 07:14 那張照片的右下角
-3. 她怎麼知道那條近路
-4. `014.txt` 是誰
-5. `007.txt` 為什麼在 2024/03/11 被更新
-6. 林昭與林晞的死因、死亡時間、中間那幾年
-7. `015.txt` 為什麼是 06:52
-8. 門後面有沒有人
-9. `016.txt` 是誰的
-
-◆ 唯一給滿的答案是「這次沒有計畫」。前案的答案是兩年，本案的答案是十二分鐘。這一件事給足，其餘全部留白。
-
-## 5. 兩條情感線
-
-| | 玩家的線 | 陳語安的線 |
-|---|---|---|
-| 起點 | 好奇 | 慌 |
-| 中段 | 我找到兇手了 | 我遲到了 |
-| 終點 | 我站在他門口，而且只剩一個選項 | 站在鎖住的校門前 |
-
-◆ 兩條線的終點是同一個畫面：一個人站在一扇打不開／不該開的門前面，選擇已經不在自己手上。
-
-**前作**：她以為是自己找到的，你也以為是自己查出來的——你們都是被帶到那裡的。
-**本作**：她相信了認識的人，你也相信了自己查到的東西——你們都準備好要動手了。
-
-## 6. 與前作的關係
-
-| | 《靖河市協尋案》 | 《靖河市第四案》 |
-|---|---|---|
-| 加害者 | 有帳號、有台詞、被喜歡過 | 沒有帳號、沒有台詞、不曾出現 |
-| 手法 | 掛了兩年的餌 | 沒有手法 |
-| 誘因來源 | 陌生人 | 朋友 |
-| 網站 | 同學手做的 | 機構做的，有捐款按鈕 |
-| 最後一則訊號 | 三秒的全黑限動 | 十一分鐘的笑 |
-| 結尾要玩家承認的事 | 你在做他做的事 | 你已經做完了 |
-| 最後一個畫面 | 黑幕五秒 | 滿版紅，角落一行 `016.txt` |
-
-### 與前作的技術銜接（跨 repo，進行中）
-
-前作 `jinghegirl-HTML-ARG` 與本作維持**兩個獨立部署的靜態站**，不合併成同一份 codebase（前作是全域 `<script>`＋`jh_` 前綴的舊架構，跟本作的 ES module／`jh4:` 前綴完全不同，沒有共用的必要，且兩者若部署在同一個 `*.github.io` 網域下，前綴不同也剛好避免 localStorage 互相踩到）。兩作之間唯一的橋接點是前作結局頁 `ending/index.html`：
-
-- 原本「全黑後停留 5 秒，什麼都不放」改成先淡入一句時間跳躍字幕「一年後。」（`SKIP_CAPTION_BY_LANG`），再進入原本逐字打字的那八句台詞（未改動）。
-- 逐字打字結束後，新增一段「信件」卡片（`#blackout-letter`）：告知玩家尋人資料庫多了一筆新案件——陳語安、16 歲、河東人、失蹤日期 2026/8/26，附一顆連到本作的連結（`target="_blank"`），停留約 3 秒後淡出，才接原本的頁尾（求助資訊／你留下了什麼／截圖／重置）。信件文案三語皆有（`LETTER_BY_LANG`），做法比照這個檔案裡既有的 `LINES_BY_LANG`／`ZY_FINAL_NEWS` 模式（直接依 `JH_I18N.getLang()` 挑字串，不吃自動翻譯的 MutationObserver，理由跟既有註解一致：一次性/逐字插入的文字，自動翻譯抓不準）。
-- 連結網址暫時寫死 `https://rex59168.github.io/jinghegirl-2-html-arg/`（假設值，還沒經過使用者確認實際部署位置，push 前需要覆核）。
-- 前作本體（`index.html` 這個入口頁）**尚未變動**——使用者已決定這一步先擱置，之後再拍板要「改成轉址頁」「整頁刪除」還是「先動前作結局，入口的事之後再說」（目前選的是最後一項）。
-- 這批修改目前只存在於使用者本機另外 clone 出來的 `jinghegirl-HTML-ARG` 工作目錄（在 `main` 分支旁另外簽出了實際有內容的 `claude/github-web-game-mobile-2oavid` 分支——`main` 目前只有一份 README，真正的全部章節內容在那個分支上），**尚未 commit、尚未 push**，等使用者自己看過再決定後續。
+`prequel/debug/index.html` 已淘汰，現在只是轉址頁（內容為「已搬移，請至 `/admin.html`」）。
 
 ---
 
-## 7. 技術架構
+## 4. 第二章：《靖河市第四案》（repo 根目錄）
 
-| 項目 | 決定 | 理由 |
+### 4.1 這次 merge 改了什麼
+
+原本是「`guard.enter()` + 直接 DOM render」架構，現在改成跟第一章同視覺語言、但獨立程式碼的手機殼層：
+
+| | 原架構 | 現架構 |
 |---|---|---|
-| 型態 | 純靜態站，無後端 | 部署在 GitHub Pages |
-| 框架 | 無框架。原生 HTML + CSS + ES module JS | 不要 build step |
-| 頁面結構 | **每個頁面一個獨立 `.html` 檔**，各自在 inline `<script type="module">` 裡帶自己的三語資料 | 見下方「防拆包設計」 |
-| 狀態 | `localStorage`，key 前綴 `jh4:` | 需跨分頁保存進度 |
-| 結局效果 | 不做音效；改用純 CSS 光線動畫（明滅→裂開→靜止）在 `.endgame-black` 撐節奏 | 靜態站不維護音檔資產；訪客瀏覽時常態靜音，音效很容易直接被錯過 |
+| 首頁 | `index.html` 直接渲染內容 | `index.html` 變成純殼層（`<iframe src="home.html">`），實際內容搬到新建的 `home.html` |
+| 殼層本體 | 無 | `scripts/shell.js`（ES module，`import { t } from './i18n.js'`） |
+| 殼層 CSS | 無 | `styles/phone-shell.css`（整合狀態列/導覽列/主畫面/訊息面板/通知橫幅/假網址列樣式） |
+| 假網址列 | 無 | `scripts/chrome.js` 新增 `mountBrowserChrome()`（併入既有檔案，非獨立新檔） |
+| localStorage 前綴 | `jh4:` | 不變，沿用 `jh4:` |
+| 開機/鎖定畫面 | 無 | 只有主畫面（`jh-boot__home`），沒有鎖定畫面，按 Home 鍵隨時可叫出 |
+| 訊息 App | `scripts/mail.js` 完整 UI 元件 | UI 搬到殼層，`mail.js` 降級為純資料寫入層：`deliverLetter(id, letter, loc)` 寫入後 `window.top.jhReceiveLetter(...)` 跨框通知殼層 |
+| 備忘錄 | 掛在 iframe 內容頁 | 不變，仍掛在 iframe 內（`scripts/notebook.js`），新增 `window.jhOpenNotebook = open` 供殼層跨框呼叫 |
+| 線索/謎題模組 | 無 | 無——沿用舊有玩法（如 `trust.html`→`worksheet.html` 拼字謎題），未被此次改造觸及 |
 
-### 防拆包設計（本輪重構的動機）
+`scripts/guard.js` 兩處 `location.href = 'index.html'` 已改成 `'home.html'`（因為 `index.html` 現在不含內容渲染邏輯）；`scripts/render.js` 的 `renderAdmin()`（約 100 行）整個移除，搬進 `admin.html` 內嵌腳本；`styles/components.css` 移除了未再使用的 `.admin-panel*`、`.mail__*`、`.case-list__*`、`.file-view__up` 等舊樣式段落。
 
-舊架構是單頁應用：`index.html` 一份殼、`main.js` 用 hash router 切換路由、所有敘事內容集中在單一 `data/content.json`，開站時一次抓完。玩家只要打開 DevTools 的 Network 分頁點一下 `content.json`，十秒內就能看到全劇本，包括徵信謎題的正確答案明文、第六幕全部結局台詞。
-
-現在改為每個路由一個獨立靜態頁面，敘事資料直接寫在該頁面自己的 inline script 裡，不再集中成一份大 JSON。**誠實的但書**：這只能防止「一次撈走全站」，無法讓「已解鎖頁面自己的原始碼」對該頁面本身的內容保密——只要某段文字最終要能不重新整頁就顯示出來，它就必須已經在該頁面的 JS 裡，view-source 永遠讀得到。這是純靜態、無後端網站的天花板，前作（`jinghegirl-HTML-ARG`）的多頁面架構也是同樣的取捨（其首頁把所有階段的更新文字都寫在同一份 inline 陣列裡，只用旗標決定顯示哪一則）。本次重構要解決的是「沒有任何一個檔案能讓玩家一次看到全站所有頁面的內容」，而不是不可能達成的「完全保密」。
-
-徵信錄謎題的答案額外做了一層加固：正確答案不以明文（案件編號或姓名）存放，而是存放 SHA-256 雜湊值，核對時比對雜湊。這只能拉高門檻（不能再直接看原始碼抄答案），無法防止有人寫幾行 console 把 4 個候選案件全部雜湊一次去比對——這是已知、可接受的限制。
-
-巢狀資料夾（`case/`、`file/`）內的頁面用 `<base href="../">`，讓 `styles/...`／`scripts/...`／`index.html` 這類相對路徑跟根目錄頁面寫法一致（包含 `location.href` 重導向）。
-
-### 檔案結構
+### 4.2 現有頁面/腳本結構
 
 ```
-/index.html /intro.html
+/index.html               純殼層（iframe → home.html）
+/home.html                原首頁內容（尋人資料庫案件列表等）
+/intro.html               志工登錄表單（完成後導向 home.html）
 /about.html /faq.html /contact.html /donate.html /privacy.html /accessibility.html
 /trust.html /worksheet.html /archive2019.html /market.html /legacy.html
 /collection.html /walk.html /gone.html /admin.html
-/case/JH-2018-001.html /case/JH-2022-002.html /case/JH-2025-003.html /case/JH-2026-004.html
-/file/001.html … /file/015.html   （只有 007/012/013/014/015 有內容，其餘維持空白 "—"）
+/case/JH-2018-001.html … JH-2026-004.html（共 20 筆案件頁）
+/file/001.html … /file/015.html
 /styles/
-  tokens.css base.css layout.css components.css endgame.css
+  tokens.css base.css layout.css components.css endgame.css phone-shell.css
 /scripts/
   store.js      進度儲存（localStorage / memory 兩種實作）
   i18n.js       t(value, locale) 三語解析
   flags.js      旗標與解鎖判定
-  labels.js     全站共用、非劇透的 UI 字串（欄位標籤、機構名稱、頁尾、導覽列、語言切換、告示文字、筆記本按鈕文字、訊息抽屜文字）
-  chrome.js     畫 header/nav/breadcrumb/footer/lang-switcher；管理語言切換後的重新渲染
-  guard.js      每頁自己在 inline script 開頭呼叫，取代舊版集中式 guard()（告示已讀＋暱稱檢查、finished 鎖死轉 gone.html、walk.html 額外檢查解鎖旗標）
+  labels.js     全站共用、非劇透的 UI 字串
+  chrome.js     畫 header/nav/breadcrumb/footer/lang-switcher + 假瀏覽器網址列（mountBrowserChrome）
+  guard.js      每頁自己在 inline script 開頭呼叫（告示已讀＋暱稱檢查、finished 鎖死轉 gone.html）
   hash.js       sha256Hex(text)，供 worksheet.html 雜湊比對謎題答案
-  render.js     各頁面的 DOM 渲染函式（純函式，只吃該頁自己的小資料物件，不含劇情文字）
-  endgame.js    第六幕狀態機，WALK 文字資料由 walk.html 以參數傳入
-  notebook.js   常駐筆記本抽屜（左下角）
-  mail.js       常駐「訊息」抽屜（右下角），送出不具名信件，連結另開新分頁
+  render.js     各頁面的 DOM 渲染函式
+  endgame.js    第六幕狀態機
+  notebook.js   iframe 內容頁的常駐筆記本抽屜
+  mail.js       純資料寫入層（deliverLetter），UI 已搬到殼層
+  shell.js      根目錄殼層本體（ES module）
 ```
 
-`main.js`、`router.js`、`data/content.json` 已刪除，不再存在。
+`main.js`、`router.js`、`data/content.json` 已刪除，不再存在（舊架構殘留）。
 
-### 每頁的樣板結構
-
-```html
-<!doctype html><html lang="zh-Hant"><head>...5 個 stylesheet、本頁 <title>...</head><body>
-  <div id="content-warning" class="content-warning" hidden>...</div>
-  <div id="app" hidden>
-    <header class="site-header">...</header>          <!-- 只有 chrome:true 頁面才有 -->
-    <nav class="site-nav" id="site-nav"></nav>          <!-- 同上 -->
-    <nav class="breadcrumb" id="breadcrumb"></nav>      <!-- 同上 -->
-    <main id="main"></main>
-    <div class="lang-switcher" id="lang-switcher"></div>
-    <footer class="site-footer" id="site-footer"></footer>  <!-- 只有 chrome:true 頁面才有 -->
-  </div>
-  <script type="module">
-    import { store } from './scripts/store.js';
-    import * as guard from './scripts/guard.js';
-    import * as chrome from './scripts/chrome.js';
-    import { renderXxx, homeCrumb } from './scripts/render.js';
-
-    const PAGE = { /* 這一頁自己的三語資料 */ };
-
-    guard.enter({ /* 這頁的選項 */ }, () => {
-      chrome.mount({ breadcrumb: [...] });   // 或 chrome.mountBare() （無機構外殼的頁面）
-      function render() {
-        document.getElementById('main').replaceChildren(renderXxx(PAGE, store.get('locale')));
-      }
-      render();
-      chrome.onLocaleChange(render);
-    });
-  </script>
-</body></html>
-```
-
-`guard.enter(opts, onReady)` 的 `opts`：`isIntro`（intro.html 專用，暱稱已存在時導回首頁）、`isGone`（gone.html 專用，豁免 finished 鎖死）、`bypassChecks`（admin.html 專用，跳過暱稱／finished／walk 解鎖檢查）、`requireWalkUnlocked`（walk.html 專用）。
-
-### 頁面清單（chrome:true／chrome:false 對照舊版路由表）
-
-| 頁面 | chrome | 備註 |
-|---|---|---|
-| `index.html` | true | 首頁，中段更新後多一則公告卡 |
-| `intro.html` | true | 序章：暱稱＋「你是怎麼知道這件事的」，只出現一次 |
-| `case/JH-xxxx-xxx.html` 共 20 頁 | true | 案件頁，見下方「案件數量」說明 |
-| `about.html` `faq.html` `contact.html` `donate.html` `privacy.html` `accessibility.html` | true | 機構制式頁面 |
-| `trust.html` | true | 年度徵信錄（純展示，無互動），第六幕第一步；看完後送出一封「訊息」，連結到 `worksheet.html` |
-| `worksheet.html` | false | 比對表：徵信錄謎題實際作答的地方，從 `trust.html` 的訊息連結另開新分頁進入，不對外連結 |
-| `archive2019.html` | false | 2019 年網站存檔快照，第六幕第二步 |
-| `market.html` | false | 二手平台賣場快照，第六幕第三、四步 |
-| `legacy.html` | false | 周妤的舊協尋網站（已停止更新）；同時是 `.txt` 檔案的發現入口，見下方說明 |
-| `file/001.html`…`file/015.html` | false | `.txt` 純文字頁 |
-| `collection.html` | false | 收藏，列出 001–015，`walk.html` 解鎖後多一行 016.txt |
-| `walk.html` | false | 第六幕 |
-| `gone.html` | false | 封站白頁，`chrome.mountBare({ skipWidgets: true })`，不顯示筆記本／訊息按鈕——網站說停用了，這兩個工具也該跟著停 |
-| `admin.html` | false | 管理員測試面板，不對外連結 |
-
-### 案件數量與版面
-
-首頁原本只有 4 筆案件，看起來太單薄，不像一個實際運作多年的基金會資料庫。現已擴充到 20 筆：4 個劇情關鍵案件（JH-2018-001／JH-2022-002／JH-2025-003／JH-2026-004，ID 維持不變，`trust.html` 謎題的雜湊比對依賴這幾個確切 ID，不能改動）加上 16 筆填充案件（JH-2012-005 至 JH-2024-020）。
-
-填充案件刻意做成「大多數是好結果」：8 筆已尋獲（尋獲原因是找到人、與家屬團聚），7 筆已結案（多為協尋期間主動返家或聯繫家屬），只有 2 筆仍在協尋中。這是刻意的比例——如果每筆案件都語焉不詳地暗示死亡，會稀釋林昭、林晞這兩個「真的找到遺體」案件的衝擊力；多數案件平淡收場，才能讓那兩筆真正黑暗的案件顯得突兀。填充案件不給 `recovery` 欄位（`renderCaseDetail` 會自動略過遺體狀況那幾列），只給一句案情摘要。
-
-案件 ID 的編號刻意不按失蹤年份排序（例如 2012 年的案件編號是 005，比 2018 年的 001 還大）——這對應到一個真實機構的合理狀況：舊案是後來才被數位化建檔的，建檔順序跟事發順序本來就對不齊，不是漏洞。
-
-首頁列表原本是 `<ul>`，案件一多就不好讀，現改成 `<table class="data-table">`（案件編號／姓名／失蹤日期／狀態四欄），依失蹤日期新到舊排序，篩選下拉選單邏輯不變。
-
-### `.txt` 檔案的發現入口
-
-原本每個案件頁的「相關連結」會直接放一個「原始檔案　XXX.txt」超連結到 `file/XXX.html`——這在真實機構網站上不合理：公開的案件資料庫不會直接連到一份原始 .txt 證據檔。現已從三個案件頁（JH-2022-002／JH-2025-003／JH-2026-004）移除這個連結。
-
-三個檔案改成在 `legacy.html`（周妤的舊網站）底部，以「頁面底部殘留的連結，年代不明，未清除」這種中性技術性註記呈現，而不是她的新台詞——**周妤本作仍然只有原本那一句話**，這三個連結是頁面本身的殘留物，不是她說的。玩家仍然可以從 `case/JH-2025-003.html` 的「原始協尋頁面（已停止更新）」連結找到 `legacy.html`，再從那裡找到 007.txt／012.txt／015.txt，整條收藏解鎖鏈路沒有斷。`legacy.html` 現在也會呼叫 `flags.notePageSeen('page-legacy')`，作為「二次更新」觸發條件的一部分（見「8. 進度旗標與解鎖規則」）。
-
-### 第六幕的線索改成要玩家自己找
-
-原本 `archive2019.html`／`market.html` 兩步都是旁白直接把答案講完，玩家沒有機會自己發現，跟「他從來沒有藏過，只是沒有人去看」這句主題句有落差。現已調整：
-
-- `archive2019.html` 從單獨一行「○先生　河東區「某某里」」改成一份完整的 2019 年感謝名單（`page.rows`），裡面混了好幾筆平凡的填充捐款人跟兩筆「依當事人要求移除」的空白列，真正對應到徵信錄那一筆的紀錄埋在裡面，玩家要自己認出來。
-- `market.html` 的窗／橋墩線索（原本的 `page.windowNote`）改成掛在腳踏車那筆商品自己的 `photoNote` 欄位，用跟案件頁 PDF 一樣的 `<details>／<summary>「放大看」` 收合，玩家要自己點開才看得到，不是表格下面就直接印出來的一段話。
-
----
-
-## 8. 進度旗標與解鎖規則（`flags.js`）
+### 4.3 進度旗標與解鎖規則（`flags.js`，`jh4:` 前綴）
 
 `store` 內存一個扁平物件：
 
 ```js
 {
   nickname: "", howYouKnew: "", introCompletedAt: 0,
-  seen: {},              // { "JH-2022-002": true, "file-007": true, "page-trust": true, "page-legacy": true, ... }
+  seen: {},              // { "JH-2022-002": true, "file-007": true, "page-trust": true, ... }
   midUpdateFired: false, secondUpdateFired: false, collectionUnlocked: false,
   refusedCount: 0, finished: false,
   notebook: [], letters: [], trustPuzzleSolved: false
@@ -321,144 +189,61 @@
 
 | 事件 | 條件 |
 |---|---|
-| 中段更新（林晞尋獲公告） | `seen` 內含 `JH-2026-004` 且 `seen` 內含任兩個舊案，**且**距離 `introCompletedAt`（志工登錄完成時間）已過至少 2 小時真實時間 |
+| 中段更新（林晞尋獲公告） | `seen` 內含 `JH-2026-004` 且任兩個舊案，且距 `introCompletedAt` 已過至少 2 小時真實時間（`flags.js` 的 `MID_UPDATE_MIN_DELAY_MS`） |
 | 二次更新（JH-2026-004 摘要修正） | 中段更新已觸發，且 `legacy.html`、`015.txt` 都看過 |
 | 收藏頁解鎖 | 三個 `.txt` 頁面（007/012/015）都看過 |
-| 第六幕解鎖 | 收藏頁看完，徵信錄、存檔頁、二手快照三頁都看過，**且徵信錄謎題必須解出**（`trustPuzzleSolved === true`） |
+| 第六幕解鎖 | 收藏頁看完 + 徵信錄／存檔頁／二手快照三頁都看過 + 徵信錄謎題解出（`trustPuzzleSolved === true`） |
 | 白屏封站 | `finished === true` 之後，任何頁面都導向 `gone.html` |
 
-**中段更新的真實時間門檻**：原本只看玩家有沒有看過幾個頁面，跟現實時間完全無關，玩家可以一次坐下十分鐘內看完全部劇情。現在額外要求距離志工登錄（`intro.html` 完成時間，存成 `introCompletedAt`）至少過了 2 小時真實時間，才會觸發林晞尋獲公告——模擬「機構網站在你不在時默默更新」的節奏感。這個延遲時間寫在 `flags.js` 的 `MID_UPDATE_MIN_DELAY_MS` 常數，可自行調整；`admin.html` 有一顆「把志工登錄時間往前撥 3 小時」的按鈕方便測試跳過這道門檻，另一顆「強制觸發中段更新」按鈕則是完全繞過所有條件的硬開關。
+徵信錄謎題流程：`trust.html`（純展示）看完後透過 `mail.js` 送出一封不具名訊息 → 附「開啟比對表」連結（`target="_blank"`）另開新分頁進入 `worksheet.html`（實際核對，下拉選單比對，SHA-256 雜湊驗證答案）→ 設定 `trustPuzzleSolved`。
 
-**徵信錄謎題現為必經關卡，且拆成「展示頁＋比對表」兩個頁面**：`trust.html` 只單純展示徵信錄公開資料，看完之後（`flags.notePageSeen('page-trust')` 觸發時）會透過 `mail.js` 送出一封不具名的「訊息」——右下角一顆訊息按鈕會冒出未讀數字，點開後看到信件內容，直接點出「這份徵信錄有點奇怪」，附一顆「開啟比對表」的連結，用 `target="_blank"` 另開新分頁進入 `worksheet.html`。實際核對的動作全部搬到 `worksheet.html`：三筆匿名捐款分別配一個下拉選單，選項是資料庫裡全部 20 筆案件（只顯示編號＋姓名，**故意不顯示失蹤日期**，否則玩家不用真的去核對就能用選單本身的資訊猜出來），玩家得自己記得或回去首頁核對日期，才能從選單裡選出正確案件。`isWalkUnlocked()` 檢查的 `trustPuzzleSolved` 旗標現在由 `worksheet.html` 設定，而不是 `trust.html`——這一步原本就算不解也能推進，跟「你以為是自己查出來的」這條情感線缺乏玩法支撐，現已修正。連續答錯三次後 `worksheet.html` 會多顯示一句提示（`page.puzzle.hint`），避免真的卡死。答案驗證方式不變：SHA-256 雜湊比對（現在雜湊的是選單選出的案件編號本身，不再需要處理姓名／編號兩種輸入變體），已知限制照舊——這只能拉高門檻，玩家還是可以寫幾行 console 把 20 個候選案件的雜湊全部跑過一次去比對答案。`admin.html` 的兩顆「解鎖第六幕」測試按鈕已同步加上 `store.set('trustPuzzleSolved', true)`，另有一顆「強制觸發二次更新」按鈕可跳過整條鏈路直接測試。這封信是全站唯一一處主動點破線索的地方，見「0. 硬性規則」第 8 條下方的例外說明。
+### 4.4 `admin.html` 測試面板
 
-**已修正的舊 bug**：`admin.html` 的「強制解鎖收藏頁」「強制解鎖第六幕」「解鎖並直接跳到第六幕」三顆按鈕，過去直接呼叫 `store.markSeen(...)`，繞過了 `flags.checkCollectionUnlocked()` 這個只在 `flags.notePageSeen()` 內才會觸發的旗標寫入，導致按鈕標記了頁面已讀、卻沒有真的解鎖。現已改為同時直接 `store.set('collectionUnlocked', true)`。
+獨立深色終端機風格單頁，不依賴 `guard.js`/`chrome.js`/`render.js`，內嵌 `<style>`。
 
----
-
-## 9. 視覺設計規範
-
-### 這個網站是什麼
-
-一個台灣的失蹤兒少協尋基金會的公開資料庫。它是一個真的在辦事的機構做的網站，參考真實協尋機構（例如兒福聯盟的失蹤兒童少年資料管理中心、NCMEC 等）常見的做法：正常維護、正常改版、看起來就是一個 2020 年代還在營運的正牌 NGO 網站。**它是一部恐怖作品，但它不需要靠「看起來很虛構／很陽春」來自證清白——一句話說清楚是虛構作品就夠了，其餘一律照真實機構網站的標準做。**
-
-### 設計方向的轉折（本輪重構）
-
-早期版本走的是「全站幾乎沒有顏色、乏味即美術指導」的極簡路線，理由是要讓結局那面紅色顯得突兀。這個方向後來被推翻：**現在改成正常現代網站該有的樣子**——色彩、圓角、陰影、hero 橫幅、卡片式排版、hover 效果都可以用，不再自我設限成「越乏味越好」。「重複提醒讀者這是虛構作品」也一併拿掉：進站告示只講一次，其餘頁面（包含頁尾）一律用機構自己站得住腳的說法（例如「本會無實體服務據點」），不再需要每頁加註「本頁資料為虛構」。
-
-唯一保留下來的舊決定：結局那面紅（`--end-red`）依然是全站唯一使用這個色值的地方，作為劇情高潮的視覺標記；`.txt` 檔案頁與收藏頁依然維持等寬字、不套用機構視覺——那是他的東西，不是基金會的東西，這個對比要保留。**另外一條不是美術規範、而是內容底線：全站任何頁面都不放真人照片（含案件照片）**，案件照片一律用「[證件照掃描，畫質不佳]」這種文字說明帶過，不管視覺設計怎麼改，這一條不能鬆動——避免虛構案件的視覺呈現被誤認、混淆成真實協尋案件。仍然不做的東西：任何「懸疑感」裝飾（血跡、雜訊、故障效果、閃爍、監視器邊框）——這部作品要看起來像正常機構網站，不是恐怖遊戲網站；深色模式也不做，機構網站不會預設深色。
-
-### 色票
-
-```
---paper       #ffffff   卡片／輸入框底色
---surface     #f4f6f9   頁面底色（淺灰，讓白色卡片浮起來）
---card-bg     #ffffff   卡片背景
---ink         #1a1a1a   內文
---ink-weak    #666666   次要資訊、日期
---rule        #e1e5ea   表格線、分隔線
---link        #1c5fd6   連結（未訪問）
---link-seen   #6a3ea1   連結（已訪問）
---chrome      #1c4e9e   品牌藍（頁首、hero、按鈕）
---chrome-dark #143a78   品牌藍深色（hover、頁尾）
---accent      #e2711d   強調橘（捐款按鈕等 CTA）
---accent-dark #c25c11   強調橘 hover
---end-red     #c8102e   只在結局出現，全站其他地方一次都不准用
-```
-
-狀態標籤（藥丸形狀，`border-radius: 999px`）：
-
-```
-協尋中  底 #fff3cd  字 #664d03
-已尋獲  底 #d1e7dd  字 #0f5132
-已結案  底 #e2e3e5  字 #41464b
-```
-
-◆ 「已尋獲」是綠色的，不分死活——這個 signature 保留，只是現在放在一個色彩更豐富的頁面裡，殺傷力來自於它跟其他正常綠色狀態標籤長得一模一樣。
-
-### 字體
-
-```
---font-ui:   system-ui, "Noto Sans TC", "微軟正黑體", sans-serif
---font-mono: ui-monospace, "Courier New", monospace
-```
-
-不載入 Google Fonts，系統字體已經夠現代、夠可靠。`--font-mono` 仍然只用在 `.txt` 頁面與收藏頁，維持「這是他的東西」的字體對比。
-
-### 版面
-
-- 最大寬度 `1080px`（`--max-width`），文字密集的內容（告示、表單）用較窄的 `--content-width: 72ch`。
-- 頁首：品牌藍漸層橫幅（`linear-gradient(135deg, var(--chrome), var(--chrome-dark))`），左邊機構全名，右邊橘色圓角捐款按鈕（`--accent`，有 hover 上浮效果）。
-- 頁首下方一條白底導覽列（首頁/關於我們/常見問題/聯絡我們），連結 hover 時底線變橘色。
-- `#main` 是一張浮在 `--surface` 灰底上的白色卡片：`border-radius: var(--radius)`、`box-shadow: var(--shadow-sm)`。
-- 首頁有一個 hero 橫幅（`.home-hero`，跟頁首同款漸層）放機構簡介，下面接一排統計卡片（`.home-stats`，4 張：累計受理／協尋中／已尋獲／已結案，各配一個小圖示），再來是「服務項目」快速連結卡片格（`.home-quicklinks`，6 格：志工登錄／捐款支持／歷年徵信錄／聯絡我們／常見問題／關於本會），案件表格下方接「最新消息」（`.home-news`，幾則行政性的填充公告，跟中段更新那則真正的公告是分開的兩個東西）跟「合作單位」（`.home-partners`，幾個虛構的合作機關名稱藥丸標籤）。`about.html` 同樣加了「本會概況」統計卡片跟「本會沿革」時間軸。這些都是刻意的資訊密度填充——內容本身大多平淡、甚至無關緊要，目的只是讓網站不要看起來太空曠單薄，不算劇情。
-- 圖示一律用 `render.js` 裡手畫的極簡線條 SVG（`icon(name)`，`ICON_PATHS` 定義在同檔案），不引用任何圖示庫、不下載任何圖片——這個網站永遠不放照片（尤其是人像），案件照片一律用文字說明帶過，這條線在填充內容時也沒有鬆動。
-- 案件頁與徵信錄等橫向表格維持 `<table>`，但表頭有淺灰底色、列有 hover 效果。
-- 頁尾改成品牌深藍色滿版色塊，裡面分三欄（關於本會／服務項目／聯絡資訊），欄位以下才是統編／聯絡方式一類的底列小字；不再寫「本頁資料為虛構」，改成機構自己站得住腳的說法（見 `ORG_CHROME.footer.address`）。
-
-### 手機
-
-單欄。表格改為 `label / value` 上下堆疊，統計卡片改 2×2 排列，導覽列自動換行。
-
-### 結局頁（依然是唯一可以徹底放手的地方）
-
-`.endgame-red`：`position: fixed`，滿版 `--end-red`，`z-index: 9999`。上面沒有任何裝飾、沒有漸層、沒有 vignette。四秒後右下角出現的那行字：`--font-mono`，11px，`rgba(0,0,0,.55)`，`margin: 0 16px 16px 0`。不要讓它閃、不要讓它發光、不要加陰影。`.endgame-black`：滿版 `#000`。原設計靠 `door_key.wav`／`door_hinge.wav` 兩支音效撐出「聲音／靜音」的節奏；決定不做音效後，改用純 CSS 畫一道貼齊畫面右邊緣的髮絲光線（`.endgame-black__crack`）取代聲音的角色：先明滅三次代表鎖的動靜（3 秒），再裂開變寬到 46px 代表門被推開（1 秒），最後完全靜止不動（1 秒，★ 最重要的一秒——原本「靜音比聲音響」的邏輯，改成「靜止比動態響」）。這道光線是結局頁唯一的視覺效果：不加漸層以外的裝飾、不發光暈、不用陰影，`prefers-reduced-motion` 時直接關閉動畫改成瞬間切換，維持跟結局紅一樣的克制。
-
-### 品質底線
-
-鍵盤 focus 一定要看得見（`outline: 2px solid var(--chrome)`，不要 `outline: none`）。`prefers-reduced-motion: reduce` 時關閉所有 transition。對比度符合 AA。不要用 `!important`。CSS 分檔：`tokens.css` / `base.css` / `layout.css` / `components.css` / `endgame.css`。
-
-### class 名稱附錄
-
-```
-.site-header .site-header__name .site-header__donate
-.site-nav              頁首下方的導覽列（首頁/關於我們/常見問題/聯絡我們），純文字連結
-.breadcrumb
-.case-table .case-table__label .case-table__value
-.status .status--searching .status--found .status--closed
-.announcement .announcement__date .announcement__title .announcement__body
-.home-hero .home-hero__title .home-hero__body   首頁 hero 橫幅
-.home-stats .home-stats__card .home-stats__value .home-stats__label   首頁統計卡片
-.file-view            .txt 頁面，等寬字
-.file-view__up        解鎖收藏後出現的 ".." 連結
-.collection           收藏頁，等寬字
-.walk .walk__line .walk__question
-.choice .choice__btn
-.endgame-black .endgame-black__crack .endgame-red .endgame-red__stamp
-.site-footer .site-footer__inner .site-footer__columns .site-footer__column .site-footer__bottom
-.home-stats__icon
-.home-quicklinks .home-quicklinks__item .home-quicklinks__icon
-.home-news .home-news__item .home-news__date .home-news__title
-.home-partners .home-partners__badge
-.gone
-.case-list .case-list__item .case-list__id .case-list__name .case-list__filter   首頁案件清單與狀態篩選下拉選單
-.intro-form .intro-form__field .intro-form__label .intro-form__input .intro-form__textarea .intro-form__submit .intro-form__note
-.data-table .data-table__row .data-table__cell   徵信錄／二手賣場等橫向表格，沿用 case-table 的乾淨線條風格
-.chatlog .chatlog__message .chatlog__time .chatlog__who .chatlog__text .chatlog__attachment   015.txt 內的對話紀錄附件
-.note-block            單行小提示，比照 --ink-weak 處理
-.content-warning .content-warning__box .content-warning__title .content-warning__body .content-warning__continue
-.lang-switcher .lang-switcher__label .lang-switcher__option .lang-switcher__option--active
-.admin-panel .admin-panel__state .admin-panel__button   不算在機構視覺規範內，等寬字純除錯介面，可正常做成好用的樣子
-.trust-puzzle__input .trust-puzzle__feedback   worksheet.html 專用，class 名稱沿用舊版但現在是 <select> 不是 <input>
-.notebook__button .notebook__badge .notebook__backdrop .notebook__panel .notebook__header .notebook__title .notebook__close .notebook__list .notebook__empty
-.mail__button .mail__badge .mail__backdrop .mail__panel .mail__header .mail__close .mail__list .mail__item .mail__subject .mail__text .mail__link .mail__empty   訊息抽屜（右下角，跟筆記本左右對稱）
-```
+- 密碼門（`ADMIN_PW = "0803"`，非安全機制，只防誤觸），解鎖狀態存 `jhAdminUnlocked`（無章節前綴，兩章「清空進度」都不會洗掉）
+- 第一章區塊：即時 dump 所有 `jh1f_` 開頭的 localStorage；「全部章節標記為已完成」一鍵設定 `ch0_done`~`ch6_done`+`news_done`；「清空第一章進度」；22 條快速跳轉連結（序章到終幕每一步）
+- 第二章區塊：全部重置、略過序章、強制觸發中/二次更新、強制解鎖收藏頁/第六幕、直接跳到第六幕、清除已結束狀態
 
 ---
 
-## 10. 目前完成度與待決事項
+## 5. 視覺設計規範
 
-已完成：全站三語內容、徵信錄謎題（雜湊比對）、常駐筆記本、管理員測試面板、`about/faq/contact/donate/privacy/accessibility` 六個機構制式頁面、首頁統計與狀態篩選（含排序功能，見下方）、每頁獨立靜態檔架構、案件數量擴充到 20 筆並改為表格排版、`.txt` 發現入口移到 `legacy.html`。
+### 第二章機構官網視覺（套用於 `home.html`、案件頁、機構制式頁面等 iframe 內容）
 
-首頁案件表格新增排序下拉選單（預設「失蹤時間（新到舊）」），與既有的狀態篩選下拉選單各自獨立作用、互不重置——切換排序時篩選條件保留，反之亦然。
+一個台灣失蹤兒少協尋基金會的公開資料庫視覺基調：正常維護、正常改版，看起來像 2020 年代還在營運的正牌 NGO 網站。一句話說清楚是虛構作品就夠了，其餘照真實機構網站標準做。不做任何「懸疑感」裝飾（血跡、雜訊、故障效果、閃爍、監視器邊框）；不做深色模式；全站不放真人照片。
 
-第六幕結局音效已決定不做，直接移除 `audio/` 資料夾與 `door_key.wav`／`door_hinge.wav` 的播放邏輯，改用純 CSS 視覺效果（見「9. 視覺設計規範」結局頁段落）撐出原本音效負責的節奏，理由與內容變更已併入本文件對應章節（第 3 節場 34、第 7 節技術架構表、第 9 節結局頁）。
+色票：
 
-`JH-2026-004` 的 `summaryRevised` 欄位已重新加回並接上觸發條件（見「8. 進度旗標與解鎖規則」的「二次更新」列）：中段更新之後，玩家再看過 `legacy.html` 跟 `015.txt`，案情摘要會修正成多一句「最後一次留下紀錄為 07:14」，並寫進筆記本。徵信錄謎題也已改為第六幕的必經關卡，且拆成 `trust.html`（純展示）＋一封不具名訊息（`mail.js`）＋另開新分頁的 `worksheet.html`（實際作答，下拉選單比對）三段式流程（見「8. 進度旗標與解鎖規則」說明）。`archive2019.html`／`market.html` 的關鍵線索改成要玩家自己從一份填充過的名單裡認出來、或自己點開才看到（見「7. 技術架構」頁面清單旁的說明），不再是旁白直接講完。
+```
+--paper #ffffff  --surface #f4f6f9  --card-bg #ffffff
+--ink #1a1a1a    --ink-weak #666666  --rule #e1e5ea
+--link #1c5fd6   --link-seen #6a3ea1
+--chrome #1c4e9e --chrome-dark #143a78（品牌藍，頁首/hero/按鈕）
+--accent #e2711d --accent-dark #c25c11（強調橘，捐款等 CTA）
+--end-red #c8102e（只在第六幕結局出現，全站其他地方一次都不准用）
+```
 
-早期草稿曾寫「五個案件」的措辭問題已解決（現有 20 筆，遠超過原本的疑慮）。
+狀態標籤（藥丸形狀）：協尋中（黃）／已尋獲（綠，不分死活——signature 效果）／已結案（灰）。
 
-**內容密度加強**：改完視覺設計後網站曾經一度偏空曠，補了一輪純資訊量的填充（見「9. 視覺設計規範」版面段落）：首頁加了服務項目快速連結、最新消息、合作單位三個區塊；`about.html` 加了本會概況統計卡片跟沿革時間軸；頁尾改三欄式。全部用手畫的極簡 SVG 圖示補視覺重量，沒有引入任何外部圖片或圖示庫——這個網站的立場一直是不放照片，這次也一樣沒破例。過程中修掉一個真的 bug：改寫頁尾時不小心把 `chrome.js` 的 `mountBare()` 整個函式弄丟了，導致所有 chrome:false 頁面（`admin.html` 起頭連鎖影響到全部測試）當掉，已補回並重新跑過全站 53 頁健檢確認修好。
+字體：`--font-ui: system-ui, "Noto Sans TC", "微軟正黑體", sans-serif`；`--font-mono` 只用在 `.txt` 頁面與收藏頁，維持「這是他的東西」的字體對比。CSS 分檔：`tokens.css`/`base.css`/`layout.css`/`components.css`/`endgame.css`。
 
-**全站健檢**：改完視覺設計與比對表機制後，用 headless Chrome 把全站每一頁（首頁、六個機構制式頁面、`trust/worksheet/archive2019/market/legacy/collection/admin`、20 個案件頁、15 個 `.txt` 頁、`walk.html`、`gone.html`）都跑過一輪，確認每頁都有正常渲染內容、沒有 `undefined`／`[object Object]` 這類殘留、zero console 例外。過程中順手修掉一個小疏漏：`gone.html`（封站白頁）先前透過 `chrome.mountBare()` 還是會冒出筆記本／訊息按鈕，跟「網站已經無法使用」的設定矛盾——現在改呼叫 `chrome.mountBare({ skipWidgets: true })`，封站後這兩個工具也一併停用，只留語言切換。
+第六幕結局頁（`.endgame-red`/`.endgame-black`）是唯一可以徹底放手的地方：不做音效，改用純 CSS 光線動畫（明滅→裂開→靜止）撐節奏，細節見各頁原始碼與 `endgame.css`。
 
-尚未決定、需要人來拍板的舊有事項：目前沒有。
+### 手機殼層視覺（兩章共用語言，各自獨立 CSS 檔）
+
+假手機狀態列、Android 三鍵、鎖定/主畫面、訊息氣泡、通知橫幅、假瀏覽器網址列。第一章樣式分散在 `prequel/assets/css/`（`shell.css`/`phone-boot.css`/`browser-chrome.css`/`clue-system.css` 等多檔）；第二章整合成單一 `styles/phone-shell.css`。
+
+### 品質底線（兩章通用）
+
+鍵盤 focus 一定要看得見（不要 `outline: none`）。`prefers-reduced-motion: reduce` 時關閉所有 transition。對比度符合 AA。不要用 `!important`。
+
+---
+
+## 6. 目前完成度與待決事項
+
+**已完成**：第一章（`prequel/`）完整重製為手機殼層模擬介面並併入本 repo；第二章改用同一視覺語言的手機殼層包裝（`index.html`/`home.html` 拆分、`scripts/shell.js`、`styles/phone-shell.css`）；`admin.html` 重寫整併兩章測試功能；兩章橋接旗標 `jh2bridge:prequel_done` 生效。
+
+**已知待確認事項**：
+- 根目錄 `home.html`／`intro.html` 等 iframe 內容頁不檢查 `jh2bridge:prequel_done`，只有殼層 `index.html` 檢查（見「2. 兩章銜接機制」的已知缺口）——是否需要補強，尚未拍板。
+- 圖片素材清單（`imageshoppinglist.md`）列出的社群貼文縮圖尚待實際尋找/上傳至 `prequel/assets/images/`，目前貼文照片仍是 emoji/CSS 色塊佔位符。
