@@ -44,13 +44,64 @@
   import * as notebook from './scripts/notebook.js';
   import * as mail from './scripts/mail.js';
 
+  const ANON = { "zh-Hant": "無名氏", "zh-Hans": "无名氏", en: "Anonymous" };
+  const DASH = { "zh-Hant": "—", "zh-Hans": "—", en: "—" };
+  const ZIP = {
+    hedong: { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", en: "[Hedong District postal code]" },
+    hexi: { "zh-Hant": "「河西區郵遞區號」", "zh-Hans": "「河西区邮递区号」", en: "[Hexi District postal code]" },
+    zhongshan: { "zh-Hant": "「中山區郵遞區號」", "zh-Hans": "「中山区邮递区号」", en: "[Zhongshan District postal code]" },
+    datong: { "zh-Hant": "「大同區郵遞區號」", "zh-Hans": "「大同区邮递区号」", en: "[Datong District postal code]" }
+  };
+  function anon(zip) {
+    return { name: ANON, zip };
+  }
+  function named(name) {
+    return { name, zip: DASH };
+  }
+
   const PAGE = {
     title: { "zh-Hant": "歷年徵信錄", "zh-Hans": "历年征信录", en: "Historical Donor Disclosure" },
     note: { "zh-Hant": "本會依規定公布捐款徵信，此頁彙整歷年紀錄。匿名捐款者僅列郵遞區號以利收據寄送。", "zh-Hans": "本会依规定公布捐款征信，此页汇整历年记录。匿名捐款者仅列邮递区号以利收据寄送。", en: "This foundation publishes donation disclosures as required; this page compiles records across years. Anonymous donors are listed only by postal code for receipt mailing purposes." },
     rows: [
-      { date: "08/26", year: "2026", amount: "1,000", name: { "zh-Hant": "無名氏", "zh-Hans": "无名氏", en: "Anonymous" }, zip: { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", en: "[Hedong District postal code]" } },
-      { date: "08/14", year: "2025", amount: "1,000", name: { "zh-Hant": "無名氏", "zh-Hans": "无名氏", en: "Anonymous" }, zip: { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", en: "[Hedong District postal code]" } },
-      { date: "09/03", year: "2022", amount: "1,000", name: { "zh-Hant": "無名氏", "zh-Hans": "无名氏", en: "Anonymous" }, zip: { "zh-Hant": "「河東區郵遞區號」", "zh-Hans": "「河东区邮递区号」", en: "[Hedong District postal code]" } }
+      { date: "03/12", year: "2019", amount: "500", ...named("王○成") },
+      { date: "05/20", year: "2019", amount: "2,000", ...named("○○早餐店") },
+      { date: "07/09", year: "2019", amount: "800", ...anon(ZIP.zhongshan) },
+      { date: "11/03", year: "2019", amount: "1,500", ...named("陳○婷") },
+
+      { date: "02/18", year: "2020", amount: "2,000", ...anon(ZIP.datong) },
+      { date: "04/22", year: "2020", amount: "3,000", ...named("林○賢") },
+      { date: "09/10", year: "2020", amount: "500", ...named("○○機車行") },
+      { date: "12/05", year: "2020", amount: "1,200", ...anon(ZIP.hexi) },
+
+      { date: "01/30", year: "2021", amount: "800", ...named("黃○婷") },
+      { date: "06/14", year: "2021", amount: "2,500", ...anon(ZIP.zhongshan) },
+      { date: "08/09", year: "2021", amount: "5,000", ...named("○○診所") },
+      { date: "10/27", year: "2021", amount: "500", ...named("吳○宏") },
+
+      { date: "02/11", year: "2022", amount: "1,800", ...anon(ZIP.datong) },
+      { date: "06/03", year: "2022", amount: "2,000", ...named("張○芸") },
+      { date: "09/03", year: "2022", amount: "1,000", ...anon(ZIP.hedong) },
+      { date: "11/19", year: "2022", amount: "500", ...named("○○洗衣店") },
+
+      { date: "01/08", year: "2023", amount: "3,000", ...anon(ZIP.hexi) },
+      { date: "05/22", year: "2023", amount: "1,500", ...named("郭○豪") },
+      { date: "08/17", year: "2023", amount: "800", ...named("曾○妍") },
+      { date: "12/02", year: "2023", amount: "2,200", ...anon(ZIP.zhongshan) },
+
+      { date: "03/09", year: "2024", amount: "500", ...named("賴○翰") },
+      { date: "07/14", year: "2024", amount: "1,600", ...anon(ZIP.datong) },
+      { date: "09/25", year: "2024", amount: "3,500", ...named("○○補習班") },
+      { date: "11/30", year: "2024", amount: "800", ...named("潘○維") },
+
+      { date: "02/14", year: "2025", amount: "2,000", ...anon(ZIP.hexi) },
+      { date: "05/01", year: "2025", amount: "1,200", ...named("蕭○安") },
+      { date: "08/14", year: "2025", amount: "1,000", ...anon(ZIP.hedong) },
+      { date: "10/06", year: "2025", amount: "500", ...named("洪○宇") },
+
+      { date: "01/15", year: "2026", amount: "2,800", ...anon(ZIP.zhongshan) },
+      { date: "04/20", year: "2026", amount: "1,500", ...named("王○穎") },
+      { date: "08/26", year: "2026", amount: "1,000", ...anon(ZIP.hedong) },
+      { date: "09/10", year: "2026", amount: "500", ...named("○○文具行") }
     ]
   };
 
