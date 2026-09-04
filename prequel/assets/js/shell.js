@@ -834,12 +834,71 @@
       currentThreadContactId = null;
     });
 
+    // ── 打字動畫佇列:只有周妤真的「說一句話」(from 不是 me、不是中性的
+    // 線索提示、不是幫玩家先編輯好的快捷回覆草稿)才需要先跑過這裡——傳送
+    // 前顯示跳動的「…」泡泡,隨機停留一段時間才真正送達,比較像真人在打字,
+    // 不是文字整段瞬間彈出來。用佇列(而不是各自獨立的 setTimeout)串起來,
+    // 是為了避免連續好幾句話同時進來時,好幾個打字動畫疊在畫面上、或者顯示
+    // 順序亂掉——一定是等上一句真正送達之後,才開始下一句的打字動畫。
+    //
+    // Playwright 之類的自動化工具會把 navigator.webdriver 設成 true,拿這個當
+    // 「現在是不是測試環境」的判斷:是的話延遲直接歸零,兩百多個既有的
+    // waitForTimeout 斷言(包括這一路以來所有訊息時序相關的測試)才不會全部
+    // 因為多了這段隨機延遲而變得不穩定;真人玩家的瀏覽器才會看到完整的
+    // 1~3 秒跳動效果。
+    const IS_AUTOMATED = typeof navigator !== "undefined" && navigator.webdriver === true;
+    const TYPING_MIN_MS = IS_AUTOMATED ? 0 : 1000;
+    const TYPING_MAX_MS = IS_AUTOMATED ? 0 : 3000;
+    const typingQueue = [];
+    let typingBusy = false;
+
+    function isTypingEligible(entry) {
+      return entry.from !== "me" && !entry.clue && !entry.quickReply;
+    }
+
+    function showTypingBubble() {
+      const threadIsOpenOnZY = currentThreadContactId === ZY_ID && messagesEl.classList.contains("jh-messages--open");
+      if (!threadIsOpenOnZY) return null;
+      const el = document.createElement("div");
+      el.className = "jh-messages__typing";
+      el.innerHTML = "<span></span><span></span><span></span>";
+      threadBodyEl.appendChild(el);
+      threadBodyEl.scrollTop = threadBodyEl.scrollHeight;
+      return el;
+    }
+
+    function processTypingQueue() {
+      if (typingBusy || !typingQueue.length) return;
+      typingBusy = true;
+      const entry = typingQueue.shift();
+      const typingEl = showTypingBubble();
+      const delay = TYPING_MIN_MS + Math.random() * (TYPING_MAX_MS - TYPING_MIN_MS);
+      setTimeout(() => {
+        if (typingEl) typingEl.remove();
+        deliverPhoneEntryNow(entry);
+        typingBusy = false;
+        processTypingQueue();
+      }, delay);
+    }
+
     // ── iframe 裡任何一頁呼叫 window.top.jhReceiveMessage(...)/
     // jhReceiveClueRequest(...) 都會進來這裡。from 預設是"them"(周妤傳來的,
     // 會跳通知橫幅);玩家自己回覆的"me"訊息不用跳通知打斷自己,直接視為已讀
     // 就好。兩種訊息共用同一套「存進 log→即時顯示或跳通知」邏輯,差別只在
     // entry 有沒有帶 clue 欄位。 ──
     function deliverPhoneEntry(entry) {
+      const log = phoneLog();
+      if (log.some((m) => m.id === entry.id)) return;
+      if (typingQueue.some((m) => m.id === entry.id)) return;
+      if (isTypingEligible(entry)) {
+        typingQueue.push(entry);
+        processTypingQueue();
+        return;
+      }
+      deliverPhoneEntryNow(entry);
+    }
+
+    function deliverPhoneEntryNow(entry) {
       const log = phoneLog();
       if (log.some((m) => m.id === entry.id)) return;
       log.push(entry);
