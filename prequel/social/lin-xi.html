@@ -179,6 +179,8 @@
 </main>
 
 <div class="story-viewer" id="story-viewer">
+  <div class="sv-bg" id="sv-bg"></div>
+  <div class="sv-scrim"></div>
   <div class="sv-tap sv-tap--left" id="sv-tap-left"></div>
   <div class="sv-tap sv-tap--right" id="sv-tap-right"></div>
   <div class="sv-progress" id="sv-progress"></div>
@@ -224,12 +226,12 @@ followBtn.addEventListener("click", () => {
 });
 
 const STORIES = {
-  1: { ts: "07:52", caption: "〔上學路上〕", text: "又快遲到了。" },
-  2: { ts: "15:02", caption: "〔教室窗外〕", text: "終於放學。" },
-  3: { ts: "15:40", caption: "〔手搖飲料〕", text: "今天犒賞自己一杯。" },
-  4: { ts: "16:50", caption: "〔捷運出口・略模糊〕", text: "河西這邊路好多,第一次自己來。" },
-  5: { ts: "18:05", caption: "〔巷口・略暗〕", text: "還要再走一段。" },
-  6: { ts: "19:41", caption: "〔畫面昏暗〕", text: "到了。" },
+  1: { ts: "07:52", caption: "〔上學路上〕", text: "又快遲到了。", photo: "story-morning" },
+  2: { ts: "15:02", caption: "〔教室窗外〕", text: "終於放學。", photo: "story-classroom" },
+  3: { ts: "15:40", caption: "〔手搖飲料〕", text: "今天犒賞自己一杯。", photo: "tea" },
+  4: { ts: "16:50", caption: "〔捷運出口・略模糊〕", text: "河西這邊路好多,第一次自己來。", photo: "story-subway" },
+  5: { ts: "18:05", caption: "〔巷口・略暗〕", text: "還要再走一段。", photo: "story-alley" },
+  6: { ts: "19:41", caption: "〔畫面昏暗〕", text: "到了。", photo: "story-dark" },
 };
 
 // 恐怖層:失蹤後的日子重訪,偶爾會多出第 7 則,時間戳在失蹤之後。
@@ -245,6 +247,7 @@ if (JH.get("ch3_done") && Math.random() < 0.5) {
 }
 
 const viewer = document.getElementById("story-viewer");
+const svBg = document.getElementById("sv-bg");
 const body = document.getElementById("sv-body");
 const progress = document.getElementById("sv-progress");
 const svLikeBtn = document.getElementById("sv-like-btn");
@@ -271,6 +274,19 @@ function openStory(id) {
   svLikeBtn.classList.remove("liked");
   svLikeBtn.textContent = "♡";
   viewer.classList.add("open");
+
+  // 每則限動背景換成對應素材圖(第7則恐怖層例外,維持純黑,不設圖)。
+  // 濾鏡只套在 sv-bg 這層背景圖上,不會連文字/關閉鈕/讚按鈕都一起糊掉。
+  // 4/5/6 則的文案本來就寫「略模糊/略暗/畫面昏暗」,直接疊加對應濾鏡,
+  // 不只是佔位圖片,越往後越看不清楚,呼應接近失蹤地點的節奏。
+  const STORY_FILTERS = { "4": "blur(3px)", "5": "brightness(.5)", "6": "brightness(.28) saturate(.6)" };
+  if (s.photo) {
+    svBg.style.backgroundImage = `url("assets/images/${s.photo}.jpg")`;
+    svBg.style.filter = STORY_FILTERS[id] || "";
+  } else {
+    svBg.style.backgroundImage = "";
+    svBg.style.filter = "";
+  }
 
   if (id === "6") {
     JHNotebook.add(

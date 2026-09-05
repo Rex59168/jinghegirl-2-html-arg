@@ -66,6 +66,11 @@
   // 站外真正的瀏覽器歷史紀錄。
   const NAV_STACK_KEY = "jh_nav_stack";
   const NAV_CONTROLLED_KEY = "jh_nav_controlled";
+  // 殼層(shell.js)從主畫面圖示/多工卡片直接切去另一個「App」(社交媒體/
+  // 購物網/瀏覽器彼此互相切換)時,會先設這個一次性旗標——告訴這裡目的頁
+  // 是全新起點,不是玩家在同一個 App 裡連續點連結,不能接在原本停留的那個
+  // App 的導覽紀錄後面,否則剛切過去就按返回鍵會被送回另一個 App 的舊頁面。
+  const NAV_RESET_KEY = "jh_nav_reset";
 
   function loadNavStack() {
     try {
@@ -87,8 +92,13 @@
       sessionStorage.removeItem(NAV_CONTROLLED_KEY);
       return;
     }
-    const nav = loadNavStack();
     const path = currentNavPath();
+    if (sessionStorage.getItem(NAV_RESET_KEY) === "1") {
+      sessionStorage.removeItem(NAV_RESET_KEY);
+      saveNavStack({ stack: [path], pos: 0 });
+      return;
+    }
+    const nav = loadNavStack();
     // 玩家先按過上一頁、又點了新連結:後面那段回不去的分支要砍掉,
     // 這是瀏覽器歷史紀錄的標準行為。
     if (nav.pos < nav.stack.length - 1) nav.stack = nav.stack.slice(0, nav.pos + 1);

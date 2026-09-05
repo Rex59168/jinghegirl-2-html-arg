@@ -76,20 +76,39 @@ body.site-social {
   z-index: 1050;
   display: none;
   flex-direction: column;
+  overflow: hidden;
 }
 .site-social .story-viewer.open { display: flex; }
+/* 背景圖跟真正的內容分開兩層:sv-bg 只負責放素材圖 + 依劇情套用的模糊/
+   調暗濾鏡(第4/5/6則文案本來就寫「略模糊/略暗/畫面昏暗」),inset 故意
+   比容器大一圈,模糊時邊緣才不會露出容器底色。濾鏡只套在這層,不會連
+   上面的文字、關閉鈕、讚按鈕都一起糊掉。 */
+.site-social .story-viewer .sv-bg {
+  position: absolute; inset: -20px;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+/* 固定的暗色漸層蓋在圖片上方、文字下方,確保不管背景圖亮暗,上面的
+   帳號名稱、時間戳、文字都看得清楚——這層不受 sv-bg 的濾鏡影響。 */
+.site-social .story-viewer .sv-scrim {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.62) 0%, rgba(0,0,0,.18) 32%, rgba(0,0,0,.68) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
 /* 點畫面左右半邊切換上一則/下一則限動,跟 IG 一樣——兩個透明區塊蓋住
    整個畫面,但 z-index 比下面的 sv-progress/sv-top/sv-bottom 低,所以
-   關閉鈕、讚按鈕這些真正的控制項還是點得到,只有中間空白區域(sv-body
-   本身沒有另外設 z-index,預設就疊在 sv-tap 下面)會被拿去判斷左右點擊。 */
+   關閉鈕、讚按鈕這些真正的控制項還是點得到,只有中間空白區域(sv-body)
+   會被拿去判斷左右點擊。 */
 .site-social .story-viewer .sv-tap {
   position: absolute; top: 0; bottom: 0; width: 50%;
-  z-index: 1;
+  z-index: 2;
 }
 .site-social .story-viewer .sv-tap--left { left: 0; }
 .site-social .story-viewer .sv-tap--right { right: 0; }
 .site-social .story-viewer .sv-top {
-  position: relative; z-index: 2;
+  position: relative; z-index: 3;
   display: flex; justify-content: space-between; align-items: center;
   /* 上面/左邊都比原本多留一點點空間,單純視覺呼吸感——真正讓名字不被蓋住
      的是上面 .story-viewer 的 z-index,不是這裡的 padding。刻意不留太多:
@@ -98,6 +117,7 @@ body.site-social {
   padding: 18px 16px 14px 20px;
 }
 .site-social .story-viewer .sv-body {
+  position: relative; z-index: 3;
   flex: 1;
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
@@ -106,7 +126,7 @@ body.site-social {
 }
 .site-social .story-viewer .sv-close { background: none; border: none; color: #fff; font-size: 20px; }
 .site-social .story-viewer .sv-progress {
-  position: relative; z-index: 2;
+  position: relative; z-index: 3;
   display: flex; gap: 4px; padding: 8px 16px 0;
 }
 .site-social .story-viewer .sv-progress span {
@@ -115,7 +135,7 @@ body.site-social {
 .site-social .story-viewer .sv-progress span.active { background: #fff; }
 .site-social .story-viewer .sv-caption { font-size: 13px; opacity: .7; margin-top: 10px; }
 .site-social .story-viewer .sv-bottom {
-  position: relative; z-index: 2;
+  position: relative; z-index: 3;
   display: flex; justify-content: flex-end;
   padding: 10px 20px calc(16px + env(safe-area-inset-bottom, 0px));
 }

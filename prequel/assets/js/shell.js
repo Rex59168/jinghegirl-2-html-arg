@@ -128,6 +128,19 @@
   function mount() {
     const frame = document.getElementById("jh-app-frame");
 
+    // 社交媒體/購物網/瀏覽器彼此是各自獨立的「App」,但共用同一個 iframe
+    // 跟同一份站內導覽紀錄(jh_nav_stack,見 browser-chrome.js)。從殼層主畫面
+    // 圖示或多工卡片直接切過去時(不是玩家在 iframe 裡點連結),不能讓目的頁
+    // 接在原本停留的那個 App 的紀錄後面——不然玩家剛點開社交媒體、什麼都還
+    // 沒逛,按一下返回鍵反而會跳去瀏覽器上次停的頁面,分不清楚返回鍵在幹嘛。
+    // 用跟 browser-chrome.js 的 NAV_CONTROLLED_KEY 一樣的一次性旗標模式,
+    // 告訴它這是全新起點、不是連續瀏覽,把站內導覽紀錄重置成只有這一頁。
+    const NAV_RESET_KEY = "jh_nav_reset";
+    function navigateFreshApp(url) {
+      try { sessionStorage.setItem(NAV_RESET_KEY, "1"); } catch (e) {}
+      try { frame.contentWindow.location.href = url; } catch (e) {}
+    }
+
     // 頂部通知橫幅共用的建構函式——訊息/線索/加好友三種通知外觀完全一樣
     // (圖示+標題+內文,點下去消失並觸發對應動作),只有圖示、標題、位置
     // (className 決定,見 phone-boot.css 的 .jh-notif--visible 位移量)、
@@ -420,7 +433,7 @@
     document.getElementById("jh-recents-browser").addEventListener("click", () => {
       closeAllPanelsForSwitch();
       if (isOnAppTabPage()) {
-        try { frame.contentWindow.location.href = "home.html"; } catch (e) {}
+        navigateFreshApp("home.html");
       }
       enterApp();
     });
@@ -433,7 +446,7 @@
       closeAllPanelsForSwitch();
       enterApp();
       const url = jhGet("app_" + kind + "_last_url", defaultUrl);
-      try { frame.contentWindow.location.href = url; } catch (e) {}
+      navigateFreshApp(url);
     }
     document.getElementById("jh-recents-social").addEventListener("click", () => openAppTab("social", "social/feed.html"));
     document.getElementById("jh-recents-market").addEventListener("click", () => openAppTab("market", "market/listing.html"));
@@ -535,7 +548,7 @@
     // 先導回 home.html,才是玩家點「瀏覽器」真正期待看到的畫面。
     document.getElementById("jh-boot-browser").addEventListener("click", () => {
       if (isOnAppTabPage()) {
-        try { frame.contentWindow.location.href = "home.html"; } catch (e) {}
+        navigateFreshApp("home.html");
       }
       enterApp();
     });

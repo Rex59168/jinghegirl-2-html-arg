@@ -124,5 +124,40 @@
     "site": "Pexels",
     "license": "Pexels License (CC0)",
     "search_query": "open book pages close up"
+  },
+  {
+    "filename": "story-morning.jpg",
+    "source_url": "https://pixabay.com/photos/way-street-architecture-asphalt-3764956/",
+    "site": "Pixabay",
+    "license": "Pixabay License",
+    "search_query": "empty street morning (林晞限時動態「上學路上」用)"
+  },
+  {
+    "filename": "story-classroom.jpg",
+    "source_url": "https://pixabay.com/photos/study-love-s-school-college-chalk-4919060/",
+    "site": "Pixabay",
+    "license": "Pixabay License",
+    "search_query": "empty classroom window (林晞限時動態「教室窗外」用)"
+  },
+  {
+    "filename": "story-subway.jpg",
+    "source_url": "https://pixabay.com/photos/escalator-stairs-metro-subway-769790/",
+    "site": "Pixabay",
+    "license": "Pixabay License",
+    "search_query": "subway station exit escalator (林晞限時動態「捷運出口・略模糊」用)"
+  },
+  {
+    "filename": "story-alley.jpg",
+    "source_url": "https://pixabay.com/photos/urban-water-reflection-new-york-5152592/",
+    "site": "Pixabay",
+    "license": "Pixabay License",
+    "search_query": "narrow dark alley (林晞限時動態「巷口・略暗」用)"
+  },
+  {
+    "filename": "story-dark.jpg",
+    "source_url": "https://pixabay.com/photos/hallway-stairs-stairwell-window-3179342/",
+    "site": "Pixabay",
+    "license": "Pixabay License",
+    "search_query": "dark stairwell (林晞限時動態最後一則「畫面昏暗」用)"
   }
 ]
