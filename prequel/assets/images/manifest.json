@@ -1,0 +1,128 @@
+[
+  {
+    "filename": "dessert.jpg",
+    "source_url": "https://pixabay.com/photos/cake-birthday-tart-dessert-pastry-486420/",
+    "site": "Pixabay",
+    "license": "Pixabay License",
+    "search_query": "birthday cake dessert pastry"
+  },
+  {
+    "filename": "exam.jpg",
+    "source_url": "https://www.pexels.com/photo/test-papers-and-pencil-on-the-desk-6683394/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "study desk textbooks exam papers"
+  },
+  {
+    "filename": "typhoon.jpg",
+    "source_url": "https://www.pexels.com/photo/wet-window-1824200/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "rainy window storm outside"
+  },
+  {
+    "filename": "headphone.jpg",
+    "source_url": "https://www.pexels.com/photo/close-up-photo-of-white-earbuds-8380433/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "wireless earbuds headphones close up"
+  },
+  {
+    "filename": "fried.jpg",
+    "source_url": "https://www.pexels.com/photo/flatlay-of-fried-chicken-and-fries-6941027/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "fried chicken taiwanese street food snack"
+  },
+  {
+    "filename": "ac.jpg",
+    "source_url": "https://www.pexels.com/photo/rows-of-desks-and-chairs-in-a-classroom-19199263/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "empty classroom air conditioner"
+  },
+  {
+    "filename": "karaoke.jpg",
+    "source_url": "https://www.pexels.com/photo/photo-of-neon-lights-near-microphone-3475853/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "karaoke room microphone neon light"
+  },
+  {
+    "filename": "haircut.jpg",
+    "source_url": "https://www.pexels.com/photo/curly-haired-woman-with-backpack-strolling-through-a-vibrant-city-street-11203852/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "curly hair back view no face"
+  },
+  {
+    "filename": "tea.jpg",
+    "source_url": "https://www.pexels.com/photo/person-holding-a-boba-tea-6412829/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "bubble tea boba drink"
+  },
+  {
+    "filename": "cat.jpg",
+    "source_url": "https://www.pexels.com/photo/adorable-cat-relaxing-in-a-cardboard-box-31889637/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "cat sleeping cardboard box"
+  },
+  {
+    "filename": "idol.jpg",
+    "source_url": "https://www.pexels.com/photo/close-up-shot-of-black-vinyl-record-5764281/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "vinyl record close up (原本 agent 選的唱片堆照片封套上印有清晰可辨識的真人樂手大頭照,換成這張純黑膠唱片特寫,不含任何封套/人臉)"
+  },
+  {
+    "filename": "sport.jpg",
+    "source_url": "https://www.pexels.com/photo/an-empty-basketball-court-2891884/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "empty basketball court"
+  },
+  {
+    "filename": "rain.jpg",
+    "source_url": "https://www.pexels.com/photo/people-walking-on-street-with-umbrellas-on-a-rainy-day-10826602/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "rainy street umbrella city wet pavement"
+  },
+  {
+    "filename": "study.jpg",
+    "source_url": "https://pixabay.com/photos/classroom-school-desks-rows-1910011/",
+    "site": "Pixabay",
+    "license": "Pixabay License",
+    "search_query": "classroom desk rows"
+  },
+  {
+    "filename": "private-album-1.jpg",
+    "source_url": "https://www.pexels.com/photo/cup-of-coffee-on-wooden-table-4195599/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "coffee cup on wooden table"
+  },
+  {
+    "filename": "private-album-2.jpg",
+    "source_url": "https://www.pexels.com/photo/photo-of-clouds-in-a-blue-sky-2528324/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "blue sky clouds"
+  },
+  {
+    "filename": "private-album-3.jpg",
+    "source_url": "https://www.pexels.com/photo/rainy-day-on-a-quiet-urban-sidewalk-29359006/",
+    "site": "Pexels",
+    "license": "Pexels License",
+    "search_query": "quiet city street sidewalk"
+  },
+  {
+    "filename": "private-album-4.jpg",
+    "source_url": "https://www.pexels.com/photo/close-up-of-open-book-256467/",
+    "site": "Pexels",
+    "license": "Pexels License (CC0)",
+    "search_query": "open book pages close up"
+  }
+]
