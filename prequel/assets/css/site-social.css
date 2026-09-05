@@ -192,25 +192,41 @@ body.site-social {
   position: relative;
   overflow: hidden;
 }
-.site-social .ig-photo--tea { background: linear-gradient(160deg,#f6d190,#c98b4b); }
-.site-social .ig-photo--cat { background: linear-gradient(160deg,#e8c9a0,#a97c50); }
-.site-social .ig-photo--study { background: linear-gradient(160deg,#c9d6e8,#7f97b8); }
-.site-social .ig-photo--idol { background: linear-gradient(160deg,#d8b8e8,#8f5fae); }
-.site-social .ig-photo--sport { background: linear-gradient(160deg,#ffcf8a,#e2762f); }
-.site-social .ig-photo--rain { background: linear-gradient(160deg,#aebfce,#5c7186); }
-.site-social .ig-photo--dessert { background: linear-gradient(160deg,#f7c9d6,#d97a97); }
-.site-social .ig-photo--school { background: linear-gradient(160deg,#bcd6c9,#5f8f79); }
-.site-social .ig-photo--window { background: linear-gradient(160deg,#dce8f2,#9db8cc); }
-.site-social .ig-photo--drink { background: linear-gradient(160deg,#f4e2a8,#d1a441); }
-.site-social .ig-photo--metro { background: linear-gradient(160deg,#c7c9d1,#6b6f7a); }
-.site-social .ig-photo--alley { background: linear-gradient(160deg,#7c7f8c,#3a3c46); }
-.site-social .ig-photo--typhoon { background: linear-gradient(160deg,#9fb0bd,#4c5c68); }
-.site-social .ig-photo--headphone { background: linear-gradient(160deg,#c8a8e8,#7c53a8); }
-.site-social .ig-photo--fried { background: linear-gradient(160deg,#f0b46a,#c9762c); }
-.site-social .ig-photo--ac { background: linear-gradient(160deg,#a9c6e8,#5b82ad); }
-.site-social .ig-photo--karaoke { background: linear-gradient(160deg,#e89ab0,#b04f70); }
-.site-social .ig-photo--haircut { background: linear-gradient(160deg,#d9c3a9,#a17c53); }
-.site-social .ig-photo--exam { background: linear-gradient(160deg,#c3ccd9,#7f8ba3); }
+/* 這 14 種板塊已經有 prequel/assets/images/ 底下的真實素材圖片,漸層色改當
+   圖片載入失敗時的備援底色;emoji 疊字用 font-size:0 收起來(emoji 是色彩
+   字形,color:transparent 對它無效,只有把字級歸零才會真的看不到)。 */
+.site-social .ig-photo--tea,
+.site-social .ig-photo--cat,
+.site-social .ig-photo--study,
+.site-social .ig-photo--idol,
+.site-social .ig-photo--sport,
+.site-social .ig-photo--rain,
+.site-social .ig-photo--dessert,
+.site-social .ig-photo--typhoon,
+.site-social .ig-photo--headphone,
+.site-social .ig-photo--fried,
+.site-social .ig-photo--ac,
+.site-social .ig-photo--karaoke,
+.site-social .ig-photo--haircut,
+.site-social .ig-photo--exam {
+  background-size: cover;
+  background-position: center;
+  font-size: 0;
+}
+.site-social .ig-photo--tea { background-image: url("../images/tea.jpg"), linear-gradient(160deg,#f6d190,#c98b4b); }
+.site-social .ig-photo--cat { background-image: url("../images/cat.jpg"), linear-gradient(160deg,#e8c9a0,#a97c50); }
+.site-social .ig-photo--study { background-image: url("../images/study.jpg"), linear-gradient(160deg,#c9d6e8,#7f97b8); }
+.site-social .ig-photo--idol { background-image: url("../images/idol.jpg"), linear-gradient(160deg,#d8b8e8,#8f5fae); }
+.site-social .ig-photo--sport { background-image: url("../images/sport.jpg"), linear-gradient(160deg,#ffcf8a,#e2762f); }
+.site-social .ig-photo--rain { background-image: url("../images/rain.jpg"), linear-gradient(160deg,#aebfce,#5c7186); }
+.site-social .ig-photo--dessert { background-image: url("../images/dessert.jpg"), linear-gradient(160deg,#f7c9d6,#d97a97); }
+.site-social .ig-photo--typhoon { background-image: url("../images/typhoon.jpg"), linear-gradient(160deg,#9fb0bd,#4c5c68); }
+.site-social .ig-photo--headphone { background-image: url("../images/headphone.jpg"), linear-gradient(160deg,#c8a8e8,#7c53a8); }
+.site-social .ig-photo--fried { background-image: url("../images/fried.jpg"), linear-gradient(160deg,#f0b46a,#c9762c); }
+.site-social .ig-photo--ac { background-image: url("../images/ac.jpg"), linear-gradient(160deg,#a9c6e8,#5b82ad); }
+.site-social .ig-photo--karaoke { background-image: url("../images/karaoke.jpg"), linear-gradient(160deg,#e89ab0,#b04f70); }
+.site-social .ig-photo--haircut { background-image: url("../images/haircut.jpg"), linear-gradient(160deg,#d9c3a9,#a17c53); }
+.site-social .ig-photo--exam { background-image: url("../images/exam.jpg"), linear-gradient(160deg,#c3ccd9,#7f8ba3); }
 .site-social .ig-photo--dark { background: linear-gradient(160deg,#2a2c33,#0c0d10); font-size: 13px; color: #666; }
 
 .site-social .ig-post__actions { padding: 8px 16px 0; font-size: 20px; }

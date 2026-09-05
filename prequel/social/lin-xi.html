@@ -311,11 +311,11 @@ document.getElementById("sv-tap-right").addEventListener("click", () => navigate
 // ══════════════════ 私人限定相簿(原本的「雲端相簿」密碼門) ══════════════════
 const PW_HASH = "7878dd754a520e04b2dc798790247b2e159ea0896db7a034fb8e72edb3784433";
 const PRIVATE_PHOTOS = [
-  { name: "IMG_0455", note: "沒有異常,普通生活照。" },
-  { name: "IMG_0448", note: "沒有異常,普通生活照。" },
+  { name: "IMG_0455", note: "沒有異常,普通生活照。", photo: "private-album-1" },
+  { name: "IMG_0448", note: "沒有異常,普通生活照。", photo: "private-album-2" },
   { name: "IMG_0431", href: "social/img0431.html", star: true },
-  { name: "IMG_0420", note: "沒有異常,普通生活照。" },
-  { name: "IMG_0410", note: "沒有異常,普通生活照。" },
+  { name: "IMG_0420", note: "沒有異常,普通生活照。", photo: "private-album-3" },
+  { name: "IMG_0410", note: "沒有異常,普通生活照。", photo: "private-album-4" },
 ];
 
 function showPrivateAlbum() {
@@ -342,6 +342,14 @@ PRIVATE_PHOTOS.forEach((p) => {
   const el = document.createElement(p.href ? "a" : "button");
   el.className = "ig-photo ig-photo--dark";
   el.textContent = p.star ? "★" : "🖼️";
+  // 普通生活照那 4 張換成真的素材圖(prequel/assets/images/),疊字圖示收起來;
+  // IMG_0431(謎題入口)維持原本全黑+★的樣子,不能被真照片洗掉重要性。
+  if (p.photo) {
+    el.style.backgroundImage = `url("assets/images/${p.photo}.jpg")`;
+    el.style.backgroundSize = "cover";
+    el.style.backgroundPosition = "center";
+    el.style.fontSize = "0";
+  }
   if (p.href) {
     el.href = p.href;
   } else {
