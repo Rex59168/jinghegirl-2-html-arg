@@ -18,6 +18,10 @@ import { MAIL_UI } from './labels.js';
   const HOME_SVG = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="7"/></svg>';
   const RECENTS_SVG = '<svg width="17" height="17" viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="15" height="15" rx="2.5"/></svg>';
 
+  // 兩章共用同一條版號,顯示在狀態列時間右側——純粹給自己(開發者)追蹤
+  // 目前進度用的標記,不是遊戲內文本,不用跟著 i18n 三語切換。第二章完工
+  // 時直接改成 "2.0"(兩章的 shell.js 要記得一起改,沒有共用模組)。
+  const SITE_VERSION = "1.5.2";
   const HOME_DATE_LABEL = "2026年8月17日 星期一";
   const FULLSCREEN_KEY = "jh2bridge:fullscreen_opt_in";
 
@@ -60,7 +64,10 @@ import { MAIL_UI } from './labels.js';
     const statusBar = document.createElement("div");
     statusBar.className = "jh-status-bar";
     statusBar.innerHTML = `
-      <span class="jh-sb-time" id="jh-sb-time"></span>
+      <span class="jh-sb-left">
+        <span class="jh-sb-time" id="jh-sb-time"></span>
+        <span class="jh-sb-version">v${SITE_VERSION}</span>
+      </span>
       <span class="jh-sb-icons">${SIGNAL_SVG}${WIFI_SVG}${BATTERY_SVG}</span>
     `;
     document.body.appendChild(statusBar);

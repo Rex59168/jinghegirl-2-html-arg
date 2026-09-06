@@ -19,7 +19,12 @@
   z-index: 2000;
   letter-spacing: 0.02em;
 }
+/* 時間+版本號分組成同一個 flex 子項,狀態列才會是「左邊時間+版本／
+   右邊訊號圖示」兩塊,不會被 justify-content:space-between 拆成三塊
+   平均分散、版本號跑到正中間。 */
+.jh-sb-left { display: flex; align-items: center; gap: 6px; }
 .jh-sb-time { font-variant-numeric: tabular-nums; }
+.jh-sb-version { font-size: 11px; font-weight: 400; opacity: .55; }
 .jh-sb-icons { display: flex; align-items: center; gap: 5px; }
 .jh-sb-icons svg { display: block; }
 
