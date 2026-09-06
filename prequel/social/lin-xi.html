@@ -226,18 +226,18 @@ followBtn.addEventListener("click", () => {
 });
 
 const STORIES = {
-  1: { ts: "07:52", caption: "〔上學路上〕", text: "又快遲到了。", photo: "story-morning" },
-  2: { ts: "15:02", caption: "〔教室窗外〕", text: "終於放學。", photo: "story-classroom" },
-  3: { ts: "15:40", caption: "〔手搖飲料〕", text: "今天犒賞自己一杯。", photo: "tea" },
-  4: { ts: "16:50", caption: "〔捷運出口・略模糊〕", text: "河西這邊路好多,第一次自己來。", photo: "story-subway" },
-  5: { ts: "18:05", caption: "〔巷口・略暗〕", text: "還要再走一段。", photo: "story-alley" },
-  6: { ts: "19:41", caption: "〔畫面昏暗〕", text: "到了。", photo: "story-dark" },
+  1: { ts: "07:52", text: "又快遲到了。", photo: "story-morning" },
+  2: { ts: "15:02", text: "終於放學。", photo: "story-classroom" },
+  3: { ts: "15:40", text: "今天犒賞自己一杯。", photo: "tea" },
+  4: { ts: "16:50", text: "河西這邊路好多,第一次自己來。", photo: "story-subway" },
+  5: { ts: "18:05", text: "還要再走一段。", photo: "story-alley" },
+  6: { ts: "19:41", text: "到了。", photo: "story-dark" },
 };
 
 // 恐怖層:失蹤後的日子重訪,偶爾會多出第 7 則,時間戳在失蹤之後。
 // 不存進 localStorage,純看這次載入運氣——重新整理不保證還在。
 if (JH.get("ch3_done") && Math.random() < 0.5) {
-  STORIES[7] = { ts: "凌晨 03:14", caption: "〔畫面全黑〕", text: "" };
+  STORIES[7] = { ts: "凌晨 03:14", text: "" };
   const rail = document.getElementById("story-rail");
   const btn = document.createElement("button");
   btn.className = "story-item";
@@ -266,7 +266,6 @@ function openStory(id) {
     .join("");
   body.innerHTML = `
     <div>
-      <div style="font-size:40px;opacity:.4;margin-bottom:16px;">${s.caption}</div>
       <div>${s.text}</div>
       <div class="sv-caption">今天 ${s.ts}</div>
     </div>

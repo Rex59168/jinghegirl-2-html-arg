@@ -97,18 +97,29 @@ body.site-social {
   z-index: 1;
   pointer-events: none;
 }
+/* 內文(sv-body)疊在背景圖跟遮罩上面,但一定要比下面的 sv-tap 矮一層——
+   之前補背景圖時不小心給了 sv-body 比 sv-tap 高的 z-index,結果畫面中間
+   (文字所在的整塊區域)反而蓋住了點擊判斷層,左右點擊切換限動整個失效。 */
+.site-social .story-viewer .sv-body {
+  position: relative; z-index: 2;
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  text-align: center;
+  font-size: 16px;
+}
 /* 點畫面左右半邊切換上一則/下一則限動,跟 IG 一樣——兩個透明區塊蓋住
    整個畫面,但 z-index 比下面的 sv-progress/sv-top/sv-bottom 低,所以
-   關閉鈕、讚按鈕這些真正的控制項還是點得到,只有中間空白區域(sv-body)
-   會被拿去判斷左右點擊。 */
+   關閉鈕、讚按鈕這些真正的控制項還是點得到,連文字都蓋得住(玩家點在
+   文字上也該能觸發切換,不是只有文字以外的空白處才有反應)。 */
 .site-social .story-viewer .sv-tap {
   position: absolute; top: 0; bottom: 0; width: 50%;
-  z-index: 2;
+  z-index: 3;
 }
 .site-social .story-viewer .sv-tap--left { left: 0; }
 .site-social .story-viewer .sv-tap--right { right: 0; }
 .site-social .story-viewer .sv-top {
-  position: relative; z-index: 3;
+  position: relative; z-index: 4;
   display: flex; justify-content: space-between; align-items: center;
   /* 上面/左邊都比原本多留一點點空間,單純視覺呼吸感——真正讓名字不被蓋住
      的是上面 .story-viewer 的 z-index,不是這裡的 padding。刻意不留太多:
@@ -116,17 +127,9 @@ body.site-social {
      220px 高,留太多反而會把關閉鈕推進通知橫幅的範圍,擋住點擊。 */
   padding: 18px 16px 14px 20px;
 }
-.site-social .story-viewer .sv-body {
-  position: relative; z-index: 3;
-  flex: 1;
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px;
-  text-align: center;
-  font-size: 16px;
-}
 .site-social .story-viewer .sv-close { background: none; border: none; color: #fff; font-size: 20px; }
 .site-social .story-viewer .sv-progress {
-  position: relative; z-index: 3;
+  position: relative; z-index: 4;
   display: flex; gap: 4px; padding: 8px 16px 0;
 }
 .site-social .story-viewer .sv-progress span {
@@ -135,7 +138,7 @@ body.site-social {
 .site-social .story-viewer .sv-progress span.active { background: #fff; }
 .site-social .story-viewer .sv-caption { font-size: 13px; opacity: .7; margin-top: 10px; }
 .site-social .story-viewer .sv-bottom {
-  position: relative; z-index: 3;
+  position: relative; z-index: 4;
   display: flex; justify-content: flex-end;
   padding: 10px 20px calc(16px + env(safe-area-inset-bottom, 0px));
 }
