@@ -12,6 +12,11 @@ const JH_I18N = (() => {
   const originalText = new WeakMap();
   const originalAttr = new WeakMap();
   let observer = null;
+  // document.title 不在 document.body 裡,上面的文字節點遍歷完全碰不到,
+  // 之前只有 ambient.js 那個嚇人效果自己手動處理過,平常切語言時分頁標題
+  // 一直維持繁體原文沒有跟著換——這裡補上跟內文一樣「存原文、每次切換
+  // 都從原文重新轉換」的機制,原文只存一次(第一次 init 的當下)。
+  let originalTitle = null;
 
   function getLang() {
     return JH.get("lang") || DEFAULT_LANG;
@@ -105,10 +110,16 @@ const JH_I18N = (() => {
     applyAttrs(root);
   }
 
+  function applyTitle(lang) {
+    if (originalTitle === null) originalTitle = document.title;
+    document.title = translate(originalTitle, lang);
+  }
+
   function setLang(lang) {
     JH.set("lang", lang);
     document.documentElement.lang = lang === "en" ? "en" : lang;
     apply(document.body);
+    applyTitle(lang);
     document.dispatchEvent(new CustomEvent("jh-lang-changed", { detail: { lang } }));
   }
 
@@ -126,6 +137,7 @@ const JH_I18N = (() => {
   function init() {
     document.documentElement.lang = getLang() === "en" ? "en" : getLang();
     apply(document.body);
+    applyTitle(getLang());
     observe();
   }
 

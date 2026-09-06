@@ -11,6 +11,8 @@ const JH_I18N_EN = {
   "我了解,繼續": "I understand, continue",
   "→ 查看完整求助資訊": "→ View full support resources",
   "在你繼續之前": "Before you continue",
+  "站內社群貼文的生活情境縮圖,均為搜尋免版稅圖庫(Pexels / Pixabay)下載使用之素材照片,非真實人物或案件照片,僅作示意用途。":
+    "The lifestyle thumbnails used in the in-site social media posts are all stock photos downloaded from royalty-free image libraries (Pexels / Pixabay). They do not depict real people or the actual case, and are for illustrative purposes only.",
 
   // ── 共用元件:假瀏覽器外框 / 筆記本 / 周妤的手機 ──────────────────
   "上一頁": "Back",
@@ -858,6 +860,138 @@ const JH_I18N_EN = {
   // 按讚按鈕(aria-label,不是畫面上看得到的文字,但 i18n.js 也會處理這個屬性)
   "讚": "Like",
   "昨天": "Yesterday",
+
+  // ── 補完先前缺英文翻譯(第二輪):手機殼層導覽列/主畫面固定字樣 ──
+  // 這幾個是多工畫面卡片、主畫面 App 圖示共用的標籤,之前一直沒有字典項目,
+  // 切到英文原本會整段露出中文。
+  "訊息": "Messages",
+  "備忘錄": "Notes",
+  "網站": "Website",
+  "社交媒體": "Social Media",
+  "購物網": "Marketplace",
+  "瀏覽器": "Browser",
+  "多工": "Recents",
+  "輕觸螢幕解鎖": "Tap to unlock",
+  "☀️ 31°C・靖河市": "☀️ 31°C · Jinghe City",
+  "2025年8月16日 星期六": "Saturday, August 16, 2025",
+
+  // ── shell.js:序章線索確認題答對後,周妤的回覆(CLUE_REQUESTS) ──
+  "最後訊號其實是 19:41(原公告寫 17:32)": "The last signal was actually at 19:41 (the original notice said 17:32)",
+  "對了——她的帳號有一組私人限定相簿要密碼才看得到,我把密碼傳給妳了:linxi0417。我一直沒敢自己點進去看,妳能不能幫我看看裡面有沒有什麼?":
+    "Oh — her account has a private album that needs a password. I'll send you the password: linxi0417. I never dared to look inside myself — could you check if there's anything in there?",
+
+  // ── shell.js:FILLER_CONTACTS(充場面聯絡人,跟本案無關的日常對話) ──
+  "阿翔(表弟)": "Xiang (cousin)",
+  "映涵": "Yinghan",
+  "晚餐想吃什麼,還是不回家吃?": "What do you want for dinner, or are you not eating at home?",
+  "在同學家,晚點自己解決": "At a classmate's place, I'll sort out dinner myself later",
+  "早點回來,不要太晚": "Come home early, not too late",
+  "對了,妳阿姨明天要來,記得整理一下房間": "Oh, your aunt's coming tomorrow, remember to tidy your room",
+  "好啦好啦": "Okay, okay",
+  "冰箱裡有切好的水果,回來記得吃": "There's cut fruit in the fridge, eat it when you get back",
+  "謝謝媽": "Thanks, Mom",
+  "機車該保養了,這禮拜找時間牽去": "The scooter needs a service, take it in sometime this week",
+  "好我知道了": "Okay, got it",
+  "順便看一下前輪煞車有沒有聲音": "While you're at it, check if the front brake is making noise",
+  "有一點點,我再注意": "A little, I'll keep an eye on it",
+  "這個月生活費已經轉了,自己看一下": "This month's allowance has been transferred, take a look",
+  "收到": "Got it",
+  "妳最近好像很常晚回家,還好嗎": "You've been coming home late a lot lately, are you okay?",
+  "就朋友那邊的事,沒事的": "Just something with a friend, it's nothing",
+  "有事要說,別自己扛": "If something's wrong, say so — don't carry it alone",
+  "姐妳新出的角色抽到了嗎": "Sis, did you pull the new character?",
+  "沒抽,最近沒空": "Didn't pull, no time lately",
+  "？？？妳不是很愛玩": "??? You love this game though",
+  "最近有點累,晚點再說": "A bit tired lately, talk later",
+  "好喔,那我先幫妳把材料存著": "Okay, I'll save the materials for you then",
+  "對了叔叔說中秋要一起烤肉,妳會回來嗎": "Oh, Uncle said we're doing a BBQ for Mid-Autumn Festival, will you come home?",
+  "應該會,到時候再說": "Probably, we'll see",
+  "姐妳寒假要不要教我打那個副本": "Sis, can you teach me that dungeon over winter break?",
+  "可以啊,到時候敲我": "Sure, hit me up then",
+  "禮拜六唱歌妳要不要來": "Karaoke Saturday, you coming?",
+  "看狀況,最近比較忙": "Depends, been busy lately",
+  "好喔那我先訂位,妳決定要跟我說": "Okay, I'll book it then — let me know once you decide",
+  "欸妳今天怎麼都沒回訊息": "Hey, why haven't you replied all day",
+  "抱歉在忙,晚點解釋": "Sorry, busy — I'll explain later",
+  "沒事啦,妳沒事就好,有空再聊": "It's fine, as long as you're okay — talk when you're free",
+  "謝謝妳": "Thanks",
+  "妳最近感覺怪怪的,真的沒事嗎": "You've seemed kind of off lately, are you really okay?",
+  "只是比較累,妳別擔心": "Just tired, don't worry",
+
+  // ── assets/js/clue-system.js:線索模組 UI ──
+  "這則線索好像不太對。": "That clue doesn't seem quite right.",
+  "妳還沒有蒐集到任何線索。": "You haven't collected any clues yet.",
+  "把線索拖到這裡,或點選一則線索": "Drag a clue here, or tap to select one",
+  "選擇線索": "Choose a Clue",
+  "提供線索": "Submit Clue",
+  "已儲存的線索": "Saved Clues",
+
+  // ── social/lin-xi.html:限時動態文案 + 線索答錯提示 ──
+  "〔上學路上〕": "〔On the way to school〕",
+  "〔巷口・略暗〕": "〔Alley entrance · a bit dark〕",
+  "又快遲到了。": "Running late again.",
+  "還要再走一段。": "Still a bit further to go.",
+  "凌晨 03:14": "3:14 AM",
+  "這則線索好像跟她最後上線的時間沒有關係。": "That clue doesn't seem related to when she was last online.",
+
+  // ── social/img0431.html:線索答錯提示 ──
+  "這則線索好像跟這張照片裡藏的東西沒有關係。": "That clue doesn't seem related to what's hidden in this photo.",
+
+  // ── social/feed.html:動態牆貼文文案 + 限動填充內容 ──
+  "貢茶買一送一衝了,今天決定波霸半糖": "Gong Cha's buy-one-get-one, going with pearl milk tea half sugar today",
+  "皮蛋今天在紙箱裡睡了一整天,家裡最忙的就是牠": "Pidan slept in the cardboard box all day today, the busiest one in the house",
+  "模擬考終於考完啦啦啦啦啦": "Finally done with the mock exam ahhhhh",
+  "巡演周邊到貨,今晚拆團開箱,已經緊張到手抖": "Tour merch arrived, group unboxing tonight, my hands are already shaking",
+  "校隊晉級啦!!下禮拜決賽,大家記得幫我加油": "The team made it through!! Finals next week, cheer for me everyone",
+  "靖河這幾天雨一直下,傘都快壞了,好想放晴": "It's been raining in Jinghe for days, my umbrella's about to break, I really want it to clear up",
+  "排隊三小時終於買到那家的蛋糕,值得": "Waited in line for three hours and finally got that cake, worth it",
+  "暑輔第一天,教室冷氣壞掉,想哭": "First day of summer school, the classroom AC is broken, want to cry",
+  "貢茶買一送一,今天終於排到我了。": "Gong Cha buy-one-get-one, finally my turn today.",
+  "皮蛋:今天也是躺平的一天。": "Pidan: another lazy day today.",
+  "周邊到貨,拆團拆到一半先發個限動。": "Merch arrived, posting a story mid-unboxing.",
+  "練球練到腿快斷,晉級值得。": "Practiced till my legs nearly gave out, making it through was worth it.",
+  "排隊排到懷疑人生,但真的好吃。": "Waited so long I questioned my life choices, but it's really good.",
+  "查看全部留言": "View all comments",
+
+  // ── transit/card-record.html:悠遊卡明細 ──
+  "跟約好的文昌站不一樣。": "Doesn't match the agreed Wenchang Station.",
+  "我看到了。": "I see it.",
+
+  // ── social/rec1029.html:賣場舊留言 + 隱藏帳號提示 ──
+  "@old_vinyl88:羨慕": "@old_vinyl88: Jealous.",
+  "@static_reel:哪張啊求分享": "@static_reel: Which one? Share pls",
+
+  // ── xunren/rebuild-0814.html:第四章五個子任務完成後的摘要 ──
+  "17:22 進站青川,19:38 卻是從興安站出站——不是約好的文昌站": "Tapped in at Qingchuan at 17:22, but tapped out at Xing'an at 19:38 — not Wenchang Station, where you agreed to meet",
+  "帳號三年歷史、共同好友,看起來沒問題": "Three years of account history, mutual friends — looks fine",
+  "她有跟我說要出門,但說得很含糊": "She did tell me she was going out, but was vague about it",
+  "她開了定位分享,只設定兩小時,19:00 自動關閉": "She turned on location sharing, but only set it for two hours — it turned off automatically at 19:00",
+
+  // ── ending/index.html:周妤在終幕傳的最後一段話(合併成單一則訊息) ──
+  "…我不知道還能做什麼。這個網站我會留著。 如果妳看到這裡了,謝謝妳陪我走完這一段。":
+    "...I don't know what else I can do. I'll keep this site up. If you've made it this far, thank you for walking this with me.",
+  "…我不知道還能做什麼。這個網站我本來是為了找晞晞才架的。 我沒想到最後找到的是姐姐。 三年了,我一直跟她們家說「說不定哪天林昭會自己回來」,現在我不知道要拿什麼臉再去見他們。 晞晞呢?我不敢往下想。這個網站我會留著。 如果妳看到這裡了,謝謝妳陪我走完這一段。":
+    "...I don't know what else I can do. I built this site to find Xi. I never expected the one we'd find in the end would be her sister. It's been three years — I kept telling her family, \"maybe Lin Zhao will come back on her own someday.\" Now I don't know how I can face them again. And Xi? I don't dare think about it. I'll keep this site up. If you've made it this far, thank you for walking this with me.",
+
+  // ── 各頁 <title>(document.title 現在也會跟著切換語言,見 i18n.js) ──
+  "內容提醒 | 協尋林晞": "Content Notice | Find Lin Xi",
+  "協尋・林晞 | 靖河市失蹤協尋網": "Searching for Lin Xi | Jinghe City Missing Persons Network",
+  "重建 8/14 | 協尋林晞": "Reconstructing 8/14 | Find Lin Xi",
+  "終幕 | 協尋林晞": "Final Act | Find Lin Xi",
+  "聯絡站長 | 協尋林晞": "Contact the Site Owner | Find Lin Xi",
+  "我和她的對話 | 協尋林晞": "My Conversation With Her | Find Lin Xi",
+  "求助資訊 | 這是一部虛構作品": "Support Resources | This Is a Work of Fiction",
+  "本市女學生失蹤逾月 警方擴大協尋 | 靖河日報": "Local High School Student Missing Over a Month, Police Expand Search | Jinghe Daily",
+  "靖河河堤尋獲不明遺骸 | 靖河日報": "Unidentified Remains Found on Jinghe Riverbank | Jinghe Daily",
+  "遺骸身分確認 | 靖河日報": "Remains Identified | Jinghe Daily",
+  "IMG_0431 ── 編輯紀錄": "IMG_0431 ── Edit History",
+  "書籤管理員・找碟": "Bookmark Manager · Finding the Disc",
+  "定位分享・設定紀錄": "Location Sharing · Settings Log",
+  "悠遊卡・當日刷卡紀錄": "EasyCard · Same-Day Tap Records",
+  "靖河捷運・時刻查詢": "Jinghe MRT · Schedule Lookup",
+  "二手交易・唱片收藏分類": "Secondhand Marketplace · Vinyl Collection Category",
+  "對話記錄・@rec_1029": "Chat Log · @rec_1029",
+  "對話記錄・再讀一次": "Chat Log · Reread",
 };
 
 // ── regex fallback:固定文字 + 動態內容(日期/數字/玩家輸入)拼在同一節點 ──
@@ -914,6 +1048,20 @@ const JH_I18N_EN_PATTERNS = [
     re: /^── (IMG_\d+):沒有異常,普通生活照。$/,
     build: (m) => `── ${m[1]}: nothing unusual, just an ordinary photo.`,
   },
-  // 林昭舊帳號重訪限動:「今天 HH:MM」
-  { re: /^今天 (.+)$/, build: (m) => `Today ${m[1]}` },
+  // 林昭舊帳號重訪限動:「今天 HH:MM」——冒號後面平常是純時間戳不用翻,
+  // 但恐怖層第 7 則限動的「凌晨 03:14」開頭帶了中文字,要遞迴翻譯過一次。
+  { re: /^今天 (.+)$/, build: (m, tr) => `Today ${tr(m[1])}` },
+  // 線索模組答錯時的提示 + 倒數秒數,兩段黏在同一個文字節點裡
+  // (clue-system.js:「wrongMessage(還要等 N 秒才能再交一次)」)
+  {
+    re: /^([\s\S]+?)\(還要等 (\d+) 秒才能再交一次\)$/,
+    build: (m, tr) => `${tr(m[1])} (please wait ${m[2]}s before submitting again)`,
+  },
+  // 二手賣場舊留言:「暱稱:想看實拍」(暱稱是玩家自訂輸入,不翻譯)
+  { re: /^([\s\S]+):想看實拍$/, build: (m) => `${m[1]}: want to see real photos` },
+  // 共同好友帳號被設為不公開:「姓名 的帳號已設為不公開,看不到內容。」
+  {
+    re: /^([\s\S]+) 的帳號已設為不公開,看不到內容。$/,
+    build: (m, tr) => `${tr(m[1])}'s account is set to private — content unavailable.`,
+  },
 ];
